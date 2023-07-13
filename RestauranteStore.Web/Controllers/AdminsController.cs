@@ -8,7 +8,7 @@ using System.Linq.Dynamic.Core;
 
 namespace RestauranteStore.Web.Controllers
 {
-    [Authorize(Roles = "admin,superadmin")]
+    [Authorize(Roles = "admin")]
     public class AdminsController : Controller
     {
         private readonly IAdminUserService adminUserService;
@@ -27,13 +27,11 @@ namespace RestauranteStore.Web.Controllers
         {
             return View();
         }
-        [Authorize(Roles = "superadmin")]
         // GET: AdminsController
         public ActionResult Index()
         {
             return View();
         }
-        [Authorize(Roles = "superadmin")]
         [HttpPost]
         public async Task<IActionResult> GetAllAdmins()
         {
@@ -50,7 +48,6 @@ namespace RestauranteStore.Web.Controllers
         }
 
 
-        [Authorize(Roles = "superadmin")]
         // GET: AdminsController/Create
         public ActionResult Create()
         {
@@ -58,7 +55,6 @@ namespace RestauranteStore.Web.Controllers
         }
 
 
-        [Authorize(Roles = "superadmin")]
         // POST: AdminsController/Create
         [HttpPost]
         public async Task<ActionResult> Create(AdminDto adminDto)
@@ -92,7 +88,6 @@ namespace RestauranteStore.Web.Controllers
 
 
 
-        [Authorize(Roles = "superadmin")]
         // GET: AdminsController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -104,7 +99,6 @@ namespace RestauranteStore.Web.Controllers
             if (adminDto == null) return NotFound();
             return View(adminDto);
         }
-        [Authorize(Roles = "superadmin")]
         // POST: AdminsController/Edit/5
         [HttpPost]
 
@@ -133,7 +127,6 @@ namespace RestauranteStore.Web.Controllers
         }
 
 
-        [Authorize(Roles = "superadmin")]
 
         // POST: AdminsController/Delete/5
         [HttpPost]

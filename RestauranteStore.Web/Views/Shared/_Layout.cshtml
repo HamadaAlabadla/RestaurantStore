@@ -216,7 +216,7 @@ License: For each use you must have a valid license purchased only from above li
 									<img alt="Logo" src="~/assets/media/logos/default-small.svg" class="h-20px app-sidebar-logo-minimize" />
 							</a>
 							}
-							else if(role.Equals("admin") || role.Equals("superadmin"))
+							else if(role.Equals("admin"))
 							{
 								<a asp-controller="Admins" asp-action="Welcom">
 									<img alt="Logo" src="~/assets/media/logos/default-dark.svg" class="h-25px app-sidebar-logo-default" />
@@ -273,10 +273,6 @@ License: For each use you must have a valid license purchased only from above li
 												@if (role.Equals("admin"))
 												{
 													<partial name="_LayoutAdmin.cshtml"/>
-												}
-												else if (role.Equals("superadmin"))
-												{
-													<partial name="_LayoutSuperAdmin.cshtml" />
 												}
 											</div>
 
