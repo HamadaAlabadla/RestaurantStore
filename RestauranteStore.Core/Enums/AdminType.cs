@@ -1,8 +1,10 @@
 ﻿namespace RestauranteStore.Core.Enums
 {
-    public enum AdminType
-    {
-        SuperAdmin,
-        Admin
-    }
+	public enum UserType
+	{
+		SuperAdmin,
+		Admin,
+		Customer,
+		Supplier
+	}
 }

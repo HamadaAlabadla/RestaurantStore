@@ -17,7 +17,7 @@ namespace RestauranteStore.EF.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.7")
+                .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -51,7 +51,7 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "772fe975-1f35-4b2e-bcc1-95ccc3ce8726",
+                            Id = "2013d021-4085-4827-be68-7fce5b6f969a",
                             Name = "superadmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -146,8 +146,8 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "fa7d037a-e74b-40d5-8245-82277d41ca94",
-                            RoleId = "772fe975-1f35-4b2e-bcc1-95ccc3ce8726"
+                            UserId = "1da24ff8-f987-4fa9-a17b-49c0dcfd9390",
+                            RoleId = "2013d021-4085-4827-be68-7fce5b6f969a"
                         });
                 });
 
@@ -178,9 +178,6 @@ namespace RestauranteStore.EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AdminType")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateCreate")
                         .HasColumnType("datetime2");
 
@@ -190,6 +187,9 @@ namespace RestauranteStore.EF.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -202,9 +202,10 @@ namespace RestauranteStore.EF.Migrations
                         new
                         {
                             Id = 1,
-                            AdminType = 0,
-                            DateCreate = new DateTime(2023, 7, 11, 14, 4, 40, 919, DateTimeKind.Local).AddTicks(4743),
-                            UserId = "fa7d037a-e74b-40d5-8245-82277d41ca94"
+                            DateCreate = new DateTime(2023, 7, 13, 14, 26, 32, 613, DateTimeKind.Local).AddTicks(1519),
+                            Logo = "superadmin - Logo01.jpg",
+                            UserId = "1da24ff8-f987-4fa9-a17b-49c0dcfd9390",
+                            isDelete = false
                         });
                 });
 
@@ -251,6 +252,9 @@ namespace RestauranteStore.EF.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
@@ -293,6 +297,9 @@ namespace RestauranteStore.EF.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -354,6 +361,12 @@ namespace RestauranteStore.EF.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -369,9 +382,9 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fa7d037a-e74b-40d5-8245-82277d41ca94",
+                            Id = "1da24ff8-f987-4fa9-a17b-49c0dcfd9390",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d60379c3-2831-488b-93ef-ab7e01c557b8",
+                            ConcurrencyStamp = "6e08ff6d-965e-45bc-9f44-55abb8f50b72",
                             Email = "superadmin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
@@ -380,9 +393,11 @@ namespace RestauranteStore.EF.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==",
                             PhoneNumber = "0596549873",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "103eef3d-5bda-4920-be76-57f106e19e22",
+                            SecurityStamp = "80abea34-8759-4322-9b1b-70d6418ece94",
                             TwoFactorEnabled = false,
-                            UserName = "superadmin"
+                            UserName = "superadmin",
+                            UserType = 0,
+                            isDelete = false
                         });
                 });
 
