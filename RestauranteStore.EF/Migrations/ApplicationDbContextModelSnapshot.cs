@@ -51,9 +51,9 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2013d021-4085-4827-be68-7fce5b6f969a",
-                            Name = "superadmin",
-                            NormalizedName = "SUPERADMIN"
+                            Id = "0d7ddf09-ed53-46ce-90d8-2cbe80d71a4c",
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
                         });
                 });
 
@@ -146,8 +146,8 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "1da24ff8-f987-4fa9-a17b-49c0dcfd9390",
-                            RoleId = "2013d021-4085-4827-be68-7fce5b6f969a"
+                            UserId = "87ad438c-7201-4e4e-b548-2560264b1b25",
+                            RoleId = "0d7ddf09-ed53-46ce-90d8-2cbe80d71a4c"
                         });
                 });
 
@@ -182,7 +182,13 @@ namespace RestauranteStore.EF.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Logo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -202,9 +208,10 @@ namespace RestauranteStore.EF.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreate = new DateTime(2023, 7, 13, 14, 26, 32, 613, DateTimeKind.Local).AddTicks(1519),
-                            Logo = "superadmin - Logo01.jpg",
-                            UserId = "1da24ff8-f987-4fa9-a17b-49c0dcfd9390",
+                            DateCreate = new DateTime(2023, 7, 13, 23, 8, 0, 526, DateTimeKind.Local).AddTicks(999),
+                            Logo = "admin - Logo01.jpg",
+                            Name = "admin",
+                            UserId = "87ad438c-7201-4e4e-b548-2560264b1b25",
                             isDelete = false
                         });
                 });
@@ -217,9 +224,8 @@ namespace RestauranteStore.EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Logo")
                         .IsRequired()
@@ -238,19 +244,9 @@ namespace RestauranteStore.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
 
                     b.Property<bool>("isDelete")
                         .HasColumnType("bit");
@@ -271,9 +267,8 @@ namespace RestauranteStore.EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Logo")
                         .IsRequired()
@@ -284,19 +279,9 @@ namespace RestauranteStore.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
 
                     b.Property<bool>("isDelete")
                         .HasColumnType("bit");
@@ -320,6 +305,9 @@ namespace RestauranteStore.EF.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -361,9 +349,6 @@ namespace RestauranteStore.EF.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
-
                     b.Property<bool>("isDelete")
                         .HasColumnType("bit");
 
@@ -382,21 +367,21 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1da24ff8-f987-4fa9-a17b-49c0dcfd9390",
+                            Id = "87ad438c-7201-4e4e-b548-2560264b1b25",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6e08ff6d-965e-45bc-9f44-55abb8f50b72",
-                            Email = "superadmin@admin.com",
+                            ConcurrencyStamp = "81e82783-259b-48f3-9b35-5e468af5072a",
+                            DateCreate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN@ADMIN.COM",
-                            NormalizedUserName = "superadmin",
+                            NormalizedUserName = "admin",
                             PasswordHash = "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==",
                             PhoneNumber = "0596549873",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "80abea34-8759-4322-9b1b-70d6418ece94",
+                            SecurityStamp = "380520af-a34b-4b9d-aca8-659b2542155d",
                             TwoFactorEnabled = false,
-                            UserName = "superadmin",
-                            UserType = 0,
+                            UserName = "admin",
                             isDelete = false
                         });
                 });

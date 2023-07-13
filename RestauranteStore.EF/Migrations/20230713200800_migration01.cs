@@ -30,6 +30,7 @@ namespace RestauranteStore.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     isDelete = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -78,10 +79,10 @@ namespace RestauranteStore.EF.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AdminType = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     isDelete = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -187,10 +188,8 @@ namespace RestauranteStore.EF.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
                     Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MainBranchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MainBranchAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -214,10 +213,8 @@ namespace RestauranteStore.EF.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
                     Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     isDelete = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -235,22 +232,22 @@ namespace RestauranteStore.EF.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "8453ba78-ea96-416d-9617-a743bbf1ed92", null, "superadmin", "SUPERADMIN" });
+                values: new object[] { "0d7ddf09-ed53-46ce-90d8-2cbe80d71a4c", null, "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "isDelete" },
-                values: new object[] { "b971db98-2bce-423b-9696-25756e9fd2c4", 0, "b4ca51c5-2743-4a31-ae3c-1c5160ea3267", "superadmin@admin.com", false, false, null, "SUPERADMIN@ADMIN.COM", "superadmin", "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==", "0596549873", false, "a383a3be-5d20-44b6-a18f-d11c82727ff4", false, "superadmin", false });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DateCreate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "isDelete" },
+                values: new object[] { "87ad438c-7201-4e4e-b548-2560264b1b25", 0, "81e82783-259b-48f3-9b35-5e468af5072a", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@admin.com", false, false, null, "SUPERADMIN@ADMIN.COM", "admin", "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==", "0596549873", false, "380520af-a34b-4b9d-aca8-659b2542155d", false, "admin", false });
 
             migrationBuilder.InsertData(
                 table: "Admins",
-                columns: new[] { "Id", "AdminType", "DateCreate", "Logo", "UserId", "isDelete" },
-                values: new object[] { 1, 0, new DateTime(2023, 7, 12, 13, 18, 50, 197, DateTimeKind.Local).AddTicks(3040), "superadmin - Logo01", "b971db98-2bce-423b-9696-25756e9fd2c4", false });
+                columns: new[] { "Id", "DateCreate", "Logo", "Name", "UserId", "isDelete" },
+                values: new object[] { 1, new DateTime(2023, 7, 13, 23, 8, 0, 526, DateTimeKind.Local).AddTicks(999), "admin - Logo01.jpg", "admin", "87ad438c-7201-4e4e-b548-2560264b1b25", false });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "8453ba78-ea96-416d-9617-a743bbf1ed92", "b971db98-2bce-423b-9696-25756e9fd2c4" });
+                values: new object[] { "0d7ddf09-ed53-46ce-90d8-2cbe80d71a4c", "87ad438c-7201-4e4e-b548-2560264b1b25" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",

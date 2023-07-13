@@ -1,7 +1,6 @@
 ﻿@model RestauranteStore.Core.Dtos.AdminDto
 
 @{
-	var list = new SelectList(ViewData["AdminTypes"] as List<SelectListItem>, "Value", "Text");
 }
 <link href="~/lib/datatables/css/datatables.bootstrap4.css" rel="stylesheet" />
 <link href="~/lib/datatables/css/datatables.bootstrap4.min.css" rel="stylesheet" />
@@ -169,16 +168,7 @@
 
 					<!--end::Input group-->
 					<!--begin::Input group-->
-					<div class="row g-9 mb-8">
-						<!--begin::Col-->
-						<div class="col-md-6 fv-row">
-							<label asp-for="UserType" class=" required fs-6 fw-semibold mb-2"></label>
-							<select class="form-select form-select-solid" asp-for="UserType" data-hide-search="true" asp-items="@list" data-placeholder="Select a Admin Type">
-							</select>
-							<span asp-validation-for="UserType" class="text-danger"></span>
-						</div>
-						<!--end::Col-->
-					</div>
+
 					<div class="text-center">
 						<button type="reset" id="kt_modal_new_target_cancel" class="btn btn-light me-3">Cancel</button>
 						<button type="submit" id="kt_modal_new_target_submit" class="btn btn-primary">

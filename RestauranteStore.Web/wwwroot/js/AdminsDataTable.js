@@ -37,7 +37,7 @@
                 "sorting": false,
                 "render": function (data, type, row) {
                     return `<td>
-								<a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">${data.userName}</a>
+								<a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">${data.name}</a>
 								<span class="text-muted fw-semibold d-block fs-7">${data.email}</span>
 							</td>`;
                 }
@@ -49,7 +49,7 @@
                 "render": function (data, type, row) {
                     return `<td class="text-end">
 								<span class="badge badge-light-danger fw-semibold me-1">${data.dateCreateText}</span>
-								<span class="badge badge-light-info fw-semibold me-1">${data.userTypeText }</span>
+								<span class="badge badge-light-info fw-semibold me-1">${data.role }</span>
 							</td>`;
                 }
             },
@@ -116,17 +116,7 @@
                                         <input id="sub-${row.id}" style="visibility:hidden" type="submit" value="" />
                                     </form> 
 								</div>
-							</td>`;
-                   
-                    
-                    `<div><form action="/Admins/Delete" method="post">
-                            <input type="hidden" class="form-control" data-val="true"
-                            data-val-required="The Id field is required." id="Id" name="Id" value="${row.id}">
-
-                                <input type="submit" value="Delete" class="btn btn-danger" />
-                                <a href="/Admins/Edit?id=${row.id}" class = "btn btn-info" > Edit </a >
-                    </form> </div>`;
-                },
+							</td>`;                },
                 "orderable": false,
             },
         ],
