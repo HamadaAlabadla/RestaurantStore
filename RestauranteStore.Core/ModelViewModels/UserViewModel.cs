@@ -4,8 +4,7 @@ namespace RestauranteStore.Core.ModelViewModels
 {
 	public class UserViewModel
 	{
-		public int Id { get; set; }
-		public string? userId { get; set; }
+		public string? Id { get; set; }
 		[Display(Name = "اسم الآددمن")]
 		public string? Name { get; set; }
 		[Display(Name = "الصورة")]

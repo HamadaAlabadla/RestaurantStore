@@ -1,20 +1,29 @@
-﻿<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Admins" asp-action="Index">
+﻿<span id="tempFilter" hidden></span>
+<!--begin:Menu link-->
+<a class="menu-link active" asp-controller="Users" asp-action="Index">
+	<span class="menu-bullet">
+		<span class="bullet bullet-dot"></span>
+	</span>
+	<span class="menu-title">User Management</span>
+</a>
+<!--begin:Menu link-->
+<a class="menu-link active" onclick="document.getElementById('tempFilter').textContent = 'admin';" id="adminLink">
 	<span class="menu-bullet">
 		<span class="bullet bullet-dot"></span>
 	</span>
 	<span class="menu-title">Admin Management</span>
 </a>
+<!--end:Menu link-->
 <!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Customers" asp-action="Index">
+<a class="menu-link active" onclick="document.getElementById('tempFilter').textContent = 'restorante';" id="restoranteLink">
 	<span class="menu-bullet">
 		<span class="bullet bullet-dot"></span>
 	</span>
-	<span class="menu-title">Customer Management</span>
+	<span class="menu-title">Restorante Management</span>
 </a>
 <!--end:Menu link-->
 <!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Suppliers" asp-action="Index">
+<a class="menu-link active" onclick="document.getElementById('tempFilter').textContent = 'supplier';" id="supplierLink">
 	<span class="menu-bullet">
 		<span class="bullet bullet-dot"></span>
 	</span>

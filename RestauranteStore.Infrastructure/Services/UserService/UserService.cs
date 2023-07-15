@@ -1,7 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Primitives;
+using RestauranteStore.Core.Dtos;
+using RestauranteStore.Core.Enums;
+using RestauranteStore.Core.ModelViewModels;
+//using Microsoft.EntityFrameworkCore;
+using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
-using RestauranteStore.Infrastructure.Services.AdminService;
+using RestauranteStore.Infrastructure.Services.FileService;
+using System.Data.Entity;
+using System.Linq.Dynamic.Core;
 
 namespace RestauranteStore.Infrastructure.Services.UserService
 {
@@ -10,24 +18,35 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 		private readonly UserManager<User> userManager;
 		private readonly RoleManager<IdentityRole> roleManager;
 		private readonly IUserStore<User> _userStore;
+		private readonly ApplicationDbContext dbContext;
+		private readonly IMapper mapper;
+		private readonly IFileService fileService;
 
 		public UserService(UserManager<User> userManager,
 			RoleManager<IdentityRole> roleManager,
 			IUserStore<User> userStore,
-			IAdminService adminService)
+			ApplicationDbContext dbContext,
+			IMapper mapper,
+			IFileService fileService)
 		{
 			this.userManager = userManager;
 			this.roleManager = roleManager;
 			_userStore = userStore;
+			this.dbContext = dbContext;
+			this.mapper = mapper;
+			this.fileService = fileService;
 		}
 
-		public async Task<string?> CreateUser(User user, string role)
+		public async Task<string?> CreateUser(UserDto userDto, string role)
 		{
+			var user = mapper.Map<User>(userDto);
 			if (user == null
 				|| string.IsNullOrWhiteSpace(role))
 				return null;
 			role = role.ToLower();
 			await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
+			user.Logo = await fileService.UploadFile(userDto.Logo!, userDto.UserName??"");
+			user.DateCreate = DateTime.UtcNow;
 			var result = await userManager.CreateAsync(user, "user_123_USER");
 
 			if (result.Succeeded)
@@ -54,10 +73,47 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 		{
 			return await userManager.FindByNameAsync(Name);
 		}
-
-		public async Task<List<User>?> GetAllUsersAsync()
+		private IQueryable<User> GetAllUsers(string search , string filter)
 		{
-			return await userManager.Users.Where(x => !x.isDelete).ToListAsync();
+			if (!string.IsNullOrEmpty(filter))
+			{
+				UserType filterEnum = (UserType)Enum.Parse(typeof(UserType), filter, true);
+				var admins = dbContext.users.Include(x => x.Restorante)
+					.Where(x => !x.isDelete && x.UserType == filterEnum);
+				//.Where(x => string.IsNullOrEmpty(search)
+				//? true
+				//: (x.AdminType.ToString().Contains(search)));
+				////|| x.User!.UserName!.Contains(search)
+				////|| x.User.Email!.Contains(search))
+				////|| x.User.PhoneNumber!.Contains(search)
+
+				return admins;
+			}else
+			 return	dbContext.users.Include(x => x.Restorante)
+					.Where(x => !x.isDelete );
+
+		}
+
+		public async Task<object?> GetAllUsers(int pageLength, int skiped, StringValues searchData, StringValues sortColumn, StringValues sortDir, StringValues filter)
+		{
+
+			var users = GetAllUsers(searchData[0] ?? "" , filter[0]??"");
+			var recordsTotal = users.Count();
+
+			if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDir))
+				users = users.OrderBy(string.Concat(sortColumn, " ", sortDir));
+
+
+			var data = users.Skip(skiped).Take(pageLength).ToList();
+			var usersViewModel = mapper.Map<IEnumerable<UserViewModel>>(data);
+			foreach (var item in usersViewModel)
+			{
+				item.Role = await GetRoleByUser(item.Id ?? "");
+			}
+			var jsonData = new { recordsFiltered = recordsTotal, recordsTotal, data = usersViewModel };
+
+			return jsonData;
+
 		}
 
 		public async Task<string?> GetRoleByUser(string userId)
@@ -74,8 +130,9 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			return user;
 		}
 
-		public async Task<string?> UpdateUser(User? user)
+		public async Task<string?> UpdateUser(UserDto? userDto)
 		{
+			var user = mapper.Map<User>(userDto);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return null;
 			var userDb = await GetUserAsync(user.Id);
 			if (userDb == null) return null;
@@ -84,6 +141,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			userDb.Email = user.Email;
 			userDb.NormalizedEmail = user.NormalizedEmail;
 			userDb.PhoneNumber = user.PhoneNumber;
+			userDb.UserType = user.UserType;
 			await userManager.UpdateAsync(userDb);
 			return user.Id;
 		}

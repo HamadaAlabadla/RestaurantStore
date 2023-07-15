@@ -121,10 +121,10 @@ namespace RestauranteStore.Web.Areas.Identity.Pages.Account
 					_logger.LogInformation("User logged in.");
 					if (!string.IsNullOrEmpty(returnUrl))
 						return LocalRedirect(returnUrl);
-					if (role.Equals("superadmin"))
-						return RedirectToAction("Welcom", "Admins");
 					else if (role.Equals("admin"))
-						return RedirectToAction("Welcom", "Admins");
+						return RedirectToAction("Welcom", "Users");
+					else if (role.Equals("supplier"))
+						return RedirectToAction("Welcom", "Users");
 				}
 				if (result.RequiresTwoFactor)
 				{

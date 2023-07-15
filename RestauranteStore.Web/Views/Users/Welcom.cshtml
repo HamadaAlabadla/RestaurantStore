@@ -1,26 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using RestauranteStore.EF.Models;
-@using RestauranteStore.Infrastructure.Services.SupplierService;
 @inject UserManager<User> UserManager
 @inject RoleManager<IdentityRole> RoleManager
-@inject ISupplierService supplierService
 @{
 	//var user = ViewData["User"] as User;
 	//var role = (string)(ViewData["role"]??"") ;
 	var user = await UserManager.GetUserAsync(Context.User);
-	string? role = null;
 	if (user == null)
 	{
-		user = new User();
-		user.Supplier = new Supplier();
-		user.Supplier.Logo = "000";
+		user = new User()
+				{ Logo = "" };
 	}
-
-	else
+	else if (string.IsNullOrEmpty(user.Logo))
 	{
-		user.Supplier = supplierService.GetSupplierByUserId(user.Id);
-		role = (await UserManager.GetRolesAsync(user))[0];
+		user.Logo = "";
 	}
+	string role = (await UserManager.GetRolesAsync(user))[0];
+
 
 
 }
@@ -43,6 +39,7 @@
 				</div>
 				<!--end::Illustration-->
 				<!--begin::Link-->
+
 				<!--end::Link-->
 			</div>
 		</div>

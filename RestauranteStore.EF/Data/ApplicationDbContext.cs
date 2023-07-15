@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RestauranteStore.Core.Enums;
 using RestauranteStore.EF.Models;
 
 namespace RestauranteStore.EF.Data
@@ -16,20 +17,10 @@ namespace RestauranteStore.EF.Data
 		{
 			base.OnModelCreating(builder);
 
-			builder.Entity<Customer>()
+			builder.Entity<Restorante>()
 				.HasOne(b => b.User)
-				.WithOne(x => x.Customer)
-				.HasForeignKey<Customer>(b => b.UserId);
-
-			builder.Entity<Supplier>()
-				.HasOne(b => b.User)
-				.WithOne(x => x.Supplier)
-				.HasForeignKey<Supplier>(b => b.UserId);
-
-			builder.Entity<User>()
-				.HasOne(b => b.Admin)
-				.WithOne(x => x.User)
-				.HasForeignKey<Admin>(b => b.UserId);
+				.WithOne(x => x.Restorante)
+				.HasForeignKey<Restorante>(b => b.UserId);
 
 
 			var userId = Guid.NewGuid().ToString();
@@ -41,22 +32,17 @@ namespace RestauranteStore.EF.Data
 				NormalizedEmail = "SUPERADMIN@ADMIN.COM",
 				PhoneNumber = "0596549873",
 				UserName = "admin",
-				NormalizedUserName = "admin",
+				NormalizedUserName = "ADMIN",
 				PasswordHash = "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==",
+				UserType = UserType.admin,
+				Logo = "admin - Logo01.jpg",
+				Name = "Hamada",
+				DateCreate = DateTime.UtcNow,
 
 			};
 			builder.Entity<User>()
 				.HasData(user);
 
-			builder.Entity<Admin>()
-				.HasData(new Admin()
-				{
-					Id = 1,
-					Name = "admin",
-					UserId = userId,
-					DateCreate = DateTime.Now,
-					Logo = "admin - Logo01.jpg"
-				});
 
 			builder.Entity<IdentityRole>()
 				.HasData(new IdentityRole()
@@ -76,8 +62,6 @@ namespace RestauranteStore.EF.Data
 		}
 
 		public DbSet<User> users { get; set; }
-		public DbSet<Admin> Admins { get; set; }
-		public DbSet<Customer> Customers { get; set; }
-		public DbSet<Supplier> Suppliers { get; set; }
+		public DbSet<Restorante> Customers { get; set; }
 	}
 }

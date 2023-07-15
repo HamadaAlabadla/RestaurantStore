@@ -9,69 +9,22 @@ namespace RestauranteStore.Core.AutoMapper
 	{
 		public MapperProfile()
 		{
-			CreateMap<Admin, UserViewModel>()
-				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id))
-				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate))
-				.ForMember(dist => dist.Logo, src => src.MapFrom(src => src.Logo))
+			CreateMap<User, UserViewModel>()
 				.ForMember(dist => dist.Role, src => src.Ignore())
-				.ForMember(dist => dist.isDelete, src => src.MapFrom(src => src.isDelete))
-				.ForMember(dist => dist.DateCreateText, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
-				.ForMember(dist => dist.Email, src => src.MapFrom(src => src.User!.Email))
-				.ForMember(dist => dist.UserName, src => src.MapFrom(src => src.User!.UserName))
-				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.User!.PhoneNumber));
-
-			CreateMap<AdminDto, Admin>()
-				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id));
-			//.ForMember(dist => dist.Logo, src => src.Ignore())
-			//.ForMember(dist => dist.UserId, src => src.Ignore());
-
-			CreateMap<Admin, AdminDto>()
-				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id))
-				.ForMember(dist => dist.Logo, src => src.Ignore())
-				.ForMember(dist => dist.UserName, src => src.MapFrom(src => src.User!.UserName))
-				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.User!.PhoneNumber))
-				.ForMember(dist => dist.Email, src => src.MapFrom(src => src.User!.Email));
+				.ForMember(dist => dist.DateCreateText, src => src.MapFrom(src => src.DateCreate.ToShortDateString()));
 
 
 
-			CreateMap<AdminDto, User>()
+			CreateMap<UserDto, User>()
 				.ForMember(dist => dist.Id, src => src.Ignore())
-				.ForMember(dist => dist.Email, src => src.MapFrom(src => src.Email))
 				.ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
-				.ForMember(dist => dist.UserName, src => src.MapFrom(src => src.UserName))
-				.ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
-				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
-			CreateMap<User, User>()
-				.ForMember(dist => dist.Id, src => src.Ignore());
-
-			CreateMap<SupplierDto, User>()
-				.ForMember(dist => dist.Id, src => src.Ignore())
-				.ForMember(dist => dist.Email, src => src.MapFrom(src => src.Email))
-				.ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
-				.ForMember(dist => dist.UserName, src => src.MapFrom(src => src.UserName))
 				.ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
 				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
 
-			CreateMap<SupplierDto, Supplier>()
-				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id));
+			CreateMap<User, UserDto>()
+				.ForMember(dist => dist.Logo, src => src.Ignore());
 
 
-			CreateMap<Supplier, SupplierViewModel>()
-				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id))
-				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate))
-				.ForMember(dist => dist.Logo, src => src.MapFrom(src => src.Logo))
-				.ForMember(dist => dist.isDelete, src => src.MapFrom(src => src.isDelete))
-				.ForMember(dist => dist.DateCreateText, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
-				.ForMember(dist => dist.Email, src => src.MapFrom(src => src.User!.Email))
-				.ForMember(dist => dist.UserName, src => src.MapFrom(src => src.User!.UserName))
-				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.User!.PhoneNumber));
-
-			CreateMap<Supplier, SupplierDto>()
-				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id))
-				.ForMember(dist => dist.Logo, src => src.Ignore())
-				.ForMember(dist => dist.UserName, src => src.MapFrom(src => src.User!.UserName))
-				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.User!.PhoneNumber))
-				.ForMember(dist => dist.Email, src => src.MapFrom(src => src.User!.Email));
 
 
 		}

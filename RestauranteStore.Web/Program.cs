@@ -3,9 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RestauranteStore.Core.AutoMapper;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
-using RestauranteStore.Infrastructure.Services.AdminService;
 using RestauranteStore.Infrastructure.Services.FileService;
-using RestauranteStore.Infrastructure.Services.SupplierService;
 using RestauranteStore.Infrastructure.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,11 +27,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IAdminUserService, AdminUserService>();
-builder.Services.AddTransient<ISupplierService, SupplierService>();
-builder.Services.AddTransient<ISupplierUserService, SupplierUserService>();
 builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 var app = builder.Build();

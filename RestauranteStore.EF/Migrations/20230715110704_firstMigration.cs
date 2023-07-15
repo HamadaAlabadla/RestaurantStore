@@ -5,7 +5,7 @@
 namespace RestauranteStore.EF.Migrations
 {
 	/// <inheritdoc />
-	public partial class migration01 : Migration
+	public partial class firstMigration : Migration
 	{
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,6 +29,9 @@ namespace RestauranteStore.EF.Migrations
 				columns: table => new
 				{
 					Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+					Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+					Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+					UserType = table.Column<int>(type: "int", nullable: false),
 					DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
 					isDelete = table.Column<bool>(type: "bit", nullable: false),
 					UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -68,29 +71,6 @@ namespace RestauranteStore.EF.Migrations
 						name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
 						column: x => x.RoleId,
 						principalTable: "AspNetRoles",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Cascade);
-				});
-
-			migrationBuilder.CreateTable(
-				name: "Admins",
-				columns: table => new
-				{
-					Id = table.Column<int>(type: "int", nullable: false)
-						.Annotation("SqlServer:Identity", "1, 1"),
-					Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-					Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-					DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-					isDelete = table.Column<bool>(type: "bit", nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_Admins", x => x.Id);
-					table.ForeignKey(
-						name: "FK_Admins_AspNetUsers_UserId",
-						column: x => x.UserId,
-						principalTable: "AspNetUsers",
 						principalColumn: "Id",
 						onDelete: ReferentialAction.Cascade);
 				});
@@ -184,44 +164,16 @@ namespace RestauranteStore.EF.Migrations
 				name: "Customers",
 				columns: table => new
 				{
-					Id = table.Column<int>(type: "int", nullable: false)
-						.Annotation("SqlServer:Identity", "1, 1"),
-					Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-					Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-					DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
 					MainBranchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
 					MainBranchAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
 					isDelete = table.Column<bool>(type: "bit", nullable: false)
 				},
 				constraints: table =>
 				{
-					table.PrimaryKey("PK_Customers", x => x.Id);
+					table.PrimaryKey("PK_Customers", x => x.UserId);
 					table.ForeignKey(
 						name: "FK_Customers_AspNetUsers_UserId",
-						column: x => x.UserId,
-						principalTable: "AspNetUsers",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Cascade);
-				});
-
-			migrationBuilder.CreateTable(
-				name: "Suppliers",
-				columns: table => new
-				{
-					Id = table.Column<int>(type: "int", nullable: false)
-						.Annotation("SqlServer:Identity", "1, 1"),
-					Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-					Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-					DateCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-					isDelete = table.Column<bool>(type: "bit", nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_Suppliers", x => x.Id);
-					table.ForeignKey(
-						name: "FK_Suppliers_AspNetUsers_UserId",
 						column: x => x.UserId,
 						principalTable: "AspNetUsers",
 						principalColumn: "Id",
@@ -231,28 +183,17 @@ namespace RestauranteStore.EF.Migrations
 			migrationBuilder.InsertData(
 				table: "AspNetRoles",
 				columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-				values: new object[] { "0d7ddf09-ed53-46ce-90d8-2cbe80d71a4c", null, "admin", "ADMIN" });
+				values: new object[] { "f8754c94-7fd5-4094-95bc-65cfb1f0dc15", null, "Admin", "ADMIN" });
 
 			migrationBuilder.InsertData(
 				table: "AspNetUsers",
-				columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DateCreate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "isDelete" },
-				values: new object[] { "87ad438c-7201-4e4e-b548-2560264b1b25", 0, "81e82783-259b-48f3-9b35-5e468af5072a", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@admin.com", false, false, null, "SUPERADMIN@ADMIN.COM", "admin", "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==", "0596549873", false, "380520af-a34b-4b9d-aca8-659b2542155d", false, "admin", false });
-
-			migrationBuilder.InsertData(
-				table: "Admins",
-				columns: new[] { "Id", "DateCreate", "Logo", "Name", "UserId", "isDelete" },
-				values: new object[] { 1, new DateTime(2023, 7, 13, 23, 8, 0, 526, DateTimeKind.Local).AddTicks(999), "admin - Logo01.jpg", "admin", "87ad438c-7201-4e4e-b548-2560264b1b25", false });
+				columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DateCreate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Logo", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "UserType", "isDelete" },
+				values: new object[] { "2168fb1a-b9a3-4829-b56e-203044948ec3", 0, "724a1aa1-378e-47e8-81bd-13a804ddbe26", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@admin.com", false, false, null, "admin - Logo01.jpg", "Hamada", "SUPERADMIN@ADMIN.COM", "admin", "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==", "0596549873", false, "a95de37e-d8bd-4099-b307-14eace780b33", false, "admin", 2, false });
 
 			migrationBuilder.InsertData(
 				table: "AspNetUserRoles",
 				columns: new[] { "RoleId", "UserId" },
-				values: new object[] { "0d7ddf09-ed53-46ce-90d8-2cbe80d71a4c", "87ad438c-7201-4e4e-b548-2560264b1b25" });
-
-			migrationBuilder.CreateIndex(
-				name: "IX_Admins_UserId",
-				table: "Admins",
-				column: "UserId",
-				unique: true);
+				values: new object[] { "f8754c94-7fd5-4094-95bc-65cfb1f0dc15", "2168fb1a-b9a3-4829-b56e-203044948ec3" });
 
 			migrationBuilder.CreateIndex(
 				name: "IX_AspNetRoleClaims_RoleId",
@@ -292,26 +233,11 @@ namespace RestauranteStore.EF.Migrations
 				column: "NormalizedUserName",
 				unique: true,
 				filter: "[NormalizedUserName] IS NOT NULL");
-
-			migrationBuilder.CreateIndex(
-				name: "IX_Customers_UserId",
-				table: "Customers",
-				column: "UserId",
-				unique: true);
-
-			migrationBuilder.CreateIndex(
-				name: "IX_Suppliers_UserId",
-				table: "Suppliers",
-				column: "UserId",
-				unique: true);
 		}
 
 		/// <inheritdoc />
 		protected override void Down(MigrationBuilder migrationBuilder)
 		{
-			migrationBuilder.DropTable(
-				name: "Admins");
-
 			migrationBuilder.DropTable(
 				name: "AspNetRoleClaims");
 
@@ -329,9 +255,6 @@ namespace RestauranteStore.EF.Migrations
 
 			migrationBuilder.DropTable(
 				name: "Customers");
-
-			migrationBuilder.DropTable(
-				name: "Suppliers");
 
 			migrationBuilder.DropTable(
 				name: "AspNetRoles");

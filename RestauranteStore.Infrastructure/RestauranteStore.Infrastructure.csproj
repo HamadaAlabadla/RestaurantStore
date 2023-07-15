@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\AdminService\**" />
+    <Compile Remove="Services\SupplierService\**" />
+    <EmbeddedResource Remove="Services\AdminService\**" />
+    <EmbeddedResource Remove="Services\SupplierService\**" />
+    <None Remove="Services\AdminService\**" />
+    <None Remove="Services\SupplierService\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.3.3" />
   </ItemGroup>

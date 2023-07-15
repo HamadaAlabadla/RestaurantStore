@@ -1,17 +1,43 @@
-﻿$(document).ready(function () {
-    $('#AdminsTable').DataTable({
+﻿var datatable;
+$(document).ready(function () {
+    datatable =  $('#UsersTable').DataTable({
         "serverSide": true,
         "filter": true,
         "pagination": true,
         "dataSrc": "",
         "ajax": {
-            "url": "/Admins/GetAllAdmins",
+            "url": "/Users/GetAllUsers",
             "type": "POST",
             "datatype": "json",
             'columnDefs': [
                 { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
                 { orderable: false, targets: 5 }, // Disable ordering on column 6 (actions)                
             ],
+            "data": function (filterString) {
+                filterString.filter = '';
+
+                // Get filter values
+                selectOptions.forEach((item, index) => {
+                    if (item.value && item.value !== '') {
+                        if (index !== 0) {
+                            filterString.filter += ' ';
+                        }
+
+                        // Build filter value options
+                        filterString.filter += item.value;
+                    }
+                });
+                var tempFilter = document.getElementById('tempFilter');
+                var buttonFilter = document.getElementById('buttonFilter');
+                if (tempFilter.textContent !== '' && tempFilter.textContent !== null) {
+                    filterString.filter = tempFilter.textContent;
+                    buttonFilter.classList.add('d-none');
+                } else {
+                    buttonFilter.classList.remove('d-none');
+                }
+                //d.filter = $('#mySelect').val();
+                return filterString;
+            }
 
         },
         "columns": [
@@ -88,29 +114,15 @@
                 "data": null, "name": "Actions", "autowidth": true,
                 "sorting": true,
                 "render": function (data, type, row) {
-                    return `<!--begin::Action=-->
+					return `<!--begin::Action=-->
 							<td class="text-end">
-								<a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-									Actions
-									<!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
-									<span class="svg-icon svg-icon-5 m-0">
-										<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-											<path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-										</svg>
-									</span>
-									<!--end::Svg Icon-->
-								</a>
-								<!--begin::Menu-->
-								<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+							
+								<div name="Action" class=" menu-row menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
 									<!--begin::Menu item-->
-									<div class="menu-item px-3">
-										<a href="/${data.role}s/Edit/${data.id}" class="menu-link px-3">Edit</a>
-									</div>
+										<a href="/Users/Edit/${data.id}" class=" px-3 menu-link px-3">Edit</a>
 									<!--end::Menu item-->
 									<!--begin::Menu item-->
-									<div class="menu-item px-3">
-										<a href="/${data.role}s/Delete/${data.id}" class="menu-link px-3" data-kt-users-table-filter="delete_row">Delete</a>
-									</div>
+										<a id="Delete-${data.id}" onclick="Delete(${data.id});"  class=" px-3 menu-link px-3" data-kt-users-table-filter="delete_row">Delete</a>
 									<!--end::Menu item-->
 								</div>
 								<!--end::Menu-->
@@ -120,126 +132,43 @@
             },
         ],
     },);
+
+    
 },);
 
-var table = document.getElementById('AdminsTable');
-var datatable;
-var toolbarBase;
-var toolbarSelected;
-var selectedCount;
+const filterForm = document.querySelector('[data-kt-user-table-filter="form"]');
+const filterButton = filterForm.querySelector('[data-kt-user-table-filter="filter"]');
+const selectOptions = filterForm.querySelectorAll('select');
 
-const checkboxes = table.querySelectorAll('[type="checkbox"]');
-
-// Select elements
-toolbarBase = document.querySelector('[data-kt-user-table-toolbar="base"]');
-toolbarSelected = document.querySelector('[data-kt-user-table-toolbar="selected"]');
-selectedCount = document.querySelector('[data-kt-user-table-select="selected_count"]');
-const deleteSelected = document.querySelector('[data-kt-user-table-select="delete_selected"]');
-
-// Toggle delete selected toolbar
-checkboxes.forEach(c => {
-    // Checkbox on click event
-    c.addEventListener('click', function () {
-        setTimeout(function () {
-            toggleToolbars();
-        }, 50);
-    });
-});
-
-
-
-
-
-// Deleted selected rows
-deleteSelected.addEventListener('click', function () {
-    // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
-    Swal.fire({
-        text: "Are you sure you want to delete selected customers?",
-        icon: "warning",
-        showCancelButton: true,
-        buttonsStyling: false,
-        confirmButtonText: "Yes, delete!",
-        cancelButtonText: "No, cancel",
-        customClass: {
-            confirmButton: "btn fw-bold btn-danger",
-            cancelButton: "btn fw-bold btn-active-light-primary"
-        }
-    }).then(function (result) {
-        if (result.value) {
-            Swal.fire({
-                text: "You have deleted all selected customers!.",
-                icon: "success",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn fw-bold btn-primary",
-                }
-            }).then(function () {
-                // Remove all selected customers
-                checkboxes.forEach(c => {
-                    if (c.checked) {
-                        datatable.row($(c.closest('tbody tr'))).remove().draw();
-                    }
-                });
-
-                // Remove header checked box
-                const headerCheckbox = table.querySelectorAll('[type="checkbox"]')[0];
-                headerCheckbox.checked = false;
-            }).then(function () {
-                toggleToolbars(); // Detect checked checkboxes
-                initToggleToolbar(); // Re-init toolbar to recalculate checkboxes
-            });
-        } else if (result.dismiss === 'cancel') {
-            Swal.fire({
-                text: "Selected customers was not deleted.",
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn fw-bold btn-primary",
-                }
-            });
-        }
-    });
-});
-
-
-function toggleToolbars () {
-    debugger
-    // Select refreshed checkbox DOM elements 
-    const allCheckboxes = table.querySelectorAll('tbody [type="checkbox"]');
-
-    // Detect checkboxes state & count
-    let checkedState = false;
-    let count = 0;
-
-    // Count checked boxes
-    allCheckboxes.forEach(c => {
-        if (c.checked) {
-            checkedState = true;
-            count++;
-        }
-    });
-
-    // Toggle toolbars
-    if (checkedState) {
-        selectedCount.innerHTML = count;
-        toolbarBase.classList.add('d-none');
-        toolbarSelected.classList.remove('d-none');
-    } else {
-        toolbarBase.classList.remove('d-none');
-        toolbarSelected.classList.add('d-none');
-    }
-};
-
-function modalView() {
+// Filter datatable on submit
+filterButton.addEventListener('click', function () {
     
-    const admin = document.getElementById('kt_modal_add_admin');
-    const radioAdmin = document.querySelector('[name = "user_role"]');
-    //document.getElementById('radio_add_admin');
-    if (radioAdmin.value == 1) {
-        admin.classList.remove('d-none');
-    } else {
-        admin.classList.add('d-none');
-    }
-}
+
+    // Filter datatable --- official docs reference: https://datatables.net/reference/api/search()
+    datatable.draw();
+});
+
+var supplierLink = document.getElementById('supplierLink');
+var restoranteLink = document.getElementById('restoranteLink');
+var adminLink = document.getElementById('adminLink');
+
+supplierLink.addEventListener('click', function () {
+
+
+    // Filter datatable --- official docs reference: https://datatables.net/reference/api/search()
+    datatable.draw();
+});
+restoranteLink.addEventListener('click', function () {
+
+
+    // Filter datatable --- official docs reference: https://datatables.net/reference/api/search()
+    datatable.draw();
+});
+adminLink.addEventListener('click', function () {
+
+
+    // Filter datatable --- official docs reference: https://datatables.net/reference/api/search()
+    datatable.draw();
+});
+
+
