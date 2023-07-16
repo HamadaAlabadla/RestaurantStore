@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using RestauranteStore.Core.Enums;
 using System.ComponentModel.DataAnnotations;
+using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.EF.Models
 {

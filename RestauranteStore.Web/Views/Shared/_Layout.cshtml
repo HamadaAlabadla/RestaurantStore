@@ -15,7 +15,12 @@
 	{
 		user.Logo = "";
 	}
-	string role =(await UserManager.GetRolesAsync(user))[0];
+	string role = "";
+	var roles = (await UserManager.GetRolesAsync(user));
+	if(roles != null && roles.Count() != 0)
+	{
+		role = roles[0];
+	}
 
 	
 }
@@ -214,7 +219,7 @@ License: For each use you must have a valid license purchased only from above li
 							}
 							else if(role.Equals("admin"))
 							{
-								<a asp-controller="Admins" asp-action="Welcom">
+								<a asp-controller="Users" asp-action="Welcom">
 									<img alt="Logo" src="~/assets/media/logos/default-dark.svg" class="h-25px app-sidebar-logo-default" />
 									<img alt="Logo" src="~/assets/media/logos/default-small.svg" class="h-20px app-sidebar-logo-minimize" />
 								</a>

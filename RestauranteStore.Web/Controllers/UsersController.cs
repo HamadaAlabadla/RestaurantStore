@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestauranteStore.Core.Dtos;
+using RestauranteStore.Core.Enums;
 using RestauranteStore.Infrastructure.Services.UserService;
+using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.Web.Controllers
 {
@@ -61,11 +63,15 @@ namespace RestauranteStore.Web.Controllers
 			//		Text = x.ToString(),
 			//		Value = ((int)x).ToString()
 			//	}).ToList();
+			if (userDto.UserType == UserType.restorante)
+				ModelState.Clear();
 			if (ModelState.IsValid)
 			{
 				var result = await userService.CreateUser(userDto, userDto.UserType.ToString().ToLower());
-				if (string.IsNullOrEmpty(result))
+				if (!string.IsNullOrEmpty(result))
+				{
 					return RedirectToAction(nameof(Index));
+				}
 				else
 				{
 					ModelState.AddModelError(string.Empty, "Error in create user");

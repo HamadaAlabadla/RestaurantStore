@@ -1,8 +1,8 @@
 ﻿@model RestauranteStore.Core.Dtos.UserDto
 
-<div class="modal " id="kt_modal_select_role" tabindex="-1" aria-hidden="true">
+<div class="modal" id="kt_modal_select_role" tabindex="-1" aria-hidden="true">
 	<!--begin::Modal dialog-->
-	<div class="modal-dialog modal-dialog-centered mw-650px">
+	<div class="modal-dialog modal-xl modal-dialog-centered mw-650px">
 		<!--begin::Modal content-->
 		<div class="modal-content">
 			<!--begin::Modal header-->
@@ -267,7 +267,7 @@
 							<!--begin::Modal body-->
 							<div class="modal-body  mx-15 mx-xl-25 my-7">
 								<!--begin::Form-->
-								<form id="kt_modal_add_user_form" class="form" enctype="multipart/form-data" asp-controller="Customers" asp-action="Create" method="post">
+								<form id="kt_modal_add_user_form" class="form" enctype="multipart/form-data" asp-controller="Users" asp-action="Create" method="post">
 									<input type="hidden" asp-for="UserType" id="restorantetype" />
 									<!--begin::Scroll-->
 									<div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using RestauranteStore.Core.Enums;
 using System.ComponentModel.DataAnnotations;
+using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.Core.Dtos
 {

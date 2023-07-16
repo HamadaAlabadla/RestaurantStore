@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestauranteStore.EF.Data;
 
@@ -11,9 +12,11 @@ using RestauranteStore.EF.Data;
 namespace RestauranteStore.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230716081919_categoryMigration")]
+    partial class categoryMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +54,7 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "40651f05-128b-4650-942f-2896758559fc",
+                            Id = "52fe9dc6-314d-405b-af0b-92083f15b5e5",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -146,8 +149,8 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "05714b30-cd23-4f3c-b8ac-63d257e25b33",
-                            RoleId = "40651f05-128b-4650-942f-2896758559fc"
+                            UserId = "317c9121-3adb-45b2-a585-c9b1d7fec8d1",
+                            RoleId = "52fe9dc6-314d-405b-af0b-92083f15b5e5"
                         });
                 });
 
@@ -215,7 +218,7 @@ namespace RestauranteStore.EF.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestauranteStore.EF.Models.QuantityUnit", b =>
+            modelBuilder.Entity("RestauranteStore.EF.Models.Quantity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -234,7 +237,7 @@ namespace RestauranteStore.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("QuantityUnits");
+                    b.ToTable("Quantities");
 
                     b.HasData(
                         new
@@ -279,58 +282,6 @@ namespace RestauranteStore.EF.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Restorantes");
-                });
-
-            modelBuilder.Entity("RestauranteStore.EF.Models.UnitPrice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShortenName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDelete")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("unitsPrice");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Dollar",
-                            ShortenName = "USD",
-                            isDelete = false
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Euro",
-                            ShortenName = "EUR",
-                            isDelete = false
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Yen",
-                            ShortenName = "JPY",
-                            isDelete = false
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Shekel ",
-                            ShortenName = "ILS",
-                            isDelete = false
-                        });
                 });
 
             modelBuilder.Entity("RestauranteStore.EF.Models.User", b =>
@@ -418,10 +369,10 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "05714b30-cd23-4f3c-b8ac-63d257e25b33",
+                            Id = "317c9121-3adb-45b2-a585-c9b1d7fec8d1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0b1cbe54-86e6-47dc-8137-a007b5799fc2",
-                            DateCreate = new DateTime(2023, 7, 16, 10, 2, 7, 495, DateTimeKind.Utc).AddTicks(7044),
+                            ConcurrencyStamp = "674be33c-bece-417e-bba3-6141cd10785e",
+                            DateCreate = new DateTime(2023, 7, 16, 8, 19, 18, 906, DateTimeKind.Utc).AddTicks(6231),
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
@@ -432,7 +383,7 @@ namespace RestauranteStore.EF.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==",
                             PhoneNumber = "0596549873",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b30509e8-2a4a-48d4-9b60-2fe2f7f884b2",
+                            SecurityStamp = "34f32327-f0d9-41b6-9b6c-d73a7857b1cc",
                             TwoFactorEnabled = false,
                             UserName = "admin",
                             UserType = 2,

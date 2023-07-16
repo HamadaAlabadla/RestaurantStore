@@ -20,12 +20,25 @@ namespace RestauranteStore.Core.AutoMapper
 				.ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
 				.ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
 				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
+			
+			CreateMap<RestoranteDto, User>()
+				.ForMember(dist => dist.Id, src => src.Ignore())
+				.ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
+				.ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
+				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
 
 			CreateMap<User, UserDto>()
 				.ForMember(dist => dist.Logo, src => src.Ignore());
 
 
+			CreateMap<RestoranteDto,Restorante>()
+				.ForMember(dist => dist.UserId, src => src.Ignore())
+				.ForMember(dist => dist.User, src => src.Ignore());
+			CreateMap<Product, ProductDto>()
+				.ForMember(dist => dist.Image, src => src.Ignore());
 
+			CreateMap<ProductDto, Product>()
+				.ForMember(dist => dist.Image, src => src.Ignore());
 
 		}
 	}

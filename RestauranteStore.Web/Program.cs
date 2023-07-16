@@ -3,7 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using RestauranteStore.Core.AutoMapper;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
+using RestauranteStore.Infrastructure.Services.CategoryService;
 using RestauranteStore.Infrastructure.Services.FileService;
+using RestauranteStore.Infrastructure.Services.QuantityService;
+using RestauranteStore.Infrastructure.Services.RestoranteService;
+using RestauranteStore.Infrastructure.Services.UnitPriceService;
 using RestauranteStore.Infrastructure.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,8 +31,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IFileService, FileService>();
+builder.Services.AddScoped<IRestoranteService, RestoranteService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IQuantityService, QuantityService>();
+builder.Services.AddScoped<IUnitPriceService, UnitPriceService>();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 var app = builder.Build();
 
@@ -49,11 +57,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Welcom}/{id?}");
+	pattern: "{controller=Users}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

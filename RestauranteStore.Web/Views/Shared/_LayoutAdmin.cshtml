@@ -1,13 +1,13 @@
 ﻿<span id="tempFilter" hidden></span>
 <!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Users" asp-action="Index">
+<a id="usersLink" class="menu-link active" asp-controller="Users" asp-action="Index">
 	<span class="menu-bullet">
 		<span class="bullet bullet-dot"></span>
 	</span>
 	<span class="menu-title">User Management</span>
 </a>
 <!--begin:Menu link-->
-<a class="menu-link active" onclick="document.getElementById('tempFilter').textContent = 'admin';" id="adminLink">
+<a class="menu-link active" onclick=" document.getElementById('usersLink').click() ;document.getElementById('tempFilter').textContent = 'admin';" id="adminLink">
 	<span class="menu-bullet">
 		<span class="bullet bullet-dot"></span>
 	</span>
@@ -44,5 +44,22 @@
 		<span class="bullet bullet-dot"></span>
 	</span>
 	<span class="menu-title">Category Management</span>
+</a>
+<!--end:Menu link-->
+<!--begin:Menu link-->
+<a class="menu-link active" asp-controller="QuantityUnits" asp-action="Index">
+	<span class="menu-bullet">
+		<span class="bullet bullet-dot"></span>
+	</span>
+	<span class="menu-title">Quantities Management</span>
+</a>
+<!--end:Menu link-->
+
+<!--begin:Menu link-->
+<a class="menu-link active" asp-controller="UnitsPrice" asp-action="Index">
+	<span class="menu-bullet">
+		<span class="bullet bullet-dot"></span>
+	</span>
+	<span class="menu-title">UnitPrice Management</span>
 </a>
 <!--end:Menu link-->

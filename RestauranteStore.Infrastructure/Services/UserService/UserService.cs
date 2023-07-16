@@ -8,8 +8,10 @@ using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.FileService;
+using RestauranteStore.Infrastructure.Services.RestoranteService;
 using System.Data.Entity;
 using System.Linq.Dynamic.Core;
+using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.Infrastructure.Services.UserService
 {
@@ -21,13 +23,15 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 		private readonly ApplicationDbContext dbContext;
 		private readonly IMapper mapper;
 		private readonly IFileService fileService;
+		private readonly IRestoranteService restoranteService;
 
 		public UserService(UserManager<User> userManager,
 			RoleManager<IdentityRole> roleManager,
 			IUserStore<User> userStore,
 			ApplicationDbContext dbContext,
 			IMapper mapper,
-			IFileService fileService)
+			IFileService fileService,
+			IRestoranteService restoranteService)
 		{
 			this.userManager = userManager;
 			this.roleManager = roleManager;
@@ -35,17 +39,28 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			this.dbContext = dbContext;
 			this.mapper = mapper;
 			this.fileService = fileService;
+			this.restoranteService = restoranteService;
 		}
 
 		public async Task<string?> CreateUser(UserDto userDto, string role)
 		{
-			var user = mapper.Map<User>(userDto);
+			if (userDto == null) return null;
+			User? user;
+			if (userDto.UserType != UserType.restorante)
+				user = mapper.Map<User>(userDto);
+			else
+			{
+				user = mapper.Map<User>(userDto.RestoranteDto);
+				user.UserType = UserType.restorante;
+			}
+
 			if (user == null
 				|| string.IsNullOrWhiteSpace(role))
 				return null;
 			role = role.ToLower();
 			await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
-			user.Logo = await fileService.UploadFile(userDto.Logo!, userDto.UserName??"");
+			user.Logo = await fileService.UploadFile(userDto.Logo??userDto.RestoranteDto.Logo, userDto.UserName??"");
+			user.Logo ??= "";
 			user.DateCreate = DateTime.UtcNow;
 			var result = await userManager.CreateAsync(user, "user_123_USER");
 
@@ -55,6 +70,12 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 				if (!isExsit)
 					await roleManager.CreateAsync(new IdentityRole { Name = role });
 				await userManager.AddToRoleAsync(user, role);
+				if(userDto.UserType == UserType.restorante)
+				{
+					var restorante = mapper.Map<Restorante>(userDto.RestoranteDto);
+					restorante.UserId = user.Id;
+					restoranteService.CreateRestorante(restorante);
+				}
 				return user.Id;
 			}
 			return null;
@@ -75,22 +96,22 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 		}
 		private IQueryable<User> GetAllUsers(string search , string filter)
 		{
+			UserType? filterEnum = null ;
 			if (!string.IsNullOrEmpty(filter))
 			{
-				UserType filterEnum = (UserType)Enum.Parse(typeof(UserType), filter, true);
-				var admins = dbContext.users.Include(x => x.Restorante)
-					.Where(x => !x.isDelete && x.UserType == filterEnum);
-				//.Where(x => string.IsNullOrEmpty(search)
-				//? true
-				//: (x.AdminType.ToString().Contains(search)));
-				////|| x.User!.UserName!.Contains(search)
-				////|| x.User.Email!.Contains(search))
-				////|| x.User.PhoneNumber!.Contains(search)
+				filterEnum = (UserType)Enum.Parse(typeof(UserType), filter, true); 
+			}
+			var users = dbContext.users.Include(x => x.Restorante)
+				.Where(x => !x.isDelete && (filterEnum == null)?true:x.UserType == filterEnum);
+			//.Where(x => string.IsNullOrEmpty(search)
+			//? true
+			//: (x.AdminType.ToString().Contains(search)));
+			////|| x.User!.UserName!.Contains(search)
+			////|| x.User.Email!.Contains(search))
+			////|| x.User.PhoneNumber!.Contains(search)
 
-				return admins;
-			}else
-			 return	dbContext.users.Include(x => x.Restorante)
-					.Where(x => !x.isDelete );
+			return users;
+
 
 		}
 
