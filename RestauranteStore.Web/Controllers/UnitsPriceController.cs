@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RestauranteStore.Infrastructure.Services.CategoryService;
 using RestauranteStore.Infrastructure.Services.UnitPriceService;
 
 namespace RestauranteStore.Web.Controllers
@@ -15,6 +16,11 @@ namespace RestauranteStore.Web.Controllers
 		public ActionResult Index()
 		{
 			return View(unitPriceService.GetUnitsPrice());
+		}
+
+		public ActionResult IndexAjax()
+		{
+			return Ok(unitPriceService.GetUnitsPrice());
 		}
 
 		// GET: UnitsPriceController/Details/5

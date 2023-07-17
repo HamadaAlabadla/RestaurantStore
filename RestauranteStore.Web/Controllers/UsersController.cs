@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.Core.Enums;
+using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.Infrastructure.Services.UserService;
+using System.Security.Claims;
 using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.Web.Controllers
@@ -27,14 +29,31 @@ namespace RestauranteStore.Web.Controllers
 			return View();
 		}
 		// GET: AdminsController
-		public ActionResult Index()
+		public ActionResult Index(string filter = "")
 		{
 			var user = new UserDto()
 			{
-				RestoranteDto = new RestoranteDto() { }
+				RestoranteDto = new RestoranteDto() { },
+				filter = filter??""
 			};
 			return View(user);
 		}
+
+		public async Task<IActionResult> GetSupplier()
+		{
+			var userContext = HttpContext.User;
+			var userId = "";
+			if (userContext.Identity!.IsAuthenticated)
+			{
+				userId = userContext.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			}
+			if (string.IsNullOrEmpty(userId)) return NotFound();
+			var user = await userService.GetUserAsync(userId);
+			if(user == null || user.UserType != UserType.supplier) return NotFound();
+			var userViewModel = mapper.Map<UserViewModel>(user);
+			return Ok(userViewModel);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> GetAllUsers()
 		{

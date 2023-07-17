@@ -40,6 +40,13 @@ namespace RestauranteStore.Core.AutoMapper
 			CreateMap<ProductDto, Product>()
 				.ForMember(dist => dist.Image, src => src.Ignore());
 
+			CreateMap<Product, ProductViewModel>()
+				.ForMember(dist => dist.NameShortenQuantityUnit, src => src.MapFrom(src => src.QuantityUnit.shortenQuantity))
+				.ForMember(dist => dist.NameCategory, src => src.MapFrom(src => src.Category.Name))
+				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
+				.ForMember(dist => dist.NameShortenUnitPrice, src => src.MapFrom(src => src.UnitPrice.ShortenName))
+				.ForMember(dist => dist.NameSupplier, src => src.MapFrom(src => src.User.Name));
+
 		}
 	}
 }

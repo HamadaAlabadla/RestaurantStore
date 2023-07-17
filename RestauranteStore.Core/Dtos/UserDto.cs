@@ -27,5 +27,6 @@ namespace RestauranteStore.Core.Dtos
 		[Required]
 		public UserType UserType { get; set; }
 		public RestoranteDto? RestoranteDto { get; set; }
-	}
+        public string? filter { get; set; }
+    }
 }

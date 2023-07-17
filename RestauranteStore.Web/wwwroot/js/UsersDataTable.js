@@ -66,7 +66,7 @@ $(document).ready(function () {
 								<div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
 									<a href="#">
 										<div class="symbol-label">
-											<img src="/images/${data.logo}" alt="${data.name}" class="w-100" />
+											<img src="/images/users/${data.logo}" alt="${data.name}" class="w-100" />
 										</div>
 									</a>
 								</div>

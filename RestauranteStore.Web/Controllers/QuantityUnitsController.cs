@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RestauranteStore.Infrastructure.Services.CategoryService;
 using RestauranteStore.Infrastructure.Services.QuantityService;
 
 namespace RestauranteStore.Web.Controllers
@@ -18,6 +19,11 @@ namespace RestauranteStore.Web.Controllers
 		public ActionResult Index()
 		{
 			return View(quantityService.GetQuantities());
+		}
+
+		public ActionResult IndexAjax()
+		{
+			return Ok(quantityService.GetQuantities());
 		}
 
 		// GET: QuantitiesController/Details/5

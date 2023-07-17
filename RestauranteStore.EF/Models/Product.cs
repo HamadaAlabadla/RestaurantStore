@@ -21,6 +21,8 @@ namespace RestauranteStore.EF.Models
 		[StringLength(100)]
 		public string? Description { get; set; }
 		[Required(AllowEmptyStrings = false)]
+        public DateTime DateCreate { get; set; }
+        [Required(AllowEmptyStrings = false)]
 		public string UserId { get; set; }
 		public User User { get; set; }
 		public int CategoryId { get; set; }
@@ -30,6 +32,6 @@ namespace RestauranteStore.EF.Models
         public QuantityUnit QuantityUnit { get; set; }
         public int UnitPriceId { get; set; }
         public UnitPrice UnitPrice { get; set; }
-        public bool isDelete { get; set; }
+		public bool isDelete { get; set; } = false;
     }
 }

@@ -14,10 +14,9 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 	{
 		Product? GetProduct(int id);
 		List<Product>? GetProduct(string name);
-		List<Product>? GetProducts();
-		Task<object?> GetAllProducts(HttpRequest request);
-		int CreateProduct(ProductDto productDto);
-		int UpdateProduct(ProductDto? productDto);
+		public object? GetAllProducts(HttpRequest request);
+        Task<int> CreateProduct(ProductDto productDto);
+        Task<int> UpdateProduct(ProductDto? productDto);
 		int UpdateProduct(Product? product);
 		Product? DeleteProduct(int id);
 	}

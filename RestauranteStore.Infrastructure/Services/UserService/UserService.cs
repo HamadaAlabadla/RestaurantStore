@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Primitives;
 using RestauranteStore.Core.Dtos;
@@ -59,7 +60,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 				return null;
 			role = role.ToLower();
 			await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
-			user.Logo = await fileService.UploadFile(userDto.Logo??userDto.RestoranteDto.Logo, userDto.UserName??"");
+			user.Logo = await fileService.UploadFile(userDto.Logo??userDto.RestoranteDto!.Logo!,"users", userDto.UserName??"");
 			user.Logo ??= "";
 			user.DateCreate = DateTime.UtcNow;
 			var result = await userManager.CreateAsync(user, "user_123_USER");
@@ -153,10 +154,16 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 
 		public async Task<string?> UpdateUser(UserDto? userDto)
 		{
+			if (userDto == null) return null;
 			var user = mapper.Map<User>(userDto);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return null;
 			var userDb = await GetUserAsync(user.Id);
 			if (userDb == null) return null;
+			if(userDto.Logo != null)
+			{
+				var logoPath = await fileService.UploadFile(userDto.Logo, "users", user.UserName??"");
+				userDb.Logo = logoPath;
+			}
 			userDb.UserName = user.UserName;
 			userDb.NormalizedUserName = user.NormalizedUserName;
 			userDb.Email = user.Email;

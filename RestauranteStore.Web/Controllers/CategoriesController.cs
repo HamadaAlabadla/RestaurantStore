@@ -20,6 +20,12 @@ namespace RestauranteStore.Web.Controllers
 			return View(categoryService.GetCategories());
 		}
 
+		// GET: CategoriesController
+		public ActionResult IndexAjax()
+		{
+			return Ok(categoryService.GetCategories());
+		}
+
 		// GET: CategoriesController/Create
 		public ActionResult Create()
 		{

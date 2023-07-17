@@ -1,31 +1,46 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using RestauranteStore.Core.Dtos;
+using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
-using System;
+using System.Linq.Dynamic.Core ;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static RestauranteStore.Core.Enums.Enums;
+using RestauranteStore.Infrastructure.Services.FileService;
 
 namespace RestauranteStore.Infrastructure.Services.ProductService
 {
 	public class ProductService : IProductService
 	{
 		private readonly ApplicationDbContext dbContext;
+		private readonly IFileService fileService;
 		private readonly IMapper mapper;
 		public ProductService(ApplicationDbContext dbContext,
-			IMapper mapper)
+			IMapper mapper,
+			IFileService fileService)
 		{
 			this.dbContext = dbContext;
 			this.mapper = mapper;
+			this.fileService = fileService;
 		}
 
-		public int CreateProduct(ProductDto productDto)
+		public async Task<int> CreateProduct(ProductDto productDto)
 		{
+			if (productDto == null) return -1;
 			var product = mapper.Map<Product>(productDto);
+			if(productDto.Image != null)
+			{
+				var imagePath = await fileService.UploadFile(productDto.Image , "products" , Guid.NewGuid().ToString());
+				product.Image = imagePath??"";
+			}
 			if (product == null) return -1;
+			product.DateCreate = DateTime.UtcNow;
 			dbContext.Products.Add(product);
 			dbContext.SaveChanges();
 			return product.ProductNumber;
@@ -39,33 +54,62 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 			UpdateProduct(product);
 			return product;
 		}
-
-
-		public Task<object?> GetAllProducts(HttpRequest request)
+		private IQueryable<Product> GetAllProducts(string search, string filter)
 		{
-			throw new NotImplementedException();
+			var users = dbContext.Products
+				.Where(x => !x.isDelete );
+			return users;
+
+
+		}
+
+		public object? GetAllProducts(HttpRequest request)
+		{
+			var pageLength = int.Parse((request.Form["length"].ToString()) ?? "");
+			var skiped = int.Parse((request.Form["start"].ToString()) ?? "");
+			var searchData = request.Form["search[value]"];
+			var sortColumn = request.Form[string.Concat("columns[", request.Form["order[0][column]"], "][name]")];
+			var sortDir = request.Form["order[0][dir]"];
+			var filter = request.Form["filter"];
+
+			var products = GetAllProducts(searchData[0] ?? "", filter[0] ?? "");
+			var recordsTotal = products.Count();
+
+			if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDir))
+				products = products.OrderBy(string.Concat(sortColumn, " ", sortDir));
+
+
+			var data = products.Include(x => x.User).Include(x => x.Category).Include(x => x.QuantityUnit).Include(x => x.UnitPrice)
+				.Skip(skiped).Take(pageLength).ToList();
+			var productsViewModel = mapper.Map<IEnumerable<ProductViewModel>>(data);
+			var jsonData = new { recordsFiltered = recordsTotal, recordsTotal, data = productsViewModel };
+
+			return jsonData;
 		}
 
 		public Product? GetProduct(int id)
 		{
-			return dbContext.Products.Where(x => !x.isDelete).FirstOrDefault(x => x.ProductNumber == id);
+			return dbContext.Products.Include(x => x.User).Include(x => x.Category).Include(x => x.QuantityUnit).Include(x => x.UnitPrice)
+				.Where(x => !x.isDelete).FirstOrDefault(x => x.ProductNumber == id);
 		}
 
 		public List<Product>? GetProduct(string name)
 		{
-			return dbContext.Products.Where(x => !x.isDelete && (x.Name ?? "").Equals(name)).ToList();
+			return dbContext.Products.Include(x => x.User).Include(x => x.Category).Include(x => x.QuantityUnit).Include(x => x.UnitPrice)
+				.Where(x => !x.isDelete && (x.Name ?? "").Equals(name)).ToList();
 		}
 
-		public List<Product>? GetProducts()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int UpdateProduct(ProductDto? productDto)
+		public async Task<int> UpdateProduct(ProductDto? productDto)
 		{
 			if(productDto == null) return -1;
 			var product = mapper.Map<Product>(productDto);
-			var id = UpdateProduct(product);
+			if(product  == null) return -1;
+            if (productDto.Image != null)
+            {
+                var imagePath = await fileService.UploadFile(productDto.Image, "products", product.ProductNumber + "");
+                product.Image = imagePath ?? "";
+            }
+            var id = UpdateProduct(product);
 			return id;
 		}
 

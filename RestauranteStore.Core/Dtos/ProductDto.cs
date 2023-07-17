@@ -22,6 +22,8 @@ namespace RestauranteStore.Core.Dtos
 		[StringLength(100)]
 		public string? Description { get; set; }
 		[Required(AllowEmptyStrings = false)]
+        public DateTime DateCreate { get; set; }
+        [Required(AllowEmptyStrings = false)]
 		public string UserId { get; set; }
 		public int CategoryId { get; set; }
 		//[DeleteBehavior(DeleteBehavior.NoAction)]

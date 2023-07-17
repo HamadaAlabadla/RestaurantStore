@@ -5,6 +5,7 @@ using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.CategoryService;
 using RestauranteStore.Infrastructure.Services.FileService;
+using RestauranteStore.Infrastructure.Services.ProductService;
 using RestauranteStore.Infrastructure.Services.QuantityService;
 using RestauranteStore.Infrastructure.Services.RestoranteService;
 using RestauranteStore.Infrastructure.Services.UnitPriceService;
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IRestoranteService, RestoranteService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IQuantityService, QuantityService>();
 builder.Services.AddScoped<IUnitPriceService, UnitPriceService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 var app = builder.Build();
 
