@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RestauranteStore.Infrastructure.Services.CategoryService;
 
 namespace RestauranteStore.Web.Controllers
@@ -8,7 +7,7 @@ namespace RestauranteStore.Web.Controllers
 	{
 		private readonly ICategoryService categoryService;
 
-		public CategoriesController (ICategoryService categoryService)
+		public CategoriesController(ICategoryService categoryService)
 		{
 			this.categoryService = categoryService;
 		}
@@ -21,7 +20,7 @@ namespace RestauranteStore.Web.Controllers
 		}
 
 		// GET: CategoriesController
-		public ActionResult IndexAjax()
+		public IActionResult IndexAjax()
 		{
 			return Ok(categoryService.GetCategories());
 		}

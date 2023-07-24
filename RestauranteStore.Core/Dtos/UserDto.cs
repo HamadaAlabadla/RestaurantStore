@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using RestauranteStore.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 using static RestauranteStore.Core.Enums.Enums;
 
@@ -15,6 +14,8 @@ namespace RestauranteStore.Core.Dtos
 		//[Required(ErrorMessage = "إدخال الصورة مطلوب")]
 		[Display(Name = "الصورة")]
 		public IFormFile? Logo { get; set; }
+		
+		public string? image { get; set; }
 		[Required(ErrorMessage = "إدخال الإيميل مطلوب")]
 		[Display(Name = "الإيميل")]
 		public string? Email { get; set; }
@@ -26,7 +27,7 @@ namespace RestauranteStore.Core.Dtos
 		public string? PhoneNumber { get; set; }
 		[Required]
 		public UserType UserType { get; set; }
-		public RestoranteDto? RestoranteDto { get; set; }
-        public string? filter { get; set; }
-    }
+		public RestaurantDto? RestoranteDto { get; set; }
+		public string? filter { get; set; }
+	}
 }

@@ -1,15 +1,18 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using RestauranteStore.Core.AutoMapper;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.CategoryService;
 using RestauranteStore.Infrastructure.Services.FileService;
+using RestauranteStore.Infrastructure.Services.OrderItemsService;
+using RestauranteStore.Infrastructure.Services.OrderService;
 using RestauranteStore.Infrastructure.Services.ProductService;
 using RestauranteStore.Infrastructure.Services.QuantityService;
 using RestauranteStore.Infrastructure.Services.RestoranteService;
 using RestauranteStore.Infrastructure.Services.UnitPriceService;
 using RestauranteStore.Infrastructure.Services.UserService;
+using RestaurantStore.Infrastructure.AutoMapper;
+using RestaurantStore.Infrastructure.Services.OrderService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,11 +37,13 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IFileService, FileService>();
-builder.Services.AddScoped<IRestoranteService, RestoranteService>();
+builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IQuantityService, QuantityService>();
 builder.Services.AddScoped<IUnitPriceService, UnitPriceService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 var app = builder.Build();
 
@@ -64,7 +69,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Users}/{action=Index}/{id?}");
+	pattern: "{controller=Home}/{action=Welcom}/{id?}");
 app.MapRazorPages();
 
 app.Run();

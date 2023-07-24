@@ -1,10 +1,5 @@
 ﻿using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestauranteStore.Infrastructure.Services.UnitPriceService
 {
@@ -18,7 +13,7 @@ namespace RestauranteStore.Infrastructure.Services.UnitPriceService
 
 		public int CreateUnitPrice(UnitPrice unitPrice)
 		{
-			var unitPriceOld = GetUnitPrice(unitPrice.Name??"");
+			var unitPriceOld = GetUnitPrice(unitPrice.Name ?? "");
 			if (unitPriceOld != null) return -1;
 			dbContext.UnitsPrice.Add(unitPrice);
 			dbContext.SaveChanges();
@@ -28,7 +23,7 @@ namespace RestauranteStore.Infrastructure.Services.UnitPriceService
 		public UnitPrice? DeleteUnitPrice(int id)
 		{
 			var unitPrice = GetUnitPrice(id);
-			if(unitPrice == null) return null;	
+			if (unitPrice == null) return null;
 			unitPrice.isDelete = true;
 			UpdateUnitPrice(unitPrice);
 			return unitPrice;
@@ -51,7 +46,7 @@ namespace RestauranteStore.Infrastructure.Services.UnitPriceService
 		public UnitPrice? GetUnitPrice(string name)
 		{
 
-			return dbContext.UnitsPrice.Where(x => !x.isDelete).FirstOrDefault(x => (x.Name??"").Equals(name));
+			return dbContext.UnitsPrice.Where(x => !x.isDelete).FirstOrDefault(x => (x.Name ?? "").Equals(name));
 		}
 
 		public List<UnitPrice>? GetUnitsPrice()
@@ -63,7 +58,7 @@ namespace RestauranteStore.Infrastructure.Services.UnitPriceService
 		{
 			if (unitPrice == null) return -1;
 			var unitPriceNew = GetUnitPrice(unitPrice.Id);
-			if(unitPriceNew == null) return -1;
+			if (unitPriceNew == null) return -1;
 			unitPriceNew.isDelete = unitPrice.isDelete;
 			unitPriceNew.Name = unitPrice.Name;
 			unitPriceNew.ShortenName = unitPrice.ShortenName;

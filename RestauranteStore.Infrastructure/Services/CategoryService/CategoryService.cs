@@ -1,10 +1,5 @@
 ﻿using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestauranteStore.Infrastructure.Services.CategoryService
 {
@@ -18,7 +13,7 @@ namespace RestauranteStore.Infrastructure.Services.CategoryService
 
 		public int CreateCategory(Category category)
 		{
-			var categoryOld = GetCategory(category.Name??"");
+			var categoryOld = GetCategory(category.Name ?? "");
 			if (categoryOld != null) return -1;
 			dbContext.Categories.Add(category);
 			dbContext.SaveChanges();
@@ -28,7 +23,7 @@ namespace RestauranteStore.Infrastructure.Services.CategoryService
 		public Category? DeleteCategory(int id)
 		{
 			var category = GetCategory(id);
-			if(category == null) return null;
+			if (category == null) return null;
 			category.isDelete = true;
 			UpdateCategory(category);
 			return category;
@@ -68,7 +63,7 @@ namespace RestauranteStore.Infrastructure.Services.CategoryService
 		{
 			if (category == null) return -1;
 			var categoryNew = GetCategory(category.Id);
-			if(categoryNew == null) return -1;
+			if (categoryNew == null) return -1;
 			categoryNew.isDelete = category.isDelete;
 			categoryNew.Name = category.Name;
 			dbContext.Categories.Update(categoryNew);

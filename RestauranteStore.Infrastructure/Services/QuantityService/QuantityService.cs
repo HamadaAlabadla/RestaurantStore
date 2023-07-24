@@ -1,10 +1,5 @@
 ﻿using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestauranteStore.Infrastructure.Services.QuantityService
 {
@@ -18,7 +13,7 @@ namespace RestauranteStore.Infrastructure.Services.QuantityService
 
 		public int CreateQuantity(QuantityUnit quantity)
 		{
-			var quantityOld = GetQuantity(quantity.Name??"");
+			var quantityOld = GetQuantity(quantity.Name ?? "");
 			if (quantityOld != null) return -1;
 			dbContext.QuantityUnits.Add(quantity);
 			dbContext.SaveChanges();
@@ -28,7 +23,7 @@ namespace RestauranteStore.Infrastructure.Services.QuantityService
 		public QuantityUnit? DeleteQuantity(int id)
 		{
 			var quantity = GetQuantity(id);
-			if(quantity == null) return null;
+			if (quantity == null) return null;
 			quantity.isDelete = true;
 			UpdateQuantity(quantity);
 			return quantity;
@@ -55,14 +50,14 @@ namespace RestauranteStore.Infrastructure.Services.QuantityService
 
 		public QuantityUnit? GetQuantity(string name)
 		{
-			return dbContext.QuantityUnits.Where(x => !x.isDelete).FirstOrDefault(x => (x.Name??"").Equals(name));
+			return dbContext.QuantityUnits.Where(x => !x.isDelete).FirstOrDefault(x => (x.Name ?? "").Equals(name));
 		}
 
 		public int UpdateQuantity(QuantityUnit? quantity)
 		{
 			if (quantity == null) return -1;
 			var quantityNew = GetQuantity(quantity.Id);
-			if(quantityNew == null) return -1;
+			if (quantityNew == null) return -1;
 			quantityNew.Name = quantity.Name;
 			quantityNew.isDelete = quantity.isDelete;
 			dbContext.QuantityUnits.Update(quantityNew);

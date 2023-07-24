@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using RestauranteStore.Infrastructure.Services.CategoryService;
+﻿using Microsoft.AspNetCore.Mvc;
 using RestauranteStore.Infrastructure.Services.UnitPriceService;
 
 namespace RestauranteStore.Web.Controllers

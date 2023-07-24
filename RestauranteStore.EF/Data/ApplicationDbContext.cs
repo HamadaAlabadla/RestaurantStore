@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RestauranteStore.Core.Enums;
 using RestauranteStore.EF.Models;
+using System.Reflection.Metadata;
 using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.EF.Data
@@ -18,10 +18,34 @@ namespace RestauranteStore.EF.Data
 		{
 			base.OnModelCreating(builder);
 
-			builder.Entity<Restorante>()
+			builder
+				.Entity<User>()
+				.Property(e => e.Id)
+				.ValueGeneratedOnAdd();
+
+			builder.Entity<Restaurant>()
 				.HasOne(b => b.User)
-				.WithOne(x => x.Restorante)
-				.HasForeignKey<Restorante>(b => b.UserId);
+				.WithOne(x => x.Restaurant)
+				.HasForeignKey<Restaurant>(b => b.UserId);
+
+			builder.Entity<OrderItem>()
+				.HasOne(b => b.Order)
+				.WithMany(x => x.OrderItems)
+				.HasForeignKey(b => b.OrderId);
+			builder.Entity<OrderItem>()
+				.HasKey(x => new { x.OrderId, x.ProductId });
+
+			builder.Entity<Order>()
+				.HasOne(x => x.Supplier)
+				.WithMany(b => b.Orders)
+				.HasForeignKey(x => x.SupplierId);
+			builder.Entity<Order>()
+				.HasOne(x => x.Restaurant)
+				.WithMany(b => b.Orders)
+				.HasForeignKey(x => x.RestaurantId);
+
+
+
 
 
 			var userId = Guid.NewGuid().ToString();
@@ -105,7 +129,7 @@ namespace RestauranteStore.EF.Data
 					Name = "Unit",
 					shortenQuantity = "U"
 				});
-			
+
 			builder.Entity<UnitPrice>()
 				.HasData(new UnitPrice()
 				{
@@ -129,7 +153,7 @@ namespace RestauranteStore.EF.Data
 					ShortenName = "JPY"
 				});
 
-			
+
 			builder.Entity<UnitPrice>()
 				.HasData(new UnitPrice()
 				{
@@ -142,10 +166,13 @@ namespace RestauranteStore.EF.Data
 		}
 
 		public DbSet<User> users { get; set; }
-		public DbSet<Restorante> Restorantes { get; set; }
+		public DbSet<Restaurant> Restaurants { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<QuantityUnit> QuantityUnits { get; set; }
 		public DbSet<UnitPrice> UnitsPrice { get; set; }
 		public DbSet<Product> Products { get; set; }
+		public DbSet<Order> Orders { get; set; }
+		public DbSet<OrderItem> OrderItems { get; set; }
+
 	}
 }

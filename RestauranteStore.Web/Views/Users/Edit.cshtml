@@ -1,57 +1,116 @@
 ﻿@model RestauranteStore.Core.Dtos.UserDto
 
-@{
-    ViewData["Title"] = "Update";
-}
+<!--begin::Form-->
+<form id="kt_modal_edit_user_form" class="form" enctype="multipart/form-data" asp-controller="Users" asp-action="Edit" method="post">
+	<input type="hidden" asp-for="UserType" id="usertype" />
+	<input type="hidden" asp-for="Id" id="usertype" />
+	<input type="hidden" asp-for="image" id="usertype" />
+	<!--begin::Scroll-->
+	<div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+		<!--begin::Input group-->
+		<div class="fv-row mb-7">
+			<!--begin::Label-->
+			<label class="d-block fw-semibold fs-6 mb-5">Avatar</label>
+			<!--end::Label-->
+			<!--begin::Image placeholder-->
+			<style>
+				.image-input-placeholder {
+					background-image: url('/assets/media/svg/files/blank-image.svg');
+				}
 
-<h1>Create</h1>
-
-<h4>Student</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" class="form-control" />
-            <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Logo" class="control-label"></label>
-                <input type="file" asp-for="Logo" class="form-control" />
-                <span asp-validation-for="Logo" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Update" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="btn btn-outline-info">
-    <a asp-controller="Users" asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+				[data-bs-theme="dark"] .image-input-placeholder {
+					background-image: url('/assets/media/svg/files/blank-image-dark.svg');
+				}</style>
+			<!--end::Image placeholder-->
+			<!--begin::Image input-->
+			<div class="image-input image-input-outline image-input-placeholder" data-kt-image-input="true">
+				<!--begin::Preview existing avatar-->
+				<div class="image-input-wrapper w-125px h-125px" style="background-image: url('/images/users/@Model.image');"></div>
+				<!--end::Preview existing avatar-->
+				<!--begin::Label-->
+				<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+					<i class="bi bi-pencil-fill fs-7"></i>
+					<!--begin::Inputs-->
+					<input asp-for="@Model.Logo" type="file" accept=".png, .jpg, .jpeg" />
+					<span asp-validation-for="@Model.Logo" class="text-danger"></span>
+					<input type="hidden" name="avatar_remove" />
+					<!--end::Inputs-->
+				</label>
+				<!--end::Label-->
+				<!--begin::Cancel-->
+				<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+					<i class="bi bi-x fs-2"></i>
+				</span>
+				<!--end::Cancel-->
+				<!--begin::Remove-->
+				<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+					<i class="bi bi-x fs-2"></i>
+				</span>
+				<!--end::Remove-->
+			</div>
+			<!--end::Image input-->
+			<!--begin::Hint-->
+			<div class="form-text">Allowed file types: png, jpg, jpeg.</div>
+			<!--end::Hint-->
+		</div>
+		<!--end::Input group-->
+		<!--begin::Input group-->
+		<div class="fv-row mb-7">
+			<!--begin::Label-->
+			<label class="required fw-semibold fs-6 mb-2">Full Name</label>
+			<!--end::Label-->
+			<!--begin::Input-->
+			<input type="text" asp-for="@Model.Name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" />
+			<span asp-validation-for="@Model.Name" class="text-danger"></span>
+			<!--end::Input-->
+		</div>
+		<!--end::Input group-->
+		<!--begin::Input group-->
+		<div class="fv-row mb-7">
+			<!--begin::Label-->
+			<label class="required fw-semibold fs-6 mb-2">UserName</label>
+			<!--end::Label-->
+			<!--begin::Input-->
+			<input type="text" asp-for="@Model.UserName" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
+			<span asp-validation-for="@Model.UserName" class="text-danger"></span>
+			<!--end::Input-->
+		</div>
+		<!--end::Input group-->
+		<!--begin::Input group-->
+		<div class="fv-row mb-7">
+			<!--begin::Label-->
+			<label class="required fw-semibold fs-6 mb-2">Email</label>
+			<!--end::Label-->
+			<!--begin::Input-->
+			<input type="email" asp-for="@Model.Email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" />
+			<span asp-validation-for="@Model.Email" class="text-danger"></span>
+			<!--end::Input-->
+		</div>
+		<!--end::Input group-->
+		<!--begin::Input group-->
+		<div class="fv-row mb-7">
+			<!--begin::Label-->
+			<label class="required fw-semibold fs-6 mb-2">Phone Number</label>
+			<!--end::Label-->
+			<!--begin::Input-->
+			<input type="number" asp-for="@Model.PhoneNumber" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="+97********" />
+			<span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
+			<!--end::Input-->
+		</div>
+		<!--end::Input group-->
+	</div>
+	<!--end::Scroll-->
+	<!--begin::Actions-->
+	<div class="text-center pt-15">
+		<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
+		<button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
+			<span class="indicator-label">Submit</span>
+			<span class="indicator-progress">
+				Please wait...
+				<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+			</span>
+		</button>
+	</div>
+	<!--end::Actions-->
+</form>
+<!--end::Form-->

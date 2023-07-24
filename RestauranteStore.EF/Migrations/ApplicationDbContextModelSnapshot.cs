@@ -51,7 +51,7 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "017799cc-aa57-408f-bb9c-47096c57ccb6",
+                            Id = "228e00a6-9361-46ed-8f91-44a3f88ad6a0",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -146,8 +146,8 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "693a20c6-ca79-45d3-8295-0f0ad6db24c3",
-                            RoleId = "017799cc-aa57-408f-bb9c-47096c57ccb6"
+                            UserId = "36a7efb8-3172-4fdd-8c0b-d50b0f6b6c54",
+                            RoleId = "228e00a6-9361-46ed-8f91-44a3f88ad6a0"
                         });
                 });
 
@@ -215,6 +215,87 @@ namespace RestauranteStore.EF.Migrations
                         });
                 });
 
+            modelBuilder.Entity("RestauranteStore.EF.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RestaurantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShippingCity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SupplierId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("RestauranteStore.EF.Models.OrderItem", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<double>("QTY")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("bit");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("RestauranteStore.EF.Models.Product", b =>
                 {
                     b.Property<int>("ProductNumber")
@@ -226,7 +307,13 @@ namespace RestauranteStore.EF.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -243,7 +330,19 @@ namespace RestauranteStore.EF.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<double>("QTY")
+                        .HasColumnType("float");
+
                     b.Property<int>("QuantityUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<int>("UnitPriceId")
@@ -314,7 +413,7 @@ namespace RestauranteStore.EF.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestauranteStore.EF.Models.Restorante", b =>
+            modelBuilder.Entity("RestauranteStore.EF.Models.Restaurant", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -332,7 +431,7 @@ namespace RestauranteStore.EF.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Restorantes");
+                    b.ToTable("Restaurants");
                 });
 
             modelBuilder.Entity("RestauranteStore.EF.Models.UnitPrice", b =>
@@ -390,6 +489,7 @@ namespace RestauranteStore.EF.Migrations
             modelBuilder.Entity("RestauranteStore.EF.Models.User", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
@@ -472,10 +572,10 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "693a20c6-ca79-45d3-8295-0f0ad6db24c3",
+                            Id = "36a7efb8-3172-4fdd-8c0b-d50b0f6b6c54",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "09e45e93-47fe-4944-86c7-07d679786b17",
-                            DateCreate = new DateTime(2023, 7, 17, 8, 8, 30, 343, DateTimeKind.Utc).AddTicks(4913),
+                            ConcurrencyStamp = "cf574ba3-0074-4e01-8e3c-e2c634a3c166",
+                            DateCreate = new DateTime(2023, 7, 24, 9, 20, 9, 520, DateTimeKind.Utc).AddTicks(7918),
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
@@ -486,7 +586,7 @@ namespace RestauranteStore.EF.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==",
                             PhoneNumber = "0596549873",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "535224c3-39a8-4d70-8cce-5dc26c4c425a",
+                            SecurityStamp = "5b55bbb6-b00d-4ede-bb43-354d6c526036",
                             TwoFactorEnabled = false,
                             UserName = "admin",
                             UserType = 2,
@@ -545,6 +645,44 @@ namespace RestauranteStore.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RestauranteStore.EF.Models.Order", b =>
+                {
+                    b.HasOne("RestauranteStore.EF.Models.Restaurant", "Restaurant")
+                        .WithMany("Orders")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RestauranteStore.EF.Models.User", "Supplier")
+                        .WithMany("Orders")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("RestauranteStore.EF.Models.OrderItem", b =>
+                {
+                    b.HasOne("RestauranteStore.EF.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RestauranteStore.EF.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("RestauranteStore.EF.Models.Product", b =>
                 {
                     b.HasOne("RestauranteStore.EF.Models.Category", "Category")
@@ -580,20 +718,32 @@ namespace RestauranteStore.EF.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RestauranteStore.EF.Models.Restorante", b =>
+            modelBuilder.Entity("RestauranteStore.EF.Models.Restaurant", b =>
                 {
                     b.HasOne("RestauranteStore.EF.Models.User", "User")
-                        .WithOne("Restorante")
-                        .HasForeignKey("RestauranteStore.EF.Models.Restorante", "UserId")
+                        .WithOne("Restaurant")
+                        .HasForeignKey("RestauranteStore.EF.Models.Restaurant", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("RestauranteStore.EF.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("RestauranteStore.EF.Models.Restaurant", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("RestauranteStore.EF.Models.User", b =>
                 {
-                    b.Navigation("Restorante");
+                    b.Navigation("Orders");
+
+                    b.Navigation("Restaurant");
                 });
 #pragma warning restore 612, 618
         }

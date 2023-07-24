@@ -1,65 +1,132 @@
-﻿
-<!--begin:Menu link-->
-<a id="usersLink" class="menu-link active" asp-controller="Users" asp-action="Index">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
+﻿<!--begin:Menu item-->
+<div data-kt-menu-trigger="click" class="menu-item here  menu-accordion menu-sub-indention">
+	<!--begin:Menu link-->
+	<span  class="menu-link">
+		<span class="menu-bullet">
+			<span class="bullet bullet-dot"></span>
+		</span>
+		<span class="menu-title">Users</span>
+		<span class="menu-arrow"></span>
 	</span>
-	<span class="menu-title">User Management</span>
-</a>
-<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Users" asp-action="Index" asp-route-filter="admin" id="adminLink">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
-	</span>
-	<span class="menu-title">Admin Management</span>
-</a>
-<!--end:Menu link-->
-<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Users" asp-action="Index" asp-route-filter="restorante" id="restoranteLink">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
-	</span>
-	<span class="menu-title">Restorante Management</span>
-</a>
-<!--end:Menu link-->
-<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Users" asp-action="Index" asp-route-filter="supplier" id="supplierLink">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
-	</span>
-	<span class="menu-title">Supplier Management</span>
-</a>
-<!--end:Menu link-->
-<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Products" asp-action="Index">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
-	</span>
-	<span class="menu-title">Product Management</span>
-</a>
-<!--end:Menu link-->
-<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="Categories" asp-action="Index">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
-	</span>
-	<span class="menu-title">Category Management</span>
-</a>
-<!--end:Menu link-->
-<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="QuantityUnits" asp-action="Index">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
-	</span>
-	<span class="menu-title">Quantities Management</span>
-</a>
-<!--end:Menu link-->
+	<!--end:Menu link-->
+	<!--begin:Menu sub-->
+	<div class="menu-sub menu-sub-accordion">
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link" asp-controller="Users" asp-action="Index">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">User Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
 
-<!--begin:Menu link-->
-<a class="menu-link active" asp-controller="UnitsPrice" asp-action="Index">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link" asp-controller="Users" asp-action="Index" asp-route-filter="admin">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Admin Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link" asp-controller="Users" asp-action="Index" asp-route-filter="restaurant">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Restaurant Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link" asp-controller="Users" asp-action="Index" asp-route-filter="supplier">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Supplier Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+	</div>
+	<!--end:Menu sub-->
+</div>
+<!--end:Menu item-->
+<!--begin:Menu item-->
+<div data-kt-menu-trigger="click" class="menu-item here  menu-accordion menu-sub-indention">
+	<!--begin:Menu link-->
+	<span class="menu-link">
+		<span class="menu-bullet">
+			<span class="bullet bullet-dot"></span>
+		</span>
+		<span class="menu-title">Catalog</span>
+		<span class="menu-arrow"></span>
 	</span>
-	<span class="menu-title">UnitPrice Management</span>
-</a>
-<!--end:Menu link-->
+	<!--end:Menu link-->
+	<!--begin:Menu sub-->
+	<div class="menu-sub menu-sub-accordion">
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link" asp-controller="Products" asp-action="Index">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Product Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link" asp-controller="Categories" asp-action="Index">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Category Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link " asp-controller="QuantityUnits" asp-action="Index">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Quantities Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a class="menu-link " asp-controller="UnitsPrice" asp-action="Index">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">UnitPrice Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+	</div>
+	<!--end:Menu sub-->
+</div>
+<!--end:Menu item-->

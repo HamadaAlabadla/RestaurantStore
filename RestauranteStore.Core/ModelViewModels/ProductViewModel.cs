@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RestauranteStore.Core.ModelViewModels
 {
@@ -19,12 +13,17 @@ namespace RestauranteStore.Core.ModelViewModels
 		[Required(AllowEmptyStrings = false)]
 		[StringLength(100)]
 		public string? Description { get; set; }
-        public string DateCreate { get; set; }
-        [Required(AllowEmptyStrings = false)]
+		public string DateCreate { get; set; }
+		[Required(AllowEmptyStrings = false)]
 		public string NameSupplier { get; set; }
-        public string NameCategory { get; set; }
-        public string NameShortenQuantityUnit { get; set; }
-        public string NameShortenUnitPrice { get; set; }
-        public bool isDelete { get; set; } = false;
+		public string NameCategory { get; set; }
+		public string NameShortenQuantityUnit { get; set; }
+		public double QTY { get; set; }
+		public string NameShortenUnitPrice { get; set; }
+		[Range(0, 100)]
+		public float Rating { get; set; }
+		public double Price { get; set; }
+		public string Status { get; set; }
+		public bool isDelete { get; set; } = false;
 	}
 }

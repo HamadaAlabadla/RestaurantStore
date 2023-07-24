@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.EF.Models;
 
@@ -6,10 +7,11 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 {
 	public interface IUserService
 	{
-		Task<User?> GetUserAsync(string id);
+		User? GetUser(string id);
+		User? GetUserByContext(HttpContext context);
 		Task<User?> FindByUserNameAsync(string Email);
-		Task<object?> GetAllUsers(int pageLength, int skiped, StringValues searchData, StringValues sortColumn, StringValues sortDir , StringValues filter);
-
+		Task<object?> GetAllUsers(int pageLength, int skiped, StringValues searchData, StringValues sortColumn, StringValues sortDir, StringValues filter);
+		List<User>? GetAllSuppliersAsync();
 		Task<User?> DeleteUser(string id);
 		Task<string?> UpdateUser(UserDto? userDto);
 		Task<string?> CreateUser(UserDto userDto, string role);
