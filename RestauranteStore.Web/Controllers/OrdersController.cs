@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.OrderService;
+using RestauranteStore.Infrastructure.Services.ProductService;
 using RestauranteStore.Infrastructure.Services.UserService;
+using RestaurantStore.Core.Dtos;
 using RestaurantStore.Core.ModelViewModels;
 using static RestauranteStore.Core.Enums.Enums;
 
@@ -26,22 +29,119 @@ namespace RestaurantStore.Web.Controllers
 			this.mapper = mapper;
 		}
 
-
+		[Authorize (Roles ="supplier")]
 		// GET: OrdersController
-		public IActionResult Index()
-		{
-			var user = userService.GetUserByContext(HttpContext);
-			if (user == null || user.UserType == UserType.admin) return NotFound();
-
-			var orders = orderService.GetAllOrders(user.Id);
-			var ordersRestaurantViewModel = mapper.Map<IEnumerable<OrderListRestaurantViewModel>>(orders);
-			return View(ordersRestaurantViewModel);
-		}
-
-		// GET: OrdersController/Details/5
-		public ActionResult Details(int id)
+		public IActionResult IndexSupplier()
 		{
 			return View();
+		}
+
+        [HttpPost]
+        public IActionResult GetAllOrdersForSupplier()
+        {
+            var user = userService.GetUserByContext(HttpContext);
+            if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+            var jsonData = orderService.GetAllSupplierOrders(Request, user.Id);
+
+            return Ok(jsonData);
+        }
+		
+		[Authorize (Roles ="restaurant")]
+		// GET: OrdersController
+		public IActionResult IndexRestaurant()
+		{
+			return View();
+		}
+
+        [HttpPost]
+        public IActionResult GetAllOrdersForRestaurant()
+        {
+            var user = userService.GetUserByContext(HttpContext);
+            if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+            var jsonData = orderService.GetAllRestaurantOrders(Request, user.Id);
+
+            return Ok(jsonData);
+        }
+
+		// GET: OrdersController/Details/5
+		[HttpGet]
+        public IActionResult Details(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var order = orderService.GetOrder(id , user.Id);
+			var orderViewModel = mapper.Map<OrderViewModel>(order);
+			if (orderViewModel == null) {
+				if (user.UserType == UserType.supplier)
+					return RedirectToAction(nameof(IndexSupplier));
+				else if (user.UserType == UserType.restaurant)
+					return RedirectToAction(nameof(IndexRestaurant));
+				else
+					return NotFound();
+			}
+			return View(orderViewModel);
+		}
+
+		[HttpGet]
+		public IActionResult DetailsForRestaurant(int id)
+		{
+			return View(id);
+		}
+
+		[HttpGet]
+		public IActionResult OrderDetails(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var orderDetails = orderService.GetOrderDetails(id, user.Id);
+			if (orderDetails == null)
+				return NotFound();
+			return Ok(orderDetails);
+		}
+		
+		[HttpGet]
+		public IActionResult RestaurantDetails(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var restaurantDetails = orderService.GetRestaurantDetails(id, user.Id);
+			if (restaurantDetails == null)
+				return NotFound();
+			return Ok(restaurantDetails);
+		}
+		
+		[HttpGet]
+		public IActionResult SupplierDetails(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var supplierDetails = orderService.GetSupplierDetails(id, user.Id);
+			if (supplierDetails == null)
+				return NotFound();
+			return Ok(supplierDetails);
+		}
+		
+		
+		[HttpGet]
+		public IActionResult PaymentDetails(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var Payment = orderService.GetPaymentDetails(id, user.Id);
+			if (Payment == null)
+				return NotFound();
+			return Ok(Payment);
+		}
+		
+		[HttpGet]
+		public IActionResult OrderItems(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var orderItems = orderService.GetOrderItems(id, user.Id);
+			if (orderItems == null)
+				return NotFound();
+			return Ok(orderItems);
 		}
 
 		// GET: OrdersController/Create
@@ -65,35 +165,95 @@ namespace RestaurantStore.Web.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				orderService.CreateOrder(orderDto , selectedProductIds ,quantities );
-				return Ok();
+				var orders = orderService.CreateOrder(orderDto , selectedProductIds ,quantities );
+				if (orders != null && orders.Count() > 0)
+					return Ok();
+				else
+					return NotFound();
 			}
 			return NotFound();
 		}
-		
+		[HttpGet]
 		// GET: OrdersController/Edit/5
-		public ActionResult Edit(int id)
+		public IActionResult EditStatus(int id)
 		{
-			return View();
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var statusorder = Enum.GetValues(typeof(StatusOrder)).Cast<StatusOrder>()
+								.Select(v => new SelectListItem
+								{
+									Text = v.ToString(),
+									Value = ((int)v).ToString()
+								}).ToList();
+			var order = orderService.GetOrder(id , user.Id);
+			return PartialView("EditStatus" , new EditOrderStatusDto() { Id = order.Id , StatusOrder = order.StatusOrder ,StatusOrders = statusorder });
 		}
 
 		// POST: OrdersController/Edit/5
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
+		public IActionResult EditStatus(EditOrderStatusDto editOrderStatusDto)
 		{
-			try
+			if (ModelState.IsValid)
 			{
-				return RedirectToAction(nameof(Index));
+				var user = userService.GetUserByContext(HttpContext);
+				if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+				var result = orderService.UpdateStatus(editOrderStatusDto.Id,user.Id, editOrderStatusDto.StatusOrder);
+				if (result > 0)
+					return Ok();
+				else
+					return NotFound();
 			}
-			catch
-			{
-				return View();
-			}
+            else
+            {
+				return NotFound();
+            }
+        }
+
+
+		[HttpGet]
+		public IActionResult EditOrderDetails(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var order = orderService.GetOrder(id , user.Id);
+			var orderDetailsDto = mapper.Map<OrderDetailsDto>(order);
+			return PartialView("EditOrderDetails", orderDetailsDto);
+
+		}
+		
+		[HttpGet]
+		public IActionResult EditPaymentDetails(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var order = orderService.GetOrder(id , user.Id);
+			var paymentDetailsDto = mapper.Map<EditPaymentDetailsDto>(order);
+			return PartialView("EditPaymentDetails", paymentDetailsDto);
+
 		}
 
-		// GET: OrdersController/Delete/5
-		public ActionResult Delete(int id)
+		[HttpPost]
+		public IActionResult EditOrderDetails(OrderDetailsDto orderDetailsDto)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var result = orderService.UpdateOrderDetails(orderDetailsDto , user.Id );
+			if (result != null) return Ok(result);
+			else return NotFound();
+		}
+		
+		[HttpPost]
+		public IActionResult EditPaymentDetails(EditPaymentDetailsDto editPaymentDetailsDto)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var result = orderService.UpdatePaymentDetails(editPaymentDetailsDto , user.Id );
+			if (result != null) return Ok(result);
+			else return NotFound();
+		}
+
+			// GET: OrdersController/Delete/5
+			public ActionResult Delete(int id)
 		{
 			return View();
 		}

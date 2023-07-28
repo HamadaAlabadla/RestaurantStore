@@ -19,17 +19,17 @@
 
 		public enum StatusOrder
 		{
-			Cancelled,          //ألغيت
-			Completed,          //اكتملت
-			Denied,             // رفض
-			Expired,            //منتهي الصلاحية
-			Failed,             //فشل
+			Draft,              //مسودة
 			Pending,            //قيد الإنتظار
 			Processing,         //قيد المعالجة
-			Refunded,           //مرجع
-			Delivered,          //تم التوصيل
 			Delivering,         //قيد التوصيل
-			Draft,              //مسودة
+			Delivered,          //تم التوصيل
+			Completed,          //اكتملت
+			Denied,             // رفض
+			Cancelled,          //ألغيت
+			Failed,             //فشل
+			Refunded,           //مرجع
+			Expired            //منتهي الصلاحية
 		}
 		public enum PaymentMethod
 		{

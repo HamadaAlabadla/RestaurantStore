@@ -72,26 +72,26 @@ var KTAppEcommerceSaveProduct = function () {
     }
 
     // Init form repeater --- more info: https://github.com/DubFriend/jquery.repeater
-    const initFormRepeater = () => {
-        $('#kt_ecommerce_add_product_options').repeater({
-            initEmpty: false,
+    //const initFormRepeater = () => {
+    //    $('#kt_ecommerce_add_product_options').repeater({
+    //        initEmpty: false,
 
-            defaultValues: {
-                'text-input': 'foo'
-            },
+    //        defaultValues: {
+    //            'text-input': 'foo'
+    //        },
 
-            show: function () {
-                $(this).slideDown();
+    //        show: function () {
+    //            $(this).slideDown();
 
-                // Init select2 on new repeated items
-                initConditionsSelect2();
-            },
+    //            // Init select2 on new repeated items
+    //            initConditionsSelect2();
+    //        },
 
-            hide: function (deleteElement) {
-                $(this).slideUp(deleteElement);
-            }
-        });
-    }
+    //        hide: function (deleteElement) {
+    //            $(this).slideUp(deleteElement);
+    //        }
+    //    });
+    //}
 
     // Init condition select2
     const initConditionsSelect2 = () => {
@@ -356,7 +356,7 @@ var KTAppEcommerceSaveProduct = function () {
                                 contentType: false,
                                 processData: false,
                                 success: function () {
-                                    document.querySelector('kt_ecommerce_add_product_form').reset();
+                                    document.getElementById('kt_ecommerce_add_product_form').reset();
                                     Swal.fire({
                                         text: "Product has been successfully submitted!",
                                         icon: "success",
@@ -403,7 +403,7 @@ var KTAppEcommerceSaveProduct = function () {
             initQuill();
             initTagify();
             //initSlider();
-            initFormRepeater();
+            //initFormRepeater();
             //initDropzone();
             initConditionsSelect2();
 

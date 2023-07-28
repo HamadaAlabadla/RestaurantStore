@@ -25,7 +25,7 @@ namespace RestauranteStore.Infrastructure.Services.OrderItemsService
 			{
 				orderItem.isDelete = false;
 				orderItem.Price = orderItemDto.Price;
-				orderItem.QTY = orderItemDto.QTY;
+				orderItem.QTY = orderItemDto.QTYRequierd;
 				UpdateOrderItem(orderItem);
 			}
 			orderItem = mapper.Map<OrderItem>(orderItemDto);
@@ -45,12 +45,12 @@ namespace RestauranteStore.Infrastructure.Services.OrderItemsService
 
 		public List<OrderItem>? GetAllOrderItems(int orderId)
 		{
-			return dbContext.OrderItems.Include(x => x.Order).Include(x => x.Product).ToList();
+			return dbContext.OrderItems.Where(x => !x.isDelete && x.OrderId == orderId).Include(x => x.Order).Include(x => x.Product).ToList();
 		}
 
 		public OrderItem? GetOrderItem(int orderId, int productId)
 		{
-			return dbContext.OrderItems.Include(x => x.Order).Include(x => x.Product).FirstOrDefault(x => x.OrderId == orderId && x.ProductId == productId);
+			return dbContext.OrderItems.Where(x => !x.isDelete).Include(x => x.Order).Include(x => x.Product).FirstOrDefault(x => x.OrderId == orderId && x.ProductId == productId);
 		}
 
 		public OrderItem? UpdateOrderItem(OrderItemDto orderItemDto)

@@ -44,7 +44,7 @@ namespace RestauranteStore.Web.Controllers
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
 			if (user.UserType != UserType.supplier)
 				user.Id = "admin";
-			var jsonData = productService.GetAllProductsItemDto(Request, user.Id);
+			var jsonData = productService.GetAllProductsItemDto(Request);
 
 			return Ok(jsonData);
 		}
@@ -67,7 +67,7 @@ namespace RestauranteStore.Web.Controllers
 			if (ModelState.IsValid)
 			{
 				var result = await productService.CreateProduct(productDto);
-				return RedirectToAction(nameof(Index));
+				return Ok();
 			}
 			else
 			{

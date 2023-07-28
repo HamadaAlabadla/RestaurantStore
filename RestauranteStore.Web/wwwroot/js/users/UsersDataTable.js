@@ -15,7 +15,6 @@ $(document).ready(function () {
                 { orderable: false, targets: 5 }, // Disable ordering on column 6 (actions)                
             ],
             "data": function (filterString) {
-                debugger
                 filterString.filter = '';
                 var searchContent = searchBox.value;
                 

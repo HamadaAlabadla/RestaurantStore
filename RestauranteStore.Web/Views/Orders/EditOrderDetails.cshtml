@@ -1,0 +1,106 @@
+﻿@using static RestauranteStore.Core.Enums.Enums;
+@model RestaurantStore.Core.Dtos.OrderDetailsDto
+<!--begin::Modal header-->
+<div class="modal-header" id="kt_modal_add_user_header">
+	<!--begin::Modal title-->
+	<h2 class="fw-bold">Edit Order Details</h2>
+	<!--end::Modal title-->
+	<!--begin::Close-->
+	<div data-kt-users-modal-action="cancel" class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
+		<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+		<span class="svg-icon svg-icon-1">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+				<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+			</svg>
+		</span>
+		<!--end::Svg Icon-->
+	</div>
+	<!--end::Close-->
+</div>
+<!--end::Modal header-->
+<div class="modal-body mx-10 mx-xl-50 my-4">
+	<!--begin::Form-->
+	<form id="kt_modal_edit_order_details" class="form" enctype="multipart/form-data" asp-controller="Categories" asp-action="Edit" method="post">
+		<!--begin::Scroll-->
+		<div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+			<!--begin::Input group-->
+			<div class="fv-row mb-7">
+				<!--begin::Label-->
+				<label class="required fw-semibold fs-6 mb-2">Id</label>
+				<!--end::Label-->
+				<!--begin::Input-->
+				<input type="hidden" asp-for="@Model.Id" />
+				<input readonly asp-for="@Model.Id" class="form-control form-control-solid mb-3 mb-lg-0" />
+				<span asp-validation-for="@Model.Id" class="text-danger"></span>
+				<!--end::Input-->
+			</div>
+			<!--end::Input group-->
+			<!--begin::Input group-->
+			<div class="fv-row">
+				<!--begin::Label-->
+				<label class="required form-label">Order Date</label>
+				<!--end::Label-->
+				<!--begin::Editor-->
+				<input asp-for="OrderDate" placeholder="Select a date" class="form-control mb-2" />
+				<!--end::Editor-->
+				<!--begin::Description-->
+				<div class="text-muted fs-7">Set the date of the order to process.</div>
+				<!--end::Description-->
+			</div>
+			<!--end::Input group-->
+			@if (Model.IsDraft)
+			{
+				<!--begin::Input group-->
+				<div class="fv-row">
+					<!--begin::Label-->
+					<label class="required form-label">Order Status</label>
+					<!--end::Label-->
+					<!--begin::Switch-->
+					<label class="form-check form-switch form-check-custom form-check-solid">
+						<input class="form-check-input" asp-for="IsDraft" type="checkbox" value="1" checked="checked" />
+						<span class="form-check-label fw-semibold text-muted">Is Draft</span>
+					</label>
+					<!--end::Switch-->
+					<!--begin::Description-->
+					<div class="text-muted fs-7">Set status order of the order to process.</div>
+					<!--end::Description-->
+				</div>
+				<!--end::Input group-->
+			}
+			<!--begin::Input group-->
+			<div class="fv-row">
+				<!--begin::Label-->
+				<label class="required form-label">Payment Method</label>
+				<!--end::Label-->
+				<!--begin::Select2-->
+				<select asp-for="PaymentMethod" class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
+					<option></option>
+					<option value="CashOnDelivery">Cash on Delivery</option>
+					<option value="CreditCardVisa">Credit Card (Visa)</option>
+					<option value="CreditCardMastercard">Credit Card (Mastercard)</option>
+					<option value="Paypal">Paypal</option>
+				</select>
+				<!--end::Select2-->
+				<!--begin::Description-->
+				<div class="text-muted fs-7">Set Payment Method of the order to process.</div>
+				<!--end::Description-->
+			</div>
+			<!--end::Input group-->
+		</div>
+		<!--end::Scroll-->
+		<!--begin::Actions-->
+		<div class="text-center pt-15">
+			<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
+			<button type="submit" class="btn btn-primary" >
+				<span class="indicator-label">Submit</span>
+				<span class="indicator-progress">
+					Please wait...
+					<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+				</span>
+			</button>
+		</div>
+		<!--end::Actions-->
+	</form>
+	<!--end::Form-->
+</div>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.CategoryService;
 
 namespace RestauranteStore.Web.Controllers
@@ -25,67 +26,46 @@ namespace RestauranteStore.Web.Controllers
 			return Ok(categoryService.GetCategories());
 		}
 
-		// GET: CategoriesController/Create
-		public ActionResult Create()
-		{
-			return View();
-		}
 
 		// POST: CategoriesController/Create
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Create(IFormCollection collection)
+		public IActionResult Create(Category category)
 		{
-			try
-			{
+			var result = categoryService.CreateCategory(category);
+			if (result > 0)
 				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
+			else
+				return PartialView("Add_Cat" , category);
 		}
-
+		[HttpGet]
 		// GET: CategoriesController/Edit/5
-		public ActionResult Edit(int id)
+		public IActionResult Edit(int id)
 		{
-			return View();
+			var cat = categoryService.GetCategory(id);
+			return PartialView("Edit" , cat);
 		}
 
 		// POST: CategoriesController/Edit/5
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
+		public IActionResult Edit(Category category)
 		{
-			try
-			{
-				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
+			var result = categoryService.UpdateCategory(category);
+			if (result > 0)
+				return Ok();
+			else
+				return NotFound(category);
 		}
 
-		// GET: CategoriesController/Delete/5
-		public ActionResult Delete(int id)
-		{
-			return View();
-		}
 
 		// POST: CategoriesController/Delete/5
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Delete(int id, IFormCollection collection)
+		public IActionResult Delete(int id)
 		{
-			try
-			{
-				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
+			var result = categoryService.DeleteCategory(id);
+			if (result != null)
+				return Ok();
+			else
+				return NotFound();
 		}
 	}
 }

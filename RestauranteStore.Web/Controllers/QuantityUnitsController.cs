@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.QuantityService;
 
 namespace RestauranteStore.Web.Controllers
@@ -24,73 +25,47 @@ namespace RestauranteStore.Web.Controllers
 			return Ok(quantityService.GetQuantities());
 		}
 
-		// GET: QuantitiesController/Details/5
-		public ActionResult Details(int id)
-		{
-			return View();
-		}
 
-		// GET: QuantitiesController/Create
-		public ActionResult Create()
-		{
-			return View();
-		}
+
 
 		// POST: QuantitiesController/Create
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Create(IFormCollection collection)
+		public IActionResult Create(QuantityUnit quantityUnit)
 		{
-			try
-			{
+			var result = quantityService.CreateQuantity(quantityUnit);
+			if (result > 0)
 				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
+			else
+				return PartialView("Add_Quantity", quantityUnit);
 		}
-
+		[HttpGet]
 		// GET: QuantitiesController/Edit/5
-		public ActionResult Edit(int id)
+		public IActionResult Edit(int id)
 		{
-			return View();
+			var quantity = quantityService.GetQuantity(id);
+			return PartialView("Edit" ,quantity );
 		}
 
 		// POST: QuantitiesController/Edit/5
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
+		public IActionResult Edit(QuantityUnit quantityUnit)
 		{
-			try
-			{
-				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
+			var result = quantityService.UpdateQuantity(quantityUnit);
+			if (result > 0)
+				return Ok();
+			else
+				return NotFound();
 		}
 
-		// GET: QuantitiesController/Delete/5
-		public ActionResult Delete(int id)
-		{
-			return View();
-		}
 
 		// POST: QuantitiesController/Delete/5
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Delete(int id, IFormCollection collection)
+		public IActionResult Delete(int id)
 		{
-			try
-			{
-				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
+			var result = quantityService.DeleteQuantity(id);
+			if (result != null)
+				return Ok();
+			else return NotFound();
 		}
 	}
 }

@@ -81,11 +81,12 @@
 										<!--begin::Label-->
 										<label class="required form-label">Order Status</label>
 										<!--end::Label-->
-										<!--begin::Select2-->
-										<select asp-for="StatusOrder" asp-items="@status" class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" >
-											<option></option>
-										</select>
-										<!--end::Select2-->
+										<!--begin::Switch-->
+										<label class="form-check form-switch form-check-custom form-check-solid">
+											<input class="form-check-input" asp-for="IsDraft" type="checkbox" value="1" checked="checked" />
+											<span class="form-check-label fw-semibold text-muted">Is Draft</span>
+										</label>
+										<!--end::Switch-->
 										<!--begin::Description-->
 										<div class="text-muted fs-7">Set status order of the order to process.</div>
 										<!--end::Description-->
@@ -163,12 +164,7 @@
 											<!--end::Svg Icon-->
 											<input type="text" data-kt-ecommerce-edit-order-filter="search" class="form-control form-control-solid w-100 w-lg-50 ps-14" placeholder="Search Products" />
 											<div class="w-50"></div>
-											<div class=" pt-0">
-												<!--begin::Select2-->
-												<select onchange="productList();" asp-for="SupplierId" asp-items="@suppliers" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true">
-													<option></option>
-												</select>
-											</div>
+
 										</div>
 										<!--end::Search products-->
 										
@@ -176,7 +172,8 @@
 										<thead>
 											<tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
 												<th class="w-25px pe-2 "></th>
-												<th class="min-w-250px">Product</th>
+												<th class="min-w-175px">Product</th>
+												<th class="min-w-125px">Supplier</th>
 												<th class="min-w-70px  pe-5">Qty Requierd</th>
 												<th class="min-w-70px pe-5">Qty Remaining</th>
 											</tr>
@@ -270,5 +267,5 @@
 
 @section Scripts{
 	<!--begin::Custom Javascript(used for this page only)-->
-	<script src="~/assets/js/custom/apps/ecomerce/sales/save-order.js"></script>
+    <script src="~/assets/js/custom/apps/ecomerce/sales/save-order.js"></script>
 }

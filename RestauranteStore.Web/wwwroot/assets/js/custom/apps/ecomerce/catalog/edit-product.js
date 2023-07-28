@@ -71,27 +71,27 @@ var KTAppEcommerceSaveProduct = function () {
         });
     }
 
-    // Init form repeater --- more info: https://github.com/DubFriend/jquery.repeater
-    const initFormRepeater = () => {
-        $('#kt_ecommerce_add_product_options').repeater({
-            initEmpty: false,
+    //// Init form repeater --- more info: https://github.com/DubFriend/jquery.repeater
+    //const initFormRepeater = () => {
+    //    $('#kt_ecommerce_add_product_options').repeater({
+    //        initEmpty: false,
 
-            defaultValues: {
-                'text-input': 'foo'
-            },
+    //        defaultValues: {
+    //            'text-input': 'foo'
+    //        },
 
-            show: function () {
-                $(this).slideDown();
+    //        show: function () {
+    //            $(this).slideDown();
 
-                // Init select2 on new repeated items
-                initConditionsSelect2();
-            },
+    //            // Init select2 on new repeated items
+    //            initConditionsSelect2();
+    //        },
 
-            hide: function (deleteElement) {
-                $(this).slideUp(deleteElement);
-            }
-        });
-    }
+    //        hide: function (deleteElement) {
+    //            $(this).slideUp(deleteElement);
+    //        }
+    //    });
+    //}
 
     // Init condition select2
     const initConditionsSelect2 = () => {
@@ -409,7 +409,7 @@ var KTAppEcommerceSaveProduct = function () {
             initQuill();
             initTagify();
             //initSlider();
-            initFormRepeater();
+            //initFormRepeater();
             //initDropzone();
             initConditionsSelect2();
 
@@ -487,73 +487,6 @@ $(document).ready(function () {
     });
 });
 
-
-function deleteUser(id) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    }).then(function (result) {
-        if (result.isConfirmed) {
-            $.ajax({
-
-                url: '/Products/Delete',
-                type: 'Post',
-                data: { id: id },
-                success: function (result) {
-                    datatable.draw();
-                    Swal.fire({
-                        text: "The product has been deleted successfully",
-                        icon: "success",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
-                        customClass: {
-                            confirmButton: "btn btn-primary",
-                        }
-                    });
-                    // $('#editUserModal').modal('show');
-                },
-                error: function (error) {
-                    Swal.fire({
-                        text: "An error occurred deleting the product",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
-                        customClass: {
-                            confirmButton: "btn btn-primary",
-                        }
-                    });
-                }
-            });
-        }
-        if (result.dismiss === 'cancel') {
-            Swal.fire({
-                text: "Your cancelled!.",
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn btn-primary",
-                }
-            });
-        }
-    });
-
-}
-
-$(document).on('click', '#deleteLink', function (e) {
-    e.preventDefault();
-    debugger
-    // Replace "modelId" with the ID of the model you want to edit
-    var modelId = this.closest('td').querySelector('span[id="productIdSpan"]').textContent;
-
-
-    deleteUser(modelId);
-});
 $(document).ready(function () {
     document.getElementById('kt_ecommerce_add_product_description').textContent = document.getElementById('Description').value
 });

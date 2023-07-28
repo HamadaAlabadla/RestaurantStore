@@ -7,7 +7,7 @@ namespace RestauranteStore.Core.Dtos
 	{
 		public int Id { get; set; }
 		[Required]
-		public string SupplierId { get; set; }
+		public string? SupplierId { get; set; }
 		[Required]
 		public string RestaurantId { get; set; }
 		[Required]
@@ -21,7 +21,8 @@ namespace RestauranteStore.Core.Dtos
 		public string ShippingCity { get; set; }
 		[Required]
 		public StatusOrder StatusOrder { get; set; }
-		//[Required]
-		//public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
-	}
+        public bool IsDraft { get; set; }
+        //[Required]
+        //public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
+    }
 }

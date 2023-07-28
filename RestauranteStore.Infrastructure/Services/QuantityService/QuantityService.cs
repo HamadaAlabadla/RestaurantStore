@@ -60,6 +60,7 @@ namespace RestauranteStore.Infrastructure.Services.QuantityService
 			if (quantityNew == null) return -1;
 			quantityNew.Name = quantity.Name;
 			quantityNew.isDelete = quantity.isDelete;
+			quantityNew.shortenQuantity = quantity.shortenQuantity;
 			dbContext.QuantityUnits.Update(quantityNew);
 			dbContext.SaveChanges();
 			return quantity.Id;

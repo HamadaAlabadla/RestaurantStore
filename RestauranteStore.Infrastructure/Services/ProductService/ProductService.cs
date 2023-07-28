@@ -54,8 +54,24 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 		}
 		private IQueryable<Product> GetAllProducts(string search, string filter)
 		{
-			var users = dbContext.Products
-				.Where(x => !x.isDelete && string.IsNullOrEmpty(filter)?true: x.UserId.Equals(filter));
+			StatusProduct? filterEnum = null;
+			if (!string.IsNullOrEmpty(filter))
+			{
+				try
+				{
+					filterEnum = (StatusProduct)Enum.Parse(typeof(StatusProduct), filter, true);
+				}
+				catch
+				{
+					filterEnum = null;
+				}
+			}
+			var users = dbContext.Products.Include(x => x.Category)
+				.Where(x => !x.isDelete 
+						&&( 
+							(filterEnum == null)?true: x.Status == filterEnum
+						)
+					  );
 			return users;
 
 
@@ -87,7 +103,7 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 			return jsonData;
 		}
 		
-		public object? GetAllProductsItemDto(HttpRequest request, string supplierId)
+		public object? GetAllProductsItemDto(HttpRequest request)
 		{
 			var pageLength = int.Parse((request.Form["length"].ToString()) ?? "");
 			var skiped = int.Parse((request.Form["start"].ToString()) ?? "");
@@ -105,7 +121,6 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 
 
 			var data = products.Include(x => x.User).Include(x => x.Category).Include(x => x.QuantityUnit).Include(x => x.UnitPrice)
-				.Where(x => supplierId.Equals("admin") ? true : (x.User.UserType == UserType.supplier) && x.UserId.Equals(supplierId))
 				.Skip(skiped).Take(pageLength).ToList();
 			var productsViewModel = mapper.Map<IEnumerable<OrderItemDto>>(data);
 			var jsonData = new { recordsFiltered = recordsTotal, recordsTotal, data = productsViewModel };

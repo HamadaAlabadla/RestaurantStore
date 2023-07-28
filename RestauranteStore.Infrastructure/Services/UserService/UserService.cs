@@ -100,7 +100,14 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			UserType? filterEnum = null;
 			if (!string.IsNullOrEmpty(filter))
 			{
-				filterEnum = (UserType)Enum.Parse(typeof(UserType), filter, true);
+				try
+				{
+					filterEnum = (UserType)Enum.Parse(typeof(UserType), filter, true);
+				}
+				catch
+				{
+					filterEnum = null;
+				}
 			}
 			var users = dbContext.users.Include(x => x.Restaurant)
 				.Where(x => !x.isDelete 

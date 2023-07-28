@@ -2,7 +2,9 @@
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.EF.Models;
+using RestaurantStore.Core.Dtos;
 using RestaurantStore.Core.ModelViewModels;
+using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestaurantStore.Infrastructure.AutoMapper
 {
@@ -60,12 +62,18 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 				.ForMember(dist => dist.NameSupplier, src => src.MapFrom(src => src.User.Name));
 
 
-			CreateMap<OrderItemDto, OrderItem>();
+			CreateMap<OrderItemDto, OrderItem>()
+				.ForMember(dist => dist.QTY, src => src.MapFrom(src => src.QTYRequierd))
+				.ReverseMap()
+				.ForMember(dist => dist.QTYRequierd , src => src.MapFrom(src => src.QTY));
 
 			CreateMap<OrderDto, Order>();
 			CreateMap<Product, OrderItemDto>()
 				.ForMember(dist => dist.ProductId, src => src.MapFrom(src => src.ProductNumber))
+				.ForMember(dist => dist.SupplierId, src => src.MapFrom(src => src.UserId))
+				.ForMember(dist => dist.SupplierName, src => src.MapFrom(src => src.User.Name))
 				.ForMember(dist => dist.ProductName, src => src.MapFrom(src => src.Name))
+				.ForMember(dist => dist.ProductImage, src => src.MapFrom(src => src.Image))
 				.ForMember(dist => dist.Image, src => src.MapFrom(src => src.Image))
 				.ForMember(dist => dist.Price, src => src.MapFrom(src => src.Price))
 				.ForMember(dist => dist.isDelete, src => src.MapFrom(src => src.isDelete))
@@ -73,11 +81,57 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 				.ForMember(dist => dist.QTYRequierd, src => src.Ignore())
 				.ForMember(dist => dist.OrderId, src => src.Ignore());
 
+			CreateMap<Order, OrderListSupplierViewModel>()
+				.ForMember(dist => dist.DateModified, src => src.MapFrom(src => src.DateModified.ToShortDateString()))
+				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
+				.ForMember(dist => dist.StatusOrder, src => src.MapFrom(src => src.StatusOrder.ToString()))
+				.ForMember(dist => dist.RestaurantImage, src => src.MapFrom(src => (src.Restaurant.User ?? new User() { Logo = "" }).Logo))
+				.ForMember(dist => dist.RestaurantName, src => src.MapFrom(src => (src.Restaurant.User??new User() { Name = "undefined"}).Name));
+			
 			CreateMap<Order, OrderListRestaurantViewModel>()
 				.ForMember(dist => dist.DateModified, src => src.MapFrom(src => src.DateModified.ToShortDateString()))
 				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
 				.ForMember(dist => dist.StatusOrder, src => src.MapFrom(src => src.StatusOrder.ToString()))
-				.ForMember(dist => dist.RestaurantName, src => src.MapFrom(src => (src.Restaurant.User??new User() { Name = "undefined"}).Name));
+				.ForMember(dist => dist.SupplierName, src => src.MapFrom(src => (src.Supplier ?? new User() { Name = "" }).Name))
+				.ForMember(dist => dist.SupplierImage, src => src.MapFrom(src => (src.Supplier??new User() { Logo = "undefined"}).Logo));
+
+
+			CreateMap<Order, OrderViewModel>()
+				.ForMember(dist => dist.DateModified, src => src.MapFrom(src => src.DateModified.ToShortDateString()))
+				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
+				.ForMember(dist => dist.OrderDate, src => src.MapFrom(src => src.OrderDate.ToShortDateString()))
+				.ForMember(dist => dist.SupplierImage, src => src.MapFrom(src => src.Supplier.Logo))
+				.ForMember(dist => dist.SupplierName, src => src.MapFrom(src => src.Supplier.Name))
+				.ForMember(dist => dist.SupplierEmail, src => src.MapFrom(src => src.Supplier.Email))
+				.ForMember(dist => dist.SupplierPhoneNumber, src => src.MapFrom(src => src.Supplier.PhoneNumber))
+				.ForMember(dist => dist.RestaurantEmail, src => src.MapFrom(src => (src.Restaurant.User ?? new User() { Email = "undefined" }).Email))
+				.ForMember(dist => dist.RestaurantImage, src => src.MapFrom(src => (src.Restaurant.User ?? new User() { Logo = "undefined" }).Logo))
+				.ForMember(dist => dist.RestaurantPhoneNumber, src => src.MapFrom(src => (src.Restaurant.User ?? new User() { PhoneNumber = "undefined" }).PhoneNumber))
+				.ForMember(dist => dist.RestaurantName, src => src.MapFrom(src => (src.Restaurant.User ?? new User() { Name = "undefined" }).Name));
+
+			CreateMap<Order, OrderDetailsViewModel>()
+				.ForMember(dist => dist.PaymentMethod, src => src.MapFrom(src => src.PaymentMethod.ToString()))
+				.ForMember(dist => dist.StatusOrder, src => src.MapFrom(src => src.StatusOrder.ToString()))
+				.ForMember(dist => dist.DateAdded, src => src.MapFrom(src => src.OrderDate.ToShortDateString()));
+
+			CreateMap<Order, OrderDetailsDto>()
+				.ForMember(dist => dist.IsDraft, src => src.MapFrom(src => (src.StatusOrder == StatusOrder.Draft)?true:false));
+
+			CreateMap<User, UserDetailsViewModel>()
+				.ForMember(dist => dist.Phone, src => src.MapFrom(src => src.PhoneNumber))
+				.ForMember(dist => dist.Image, src => src.MapFrom(src => src.Logo??"undefined"));
+
+			CreateMap<Order, PaymentDetailsViewModel>();
+			CreateMap<Order, EditPaymentDetailsDto>();
+			CreateMap<OrderItem, OrderItemViewModel>()
+				.ForMember(dist => dist.ProductImage, src => src.MapFrom(src => src.Product.Image))
+				.ForMember(dist => dist.ProductName, src => src.MapFrom(src => src.Product.Name))
+				.ForMember(dist => dist.ProductId, src => src.MapFrom(src => src.Product.ProductNumber))
+				.ForMember(dist => dist.QTYRequierd, src => src.MapFrom(src => src.QTY))
+				.ForMember(dist => dist.DateModified, src => src.MapFrom(src => src.Order.DateModified.ToShortDateString()))
+				.ForMember(dist => dist.OrderDate, src => src.MapFrom(src => src.Order.OrderDate.ToShortDateString()))
+				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.Order.DateCreate.ToShortDateString()))
+				.ForMember(dist => dist.Price, src => src.MapFrom(src => src.Price));
 		}
 	}
 }
