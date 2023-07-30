@@ -23,7 +23,7 @@ namespace RestauranteStore.Infrastructure.Services.RestoranteService
 
 		public Restaurant? GetRestaurant(string id)
 		{
-			return dbContext.Restaurants.Include(x => x.User).FirstOrDefault(x => (x.UserId??"").Equals(id??""));
+			return dbContext.Restaurants.Include(x => x.User).FirstOrDefault(x => (x.UserId ?? "").Equals(id ?? ""));
 		}
 	}
 }

@@ -16,6 +16,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 		Task<string?> UpdateUser(UserDto? userDto);
 		Task<string?> CreateUser(UserDto userDto, string role);
 		Task<string?> GetRoleByUser(string userId);
+		Task<string?> UpdateUserDetails(UserDto? userDto);
 
 	}
 }

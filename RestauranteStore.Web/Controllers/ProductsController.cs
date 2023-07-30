@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RestauranteStore.Core.Dtos;
+using RestauranteStore.EF.Models;
+using RestauranteStore.Infrastructure.Services.OrderService;
 using RestauranteStore.Infrastructure.Services.ProductService;
 using RestauranteStore.Infrastructure.Services.UserService;
 using static RestauranteStore.Core.Enums.Enums;
@@ -10,15 +12,18 @@ namespace RestauranteStore.Web.Controllers
 	public class ProductsController : Controller
 	{
 		private readonly IProductService productService;
+		private readonly IOrderService orderService;
 		private readonly IUserService userService;
 		private readonly IMapper mapper;
 		public ProductsController(IProductService productService,
 			IUserService userService,
-			IMapper mapper)
+			IMapper mapper,
+			IOrderService orderService)
 		{
 			this.productService = productService;
 			this.userService = userService;
 			this.mapper = mapper;
+			this.orderService = orderService;
 		}
 		// GET: ProductsController
 		public ActionResult Index()
@@ -27,7 +32,7 @@ namespace RestauranteStore.Web.Controllers
 		}
 
 		[HttpPost]
-		public  IActionResult GetAllProducts()
+		public IActionResult GetAllProducts()
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
@@ -38,13 +43,15 @@ namespace RestauranteStore.Web.Controllers
 			return Ok(jsonData);
 		}
 		[HttpPost]
-		public IActionResult GetAllProductsItemDto()
+		public IActionResult GetAllProductsItemDto(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
 			if (user.UserType != UserType.supplier)
 				user.Id = "admin";
-			var jsonData = productService.GetAllProductsItemDto(Request);
+			var order = orderService.GetOrder(id, user.Id);
+			var supplierId = (order ?? new Order() { SupplierId = "" }).SupplierId;
+			var jsonData = productService.GetAllProductsItemDto(Request, supplierId, user.Id);
 
 			return Ok(jsonData);
 		}
@@ -52,7 +59,7 @@ namespace RestauranteStore.Web.Controllers
 		[HttpGet]
 		public IActionResult Add_Product()
 		{
-		
+
 			return View();
 		}
 		//[HttpGet]

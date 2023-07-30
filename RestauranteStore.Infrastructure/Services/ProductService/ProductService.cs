@@ -52,7 +52,7 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 			UpdateProduct(product);
 			return product;
 		}
-		private IQueryable<Product> GetAllProducts(string search, string filter)
+		private IQueryable<Product> GetAllProducts(string search, string filter, string supplierId)
 		{
 			StatusProduct? filterEnum = null;
 			if (!string.IsNullOrEmpty(filter))
@@ -67,10 +67,11 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 				}
 			}
 			var users = dbContext.Products.Include(x => x.Category)
-				.Where(x => !x.isDelete 
-						&&( 
-							(filterEnum == null)?true: x.Status == filterEnum
+				.Where(x => !x.isDelete
+						&& (
+							(filterEnum == null) ? true : x.Status == filterEnum
 						)
+						&& (string.IsNullOrEmpty(supplierId) || x.UserId.Equals(supplierId))
 					  );
 			return users;
 
@@ -85,9 +86,9 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 			var sortColumn = request.Form[string.Concat("columns[", request.Form["order[0][column]"], "][name]")];
 			var sortDir = request.Form["order[0][dir]"];
 			var filter = request.Form["filter"];
-			if(string.IsNullOrEmpty(filter))
-				filter = new StringValues("") {};
-			var products = GetAllProducts(searchData[0] ?? "", filter[0] ?? "");
+			if (string.IsNullOrEmpty(filter))
+				filter = new StringValues("") { };
+			var products = GetAllProducts(searchData[0] ?? "", filter[0] ?? "", "");
 			var recordsTotal = products.Count();
 
 			if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDir))
@@ -102,8 +103,8 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 
 			return jsonData;
 		}
-		
-		public object? GetAllProductsItemDto(HttpRequest request)
+
+		public object? GetAllProductsItemDto(HttpRequest request, string supplierId, string userId)
 		{
 			var pageLength = int.Parse((request.Form["length"].ToString()) ?? "");
 			var skiped = int.Parse((request.Form["start"].ToString()) ?? "");
@@ -111,9 +112,10 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 			var sortColumn = request.Form[string.Concat("columns[", request.Form["order[0][column]"], "][name]")];
 			var sortDir = request.Form["order[0][dir]"];
 			var filter = request.Form["filter"];
-			if(string.IsNullOrEmpty(filter))
-				filter = new StringValues("") {};
-			var products = GetAllProducts(searchData[0] ?? "", filter[0] ?? "");
+			if (string.IsNullOrEmpty(filter))
+				filter = new StringValues("") { };
+
+			var products = GetAllProducts(searchData[0] ?? "", filter[0] ?? "", supplierId);
 			var recordsTotal = products.Count();
 
 			if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDir))
@@ -170,14 +172,14 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 			productNew.CategoryId = product.CategoryId;
 			productNew.Description = product.Description;
 			productNew.isDelete = product.isDelete;
-			productNew.Image = product.Image??productNew.Image;
+			productNew.Image = product.Image ?? productNew.Image;
 			productNew.Name = product.Name;
 			try
 			{
 				dbContext.Products.Update(productNew);
 				dbContext.SaveChanges();
 			}
-			catch(Exception ex) 
+			catch (Exception ex)
 			{
 
 			}

@@ -35,14 +35,14 @@ namespace RestauranteStore.Web.Controllers
 			if (result > 0)
 				return RedirectToAction(nameof(Index));
 			else
-				return PartialView("Add_Cat" , category);
+				return PartialView("Add_Cat", category);
 		}
 		[HttpGet]
 		// GET: CategoriesController/Edit/5
 		public IActionResult Edit(int id)
 		{
 			var cat = categoryService.GetCategory(id);
-			return PartialView("Edit" , cat);
+			return PartialView("Edit", cat);
 		}
 
 		// POST: CategoriesController/Edit/5

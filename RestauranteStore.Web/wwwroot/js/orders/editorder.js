@@ -1,7 +1,7 @@
 ﻿var OrderDetailsTable = document.getElementById("OrderDetails");
-
+var orderId = document.querySelector('[id="OrderIdSpan"]').textContent;
 $(document).ready(function () {
-    var orderId = document.querySelector('[id="OrderIdSpan"]').textContent;
+    
     $.ajax({
         url: '/Orders/OrderDetails/' + orderId,
         type: "GET",
@@ -62,6 +62,7 @@ $(document).ready(function () {
 
         }
     });
+
 
     $.ajax({
         url: '/Orders/OrderItems/' + orderId,
@@ -160,10 +161,31 @@ function loadEditPaymentForm(id) {
     });
 }
 
+
+function loadEditOrderItemsForm(id) {
+    $.ajax({
+
+        url: '/Orders/EditOrderItems',
+        type: 'GET',
+        //data: { id: id },
+        success: function (result) {
+
+            $('#EditOrderModal .modal-content').html(result);
+            drawTableProducts();
+
+
+
+        },
+        error: function (error) {
+            console.error('Error while loading the edit form:', error);
+        }
+    });
+}
+var modelId = document.querySelector('span[id="OrderIdSpan"]').textContent;
 $(document).on('click', '#editOrderDetailsLink', function (e) {
     e.preventDefault();
     // Replace "modelId" with the ID of the model you want to edit
-    var modelId = document.querySelector('span[id="OrderIdSpan"]').textContent;
+    
 
 
     loadEditForm(modelId);
@@ -173,10 +195,19 @@ $(document).on('click', '#editOrderDetailsLink', function (e) {
 $(document).on('click', '#editPaymentDetailsLink', function (e) {
     e.preventDefault();
     // Replace "modelId" with the ID of the model you want to edit
-    var modelId = document.querySelector('span[id="OrderIdSpan"]').textContent;
+   // var modelId = document.querySelector('span[id="OrderIdSpan"]').textContent;
 
 
     loadEditPaymentForm(modelId);
+});
+
+$(document).on('click', '#editOrderItemsLink', function (e) {
+    e.preventDefault();
+    // Replace "modelId" with the ID of the model you want to edit
+    //var modelId = document.querySelector('span[id="OrderIdSpan"]').textContent;
+
+
+    loadEditOrderItemsForm(modelId);
 });
 
 
@@ -235,7 +266,7 @@ $(document).on('submit', '#kt_modal_edit_order_details', function (e) {
         }
     });
 });
-(document).on('submit', '#kt_modal_edit_payment_details', function (e) {
+$(document).on('submit', '#kt_modal_edit_payment_details', function (e) {
     e.preventDefault();
     var formEdit = this;
     var formData = $(this).serialize();

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RestauranteStore.EF.Models;
-using System.Reflection.Metadata;
 using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.EF.Data

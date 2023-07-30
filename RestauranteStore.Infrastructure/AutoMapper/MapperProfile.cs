@@ -20,6 +20,7 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 
 			CreateMap<UserDto, User>()
 				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id))
+				.ForMember(dist => dist.Name, src => src.MapFrom(src => (!string.IsNullOrEmpty(src.Name))?src.Name: $"{src.FirstName} {src.LastName}"))
 				.ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
 				.ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
 				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
@@ -32,6 +33,8 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 
 			CreateMap<User, UserDto>()
 				.ForMember(dist => dist.Logo, src => src.Ignore())
+				.ForMember(dist => dist.FirstName, src => src.MapFrom(src => SplitName(src.Name??"")[0]))
+				.ForMember(dist => dist.LastName, src => src.MapFrom(src => SplitName(src.Name ?? "")[1]))
 				.ForMember(dist => dist.image, src => src.MapFrom(src => src.Logo));
 
 
@@ -45,7 +48,7 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 				.ForMember(dist => dist.Name, src => src.MapFrom(src => src.User!.Name))
 				.ForMember(dist => dist.Email, src => src.MapFrom(src => src.User!.Email))
 				.ForMember(dist => dist.image, src => src.MapFrom(src => src.User!.Logo));
-			
+
 			CreateMap<Product, ProductDto>()
 				.ForMember(dist => dist.Image, src => src.Ignore())
 				.ForMember(dist => dist.ImageTitle, src => src.MapFrom(src => src.Image))
@@ -65,7 +68,7 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 			CreateMap<OrderItemDto, OrderItem>()
 				.ForMember(dist => dist.QTY, src => src.MapFrom(src => src.QTYRequierd))
 				.ReverseMap()
-				.ForMember(dist => dist.QTYRequierd , src => src.MapFrom(src => src.QTY));
+				.ForMember(dist => dist.QTYRequierd, src => src.MapFrom(src => src.QTY));
 
 			CreateMap<OrderDto, Order>();
 			CreateMap<Product, OrderItemDto>()
@@ -86,14 +89,14 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
 				.ForMember(dist => dist.StatusOrder, src => src.MapFrom(src => src.StatusOrder.ToString()))
 				.ForMember(dist => dist.RestaurantImage, src => src.MapFrom(src => (src.Restaurant.User ?? new User() { Logo = "" }).Logo))
-				.ForMember(dist => dist.RestaurantName, src => src.MapFrom(src => (src.Restaurant.User??new User() { Name = "undefined"}).Name));
-			
+				.ForMember(dist => dist.RestaurantName, src => src.MapFrom(src => (src.Restaurant.User ?? new User() { Name = "undefined" }).Name));
+
 			CreateMap<Order, OrderListRestaurantViewModel>()
 				.ForMember(dist => dist.DateModified, src => src.MapFrom(src => src.DateModified.ToShortDateString()))
 				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.DateCreate.ToShortDateString()))
 				.ForMember(dist => dist.StatusOrder, src => src.MapFrom(src => src.StatusOrder.ToString()))
 				.ForMember(dist => dist.SupplierName, src => src.MapFrom(src => (src.Supplier ?? new User() { Name = "" }).Name))
-				.ForMember(dist => dist.SupplierImage, src => src.MapFrom(src => (src.Supplier??new User() { Logo = "undefined"}).Logo));
+				.ForMember(dist => dist.SupplierImage, src => src.MapFrom(src => (src.Supplier ?? new User() { Logo = "undefined" }).Logo));
 
 
 			CreateMap<Order, OrderViewModel>()
@@ -115,11 +118,11 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 				.ForMember(dist => dist.DateAdded, src => src.MapFrom(src => src.OrderDate.ToShortDateString()));
 
 			CreateMap<Order, OrderDetailsDto>()
-				.ForMember(dist => dist.IsDraft, src => src.MapFrom(src => (src.StatusOrder == StatusOrder.Draft)?true:false));
+				.ForMember(dist => dist.IsDraft, src => src.MapFrom(src => (src.StatusOrder == StatusOrder.Draft) ? true : false));
 
 			CreateMap<User, UserDetailsViewModel>()
 				.ForMember(dist => dist.Phone, src => src.MapFrom(src => src.PhoneNumber))
-				.ForMember(dist => dist.Image, src => src.MapFrom(src => src.Logo??"undefined"));
+				.ForMember(dist => dist.Image, src => src.MapFrom(src => src.Logo ?? "undefined"));
 
 			CreateMap<Order, PaymentDetailsViewModel>();
 			CreateMap<Order, EditPaymentDetailsDto>();
@@ -132,6 +135,12 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 				.ForMember(dist => dist.OrderDate, src => src.MapFrom(src => src.Order.OrderDate.ToShortDateString()))
 				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.Order.DateCreate.ToShortDateString()))
 				.ForMember(dist => dist.Price, src => src.MapFrom(src => src.Price));
+		}
+
+		private string[] SplitName(string name = "")
+		{
+			return name.Split(' ');
+
 		}
 	}
 }

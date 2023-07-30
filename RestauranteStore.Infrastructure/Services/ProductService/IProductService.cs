@@ -10,7 +10,7 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 		List<Product>? GetProducts(string name);
 		Product? GetProduct(string name);
 		public object? GetAllProducts(HttpRequest request, string supplierId);
-		public object? GetAllProductsItemDto(HttpRequest request);
+		public object? GetAllProductsItemDto(HttpRequest request, string supplierId, string userId);
 		Task<int> CreateProduct(ProductDto productDto);
 		Task<int> UpdateProduct(ProductDto? productDto);
 		int UpdateProduct(Product? product);

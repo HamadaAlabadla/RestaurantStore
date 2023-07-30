@@ -43,7 +43,7 @@ namespace RestauranteStore.Web.Controllers
 		public IActionResult Edit(int id)
 		{
 			var quantity = quantityService.GetQuantity(id);
-			return PartialView("Edit" ,quantity );
+			return PartialView("Edit", quantity);
 		}
 
 		// POST: QuantitiesController/Edit/5

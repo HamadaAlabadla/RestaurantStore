@@ -416,8 +416,9 @@ var KTAppEcommerceSalesSaveOrder = function () {
                             checkboxes.forEach((checkbox) => {
                                 
                                 if (checkbox.checked) {
+                                    debugger
                                     var productId = checkbox.value;
-                                    var supplierId = checkbox.closest('tr').querySelector('input[id="supplierId"]').value; 
+                                    var supplierId = checkbox.closest('tr').querySelector('[id="supplierId"]').textContent; 
                                     var quantity = checkbox.closest('tr').querySelector('input[id="productQTY"]').value;
 
                                     supplierIds[productId] = supplierId;
@@ -538,7 +539,7 @@ $(document).on('click', function () {
                 var target = item.closest('tr');
                 var check = target.querySelector("[id='Checked']");
                 if (check.checked) {
-                    debugger
+                    
                     var td = target.getElementsByTagName('td')[1].getElementsByTagName('div')[0];
                     var productId = td.getAttribute('data-kt-ecommerce-edit-order-id');
                     var span = document.querySelector(`[data-id="${productId}"]`);
@@ -560,7 +561,7 @@ $(document).on('click', function () {
 const target = document.getElementById('kt_ecommerce_edit_order_selected_products');
 const totalPrice = document.getElementById('kt_ecommerce_edit_order_total_price');
 function addProduct(checkbox, e) {
-    debugger
+    
     // Select parent row element
     const parent = checkbox.closest('tr');
     var QTY = parent.querySelector('[id="productQTY"]');

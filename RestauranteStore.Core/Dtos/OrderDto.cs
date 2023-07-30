@@ -21,8 +21,8 @@ namespace RestauranteStore.Core.Dtos
 		public string ShippingCity { get; set; }
 		[Required]
 		public StatusOrder StatusOrder { get; set; }
-        public bool IsDraft { get; set; }
-        //[Required]
-        //public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
-    }
+		public bool IsDraft { get; set; }
+		//[Required]
+		//public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
+	}
 }

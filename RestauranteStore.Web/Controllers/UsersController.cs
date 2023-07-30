@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.Infrastructure.Services.UserService;
@@ -37,8 +36,37 @@ namespace RestauranteStore.Web.Controllers
 			};
 			return View(user);
 		}
+		public ActionResult Account(string id)
+		{
+			var user = userService.GetUser(id);
+			if (user == null) return NotFound();
+			var userViewModel = mapper.Map<UserViewModel>(user);
+			if(userViewModel == null) return NotFound();
 
-		public IActionResult GetSupplier()
+			return View(userViewModel);
+		}
+		[HttpGet]
+		public IActionResult EditUser(string id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id) || !user.Id.Equals(id)) return NotFound();
+			var userDto = mapper.Map<UserDto>(user);
+			if (userDto == null) return NotFound();
+			return PartialView("EditAccount" , userDto);
+		}
+		[HttpPost]
+		public async Task<IActionResult> EditAccount(UserDto userDto)
+		{
+			if(userDto == null) return NotFound();
+			var result = await userService.UpdateUserDetails(userDto);
+			if (string.IsNullOrEmpty(result))
+				return NotFound();
+			else return Ok();
+		}
+
+
+
+        public IActionResult GetSupplier()
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || user.UserType != UserType.supplier) return NotFound();
@@ -132,7 +160,7 @@ namespace RestauranteStore.Web.Controllers
 			{
 				var userDto = mapper.Map<UserDto>(user);
 				if (userDto == null) return NotFound();
-				return PartialView("Edit", userDto); 
+				return PartialView("Edit", userDto);
 			}
 			else
 			{

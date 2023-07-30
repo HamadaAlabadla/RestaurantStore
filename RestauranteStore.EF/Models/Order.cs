@@ -6,7 +6,7 @@ namespace RestauranteStore.EF.Models
 	public class Order
 	{
 		public int Id { get; set; }
-		public string SupplierId { get; set; }
+        public string SupplierId { get; set; }
 		public User Supplier { get; set; }
 		public string RestaurantId { get; set; }
 		public Restaurant Restaurant { get; set; }
@@ -22,5 +22,5 @@ namespace RestauranteStore.EF.Models
 		public StatusOrder StatusOrder { get; set; }
 		public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 		public bool isDelete { get; set; } = false;
-    }
+	}
 }

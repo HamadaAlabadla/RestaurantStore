@@ -4,20 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using RestauranteStore.Core.Dtos;
-using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.OrderItemsService;
 using RestauranteStore.Infrastructure.Services.OrderService;
 using RestauranteStore.Infrastructure.Services.ProductService;
-using System.Linq.Dynamic.Core;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static RestauranteStore.Core.Enums.Enums;
-using RestaurantStore.Core.ModelViewModels;
 using RestaurantStore.Core.Dtos;
+using RestaurantStore.Core.ModelViewModels;
+using System.Linq.Dynamic.Core;
+using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestaurantStore.Infrastructure.Services.OrderService
 {
@@ -41,25 +36,26 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
 		public List<Order>? CreateOrder(OrderDto orderDto, string supplierIds, string quantities)
 		{
-			if(orderDto == null) return null;
+			if (orderDto == null) return null;
 			List<Order> orders = new List<Order>();
 			Dictionary<int, string> suppliersDectionary = JsonConvert.DeserializeObject<Dictionary<int, string>>(supplierIds) ?? new Dictionary<int, string>();
 
 			// Convert the JSON string to a Dictionary<int, int> for quantities
-			Dictionary<int, double> quantityDictionary = JsonConvert.DeserializeObject<Dictionary<int, double>>(quantities)?? new Dictionary<int, double>();
+			Dictionary<int, double> quantityDictionary = JsonConvert.DeserializeObject<Dictionary<int, double>>(quantities) ?? new Dictionary<int, double>();
 			List<OrderItemDto> orderItemDtos = new List<OrderItemDto>();
 			foreach (var item in quantityDictionary)
 			{
 				var orderItemDto = new OrderItemDto()
 				{
-					SupplierId = suppliersDectionary.GetValueOrDefault(item.Key)??"",
+					SupplierId = suppliersDectionary.GetValueOrDefault(item.Key) ?? "",
 					isDelete = false,
 					Price = (productService.GetProduct(item.Key) ?? new Product() { Price = 0.0 }).Price,
 					ProductId = item.Key,
 					QTYRequierd = item.Value,
 				};
+				orderItemDtos.Add(orderItemDto);
 			}
-
+			
 			var groups = orderItemDtos.GroupBy(x => x.SupplierId);
 			foreach (var group in groups)
 			{
@@ -68,7 +64,8 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 					order.StatusOrder = StatusOrder.Draft;
 				else
 					order.StatusOrder = StatusOrder.Pending;
-				order.TotalPrice = group.Sum(x => x.Price*x.QTYRequierd);
+				order.TotalPrice = group.Sum(x => x.Price * x.QTYRequierd);
+				order.SupplierId = group.Key;
 				dbContext.Orders.Add(order);
 				dbContext.SaveChanges();
 				foreach (var item in group)
@@ -77,16 +74,16 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 					orderItemService.CreateOrderItem(item);
 				}
 				orders.Add(order);
-			}			
-			
+			}
+
 			return orders;
 		}
 
-		public Order? DeleteOrder(int orderId , string userId)
+		public Order? DeleteOrder(int orderId, string userId)
 		{
-			var order = GetOrder(orderId , userId);
-			if(order == null) return null;
-			foreach(var item in order.OrderItems)
+			var order = GetOrder(orderId, userId);
+			if (order == null) return null;
+			foreach (var item in order.OrderItems)
 			{
 				item.isDelete = true;
 				orderItemService.UpdateOrderItem(item);
@@ -97,7 +94,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			return order;
 		}
 
-		public IQueryable<Order> GetAllOrders(string search , string filter , string userId)
+		public IQueryable<Order> GetAllOrders(string search, string filter, string userId)
 		{
 			StatusOrder? filterEnum = null;
 			if (!string.IsNullOrEmpty(filter))
@@ -112,16 +109,16 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 				}
 			}
 			return dbContext.Orders
-				.Where(x => !x.isDelete 
+				.Where(x => !x.isDelete
 						&& (
-						 x.SupplierId.Equals(userId) 
+						 x.SupplierId.Equals(userId)
 						 ||
 						 x.RestaurantId.Equals(userId)
 						)
-						&&(
-						 x.RestaurantId.Equals(userId)?true:x.StatusOrder != StatusOrder.Draft
+						&& (
+						 x.RestaurantId.Equals(userId) ? true : x.StatusOrder != StatusOrder.Draft
 						)
-						&&(
+						&& (
 							filterEnum == null || x.StatusOrder == filterEnum
 						)
 				);
@@ -138,7 +135,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 				filter = new StringValues("") { };
 			var orders = GetAllOrders(searchData[0] ?? "", filter[0] ?? "", userId);
 			var recordsTotal = orders.Count();
-			
+
 			if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDir))
 				orders = orders.OrderBy(string.Concat(sortColumn, " ", sortDir));
 
@@ -176,10 +173,10 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
 
 
-		public int UpdateStatus(int orderId ,string userId, StatusOrder status)
+		public int UpdateStatus(int orderId, string userId, StatusOrder status)
 		{
-			var order = GetOrder(orderId , userId);
-			if(order != null)
+			var order = GetOrder(orderId, userId);
+			if (order != null)
 			{
 				order.StatusOrder = status;
 				order.DateModified = DateTime.UtcNow;
@@ -189,7 +186,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			}
 			return -1;
 		}
-        public Order? GetOrder(int id , string userId)
+		public Order? GetOrder(int id, string userId)
 		{
 			var order = dbContext.Orders.Where(x => !x.isDelete && x.Id == id
 				&& (
@@ -202,7 +199,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 				))
 				.Include(x => x.Supplier).Include(x => x.Restaurant).ThenInclude(x => x.User).Include(x => x.OrderItems).ThenInclude(x => x.Product).FirstOrDefault(x => x.Id == id);
 			if (order == null) return null;
-			if ( order.SupplierId.Equals(userId) && order.StatusOrder == StatusOrder.Pending)
+			if (order.SupplierId.Equals(userId) && order.StatusOrder == StatusOrder.Pending)
 			{
 				order.StatusOrder = StatusOrder.Processing;
 				order.DateModified = DateTime.UtcNow;
@@ -212,14 +209,14 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			return order;
 		}
 
-		public Order? UpdateOrder(OrderDto orderDto , string userId)
+		public Order? UpdateOrder(OrderDto orderDto, string userId)
 		{
 			throw new NotImplementedException();
 		}
-		public Order? UpdateOrder(Order order , string userId)
+		public Order? UpdateOrder(Order order, string userId)
 		{
 			if (order == null) return null;
-			var orderNew = GetOrder(order.Id , userId);
+			var orderNew = GetOrder(order.Id, userId);
 			if (orderNew == null) return null;
 			orderNew.isDelete = order.isDelete;
 			orderNew.PaymentMethod = order.PaymentMethod;
@@ -238,14 +235,14 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			var order = GetOrder(id, userId);
 			if (order == null) return null;
 			var orderDetailsViewModel = mapper.Map<OrderDetailsViewModel>(order);
-			return new {data =  orderDetailsViewModel};
+			return new { data = orderDetailsViewModel };
 		}
 
 		public object? UpdateOrderDetails(OrderDetailsDto orderDetailsDto, string userId)
 		{
-			if(orderDetailsDto == null) return -1;
+			if (orderDetailsDto == null) return -1;
 			var order = GetOrder(orderDetailsDto.Id, userId);
-			if(order == null) return -1;
+			if (order == null) return -1;
 			if (order.StatusOrder == StatusOrder.Draft)
 			{
 				if (!orderDetailsDto.IsDraft)
@@ -256,7 +253,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			dbContext.Orders.Update(order);
 			dbContext.SaveChanges();
 			var orderDetailsViewModel = mapper.Map<OrderDetailsViewModel>(order);
-			var jsondata = new { data =  orderDetailsViewModel };
+			var jsondata = new { data = orderDetailsViewModel };
 			return jsondata;
 		}
 
@@ -285,7 +282,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
 		public object? UpdatePaymentDetails(EditPaymentDetailsDto editPaymentDetailsDto, string userId)
 		{
-			if(editPaymentDetailsDto == null) return null;
+			if (editPaymentDetailsDto == null) return null;
 			var order = GetOrder(editPaymentDetailsDto.Id, userId);
 			if (order == null) return null;
 			order.ShippingAddress = editPaymentDetailsDto.ShippingAddress;
@@ -297,12 +294,68 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
 		public object? GetOrderItems(int id, string userId)
 		{
-			var orderItems = orderItemService.GetAllOrderItems(id);	
-			if(orderItems == null || orderItems.Count() <1) return null;
+			var orderItems = orderItemService.GetAllOrderItems(id);
+			if (orderItems == null || orderItems.Count() < 1) return null;
 			var orderItemsViewModel = mapper.Map<IEnumerable<OrderItemViewModel>>(orderItems);
-			if(orderItemsViewModel == null || orderItemsViewModel.Count() <1) return null;
+			if (orderItemsViewModel == null || orderItemsViewModel.Count() < 1) return null;
+			else return new { data = orderItemsViewModel };
+
+		}
+
+
+		public object? UpdateOrderItems(int orderId, string quantities, string userId)
+		{
+			var order = GetOrder(orderId, userId);
+			if (order == null) return null;
+			var orderItems = order.OrderItems.Where(x => !x.isDelete);
+			// Convert the JSON string to a Dictionary<int, int> for quantities
+			Dictionary<int, double> quantityDictionary = JsonConvert.DeserializeObject<Dictionary<int, double>>(quantities) ?? new Dictionary<int, double>();
+			List<OrderItemDto> orderItemDtos = new List<OrderItemDto>();
+			foreach (var item in quantityDictionary)
+			{
+				var orderItemDto = new OrderItemDto()
+				{
+					OrderId = orderId,
+					SupplierId = order.SupplierId,
+					isDelete = false,
+					Price = (productService.GetProduct(item.Key) ?? new Product() { Price = 0.0 }).Price,
+					ProductId = item.Key,
+					QTYRequierd = item.Value,
+				};
+				if (orderItemDto.SupplierId.Equals(order.SupplierId))
+					orderItemDtos.Add(orderItemDto);
+			}
+			foreach (var item in orderItems)
+			{
+				var orderItemDto = orderItemDtos.FirstOrDefault(x => x.ProductId == item.ProductId);
+				if (orderItemDto == null)
+				{
+					orderItemService.DeleteOrderItem(orderId, item.ProductId);
+				}
+				else if (orderItemDto.QTYRequierd != item.QTY)
+				{
+					item.QTY = orderItemDto.QTYRequierd;
+					orderItemService.UpdateOrderItem(item);
+				}
+			}
+			foreach (var item in orderItemDtos)
+			{
+				var orderItemDto = orderItems.FirstOrDefault(x => x.ProductId == item.ProductId);
+				if (orderItemDto == null)
+				{
+					orderItemService.CreateOrderItem(item);
+				}
+			}
+			orderItems = order.OrderItems.Where(x => !x.isDelete);
+			order.TotalPrice = order.OrderItems.Sum(x => x.Price * x.QTY);
+			dbContext.Orders.Update(order);
+			dbContext.SaveChanges();
+			if (orderItems == null || orderItems.Count() < 1) return null;
+			var orderItemsViewModel = mapper.Map<IEnumerable<OrderItemViewModel>>(orderItems);
+			if (orderItemsViewModel == null || orderItemsViewModel.Count() < 1) return null;
 			else return new { data = orderItemsViewModel };
 
 		}
 	}
+
 }

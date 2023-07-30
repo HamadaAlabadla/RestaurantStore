@@ -110,13 +110,13 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 				}
 			}
 			var users = dbContext.users.Include(x => x.Restaurant)
-				.Where(x => !x.isDelete 
-				&&( (filterEnum == null) ? true : 
+				.Where(x => !x.isDelete
+				&& ((filterEnum == null) ? true :
 					x.UserType == filterEnum
 				)
-				&&( string.IsNullOrEmpty(search)?true 
+				&& (string.IsNullOrEmpty(search) ? true
 							: (
-								(x.Name??"").Contains(search)
+								(x.Name ?? "").Contains(search)
 							)
 						)
 				);
@@ -165,7 +165,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 		public User? GetUser(string id)
 		{
 			var user = dbContext.users.Include(x => x.Restaurant).FirstOrDefault(x => x.Id.Equals(id));
-			if(user != null)
+			if (user != null)
 				user.Restaurant = restoranteService.GetRestaurant(id);
 			return user;
 		}
@@ -202,13 +202,31 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 				userId = userContext.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			}
 			if (string.IsNullOrEmpty(userId)) return null;
-			var user =GetUser(userId);
+			var user = GetUser(userId);
 			return user;
 		}
 
 		public List<User>? GetAllSuppliersAsync()
 		{
-			return  dbContext.users.Where(x => !x.isDelete && x.UserType == UserType.supplier).ToList(); 
+			return dbContext.users.Where(x => !x.isDelete && x.UserType == UserType.supplier).ToList();
 		}
-	}
+
+        public async Task<string?> UpdateUserDetails(UserDto? userDto)
+        {
+            if(userDto == null) return null;
+			var user = GetUser(userDto.Id??"");
+			if(user == null) return null;
+			user.Name = $"{userDto.FirstName} {userDto.LastName}";
+			user.PhoneNumber = userDto.PhoneNumber;
+            if (userDto.Logo != null)
+            {
+                var logoPath = await fileService.UploadFile(userDto.Logo, "users", user.UserName ?? "");
+                user.Logo = logoPath;
+            }
+			dbContext.users.Update(user);
+			dbContext.SaveChanges();
+			return user.Id;
+        
+        }
+    }
 }
