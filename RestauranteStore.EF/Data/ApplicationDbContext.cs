@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RestauranteStore.EF.Models;
+using RestaurantStore.EF.Models;
 using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.EF.Data
@@ -31,6 +32,12 @@ namespace RestauranteStore.EF.Data
 				.HasOne(b => b.Order)
 				.WithMany(x => x.OrderItems)
 				.HasForeignKey(b => b.OrderId);
+			
+			builder.Entity<Notification>()
+				.HasOne(b => b.Order)
+				.WithMany(x => x.Notifications)
+				.HasForeignKey(b => b.OrderId);
+
 			builder.Entity<OrderItem>()
 				.HasKey(x => new { x.OrderId, x.ProductId });
 
@@ -172,6 +179,8 @@ namespace RestauranteStore.EF.Data
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderItem> OrderItems { get; set; }
+		public DbSet<Notification> Notifications { get; set; }
+
 
 	}
 }

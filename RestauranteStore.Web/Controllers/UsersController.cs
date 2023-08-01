@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.Infrastructure.Services.UserService;
+using RestaurantStore.Core.Dtos;
 using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.Web.Controllers
@@ -41,7 +42,7 @@ namespace RestauranteStore.Web.Controllers
 			var user = userService.GetUser(id);
 			if (user == null) return NotFound();
 			var userViewModel = mapper.Map<UserViewModel>(user);
-			if(userViewModel == null) return NotFound();
+			if (userViewModel == null) return NotFound();
 
 			return View(userViewModel);
 		}
@@ -52,13 +53,60 @@ namespace RestauranteStore.Web.Controllers
 			if (user == null || string.IsNullOrEmpty(user.Id) || !user.Id.Equals(id)) return NotFound();
 			var userDto = mapper.Map<UserDto>(user);
 			if (userDto == null) return NotFound();
-			return PartialView("EditAccount" , userDto);
+			return PartialView("EditAccount", userDto);
+		}
+		[HttpGet]
+		public IActionResult EditEmail(string id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id) || !user.Id.Equals(id)) return NotFound();
+			var emailDto = mapper.Map<EditEmailDto>(user);
+			if (emailDto == null) return NotFound();
+			return PartialView("EditEmail", emailDto);
+		}
+
+		[HttpGet]
+		public IActionResult EditPassword(string id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id) || !user.Id.Equals(id)) return NotFound();
+			var editPasswordDto = new EditPasswordDto() { Id = id };
+			return PartialView("EditPassword", editPasswordDto);
+		}
+		
+		[HttpGet]
+		public IActionResult DeleteUser(string id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id) || !user.Id.Equals(id)) return NotFound();
+			var deleteUserDto = new DeleteUserDto() { Id = id };
+			return PartialView("DeleteUser", deleteUserDto);
 		}
 		[HttpPost]
 		public async Task<IActionResult> EditAccount(UserDto userDto)
 		{
-			if(userDto == null) return NotFound();
+			if (userDto == null) return NotFound();
 			var result = await userService.UpdateUserDetails(userDto);
+			if (string.IsNullOrEmpty(result))
+				return NotFound();
+			else return Ok();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> EditEmail(EditEmailDto editEmailDto)
+		{
+			if (editEmailDto == null) return NotFound();
+			var result = await userService.UpdateEmail(editEmailDto);
+			if (string.IsNullOrEmpty(result))
+				return NotFound();
+			else return Ok();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> EditPassword(EditPasswordDto editPasswordDto)
+		{
+			if (editPasswordDto == null) return NotFound();
+			var result = await userService.UpdatePassword(editPasswordDto);
 			if (string.IsNullOrEmpty(result))
 				return NotFound();
 			else return Ok();
@@ -66,7 +114,7 @@ namespace RestauranteStore.Web.Controllers
 
 
 
-        public IActionResult GetSupplier()
+		public IActionResult GetSupplier()
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || user.UserType != UserType.supplier) return NotFound();
@@ -198,9 +246,23 @@ namespace RestauranteStore.Web.Controllers
 
 		// POST: AdminsController/Delete/5
 		[HttpPost]
-		public async Task<ActionResult> Delete(string id)
+		public ActionResult Delete(string id)
 		{
-			var errorModel = await userService.DeleteUser(id);
+			var errorModel = userService.DeleteUser(id);
+			if (errorModel != null)
+				return Ok();
+			else
+			{
+				ModelState.AddModelError(string.Empty, "Error in delete user");
+				return NotFound();
+			}
+		}
+
+		[HttpPost]
+		public IActionResult DeleteUser(DeleteUserDto deleteUserDto)
+		{
+			if (deleteUserDto == null || !deleteUserDto.isDelete) return NotFound();
+			var errorModel = userService.DeleteUser(deleteUserDto.Id);
 			if (errorModel != null)
 				return Ok();
 			else

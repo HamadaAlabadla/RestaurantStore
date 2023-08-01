@@ -12,6 +12,8 @@ using RestauranteStore.Infrastructure.Services.RestoranteService;
 using RestauranteStore.Infrastructure.Services.UnitPriceService;
 using RestauranteStore.Infrastructure.Services.UserService;
 using RestaurantStore.Infrastructure.AutoMapper;
+using RestaurantStore.Infrastructure.Hubs;
+using RestaurantStore.Infrastructure.Services.NotificationService;
 using RestaurantStore.Infrastructure.Services.OrderService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,7 +46,12 @@ builder.Services.AddScoped<IUnitPriceService, UnitPriceService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderItemService, OrderItemService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+
+
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -71,5 +78,6 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Welcom}/{id?}");
 app.MapRazorPages();
+app.MapHub<NotificationHub>("/NotificationHub");
 
 app.Run();

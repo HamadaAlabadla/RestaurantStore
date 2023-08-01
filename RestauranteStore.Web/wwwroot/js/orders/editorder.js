@@ -9,6 +9,20 @@ $(document).ready(function () {
         success: function (data) {
             OrderDetailsTable.querySelector('[id="DateAdded"]').innerHTML = data.data.dateAdded;
             OrderDetailsTable.querySelector('[id="paymentMethod"]').textContent = data.data.paymentMethod;
+            var color = '';
+            if (data.data.statusOrder == 'Completed' || data.data.statusOrder == 'Delivered') {
+                color = 'badge-light-success';
+            } else if (data.data.statusOrder == 'Denied' || data.data.statusOrder == 'Expired' || data.data.statusOrder == 'Failed' || data.data.statusOrder == 'Cancelled') {
+                color = 'badge-light-danger';
+            } else if (data.data.statusOrder == 'Pending') {
+                color = 'badge-light-warning';
+            } else if (data.data.statusOrder == 'Processing' || data.data.statusOrder == 'Delivering') {
+                color = 'badge-light-primary';
+            } else if (data.data.statusOrder == 'Refunded') {
+                color = 'badge-light-info';
+            }
+            OrderDetailsTable.querySelector('[id="StatusOrder"]').classList.add('badge');
+            OrderDetailsTable.querySelector('[id="StatusOrder"]').classList.add(color);
             OrderDetailsTable.querySelector('[id="StatusOrder"]').textContent = data.data.statusOrder;
 
         }
@@ -223,6 +237,20 @@ $(document).on('submit', '#kt_modal_edit_order_details', function (e) {
         success: function (data) {
             OrderDetailsTable.querySelector('[id="DateAdded"]').textContent = data.data.dateAdded;
             OrderDetailsTable.querySelector('[id="paymentMethod"]').textContent = data.data.paymentMethod;
+            var color = '';
+            if (data.data.statusOrder == 'Completed' || data.data.statusOrder == 'Delivered') {
+                color = 'badge-light-success';
+            } else if (data.data.statusOrder == 'Denied' || data.data.statusOrder == 'Expired' || data.data.statusOrder == 'Failed' || data.data.statusOrder == 'Cancelled') {
+                color = 'badge-light-danger';
+            } else if (data.data.statusOrder == 'Pending') {
+                color = 'badge-light-warning';
+            } else if (data.data.statusOrder == 'Processing' || data.data.statusOrder == 'Delivering') {
+                color = 'badge-light-primary';
+            } else if (data.data.statusOrder == 'Refunded') {
+                color = 'badge-light-info';
+            }
+            OrderDetailsTable.querySelector('[id="StatusOrder"]').classList.add('badge');
+            OrderDetailsTable.querySelector('[id="StatusOrder"]').classList.add(color);
             OrderDetailsTable.querySelector('[id="StatusOrder"]').textContent = data.data.statusOrder;
 
             // Handle the success response

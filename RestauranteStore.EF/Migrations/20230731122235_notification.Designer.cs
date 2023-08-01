@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestauranteStore.EF.Data;
 
@@ -11,9 +12,11 @@ using RestauranteStore.EF.Data;
 namespace RestauranteStore.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230731122235_notification")]
+    partial class notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +54,7 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5288a0d5-e7c1-4860-9c91-c06a20ebd849",
+                            Id = "c6142978-3c10-41e7-a098-00ddd8582044",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -146,8 +149,8 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "9be52558-7b0f-47e1-8f1c-b7f0e609fa93",
-                            RoleId = "5288a0d5-e7c1-4860-9c91-c06a20ebd849"
+                            UserId = "a870b841-b471-49bc-898b-8866ee71a4a4",
+                            RoleId = "c6142978-3c10-41e7-a098-00ddd8582044"
                         });
                 });
 
@@ -203,7 +206,7 @@ namespace RestauranteStore.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isRead")
+                    b.Property<bool>("isReady")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
@@ -617,10 +620,10 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9be52558-7b0f-47e1-8f1c-b7f0e609fa93",
+                            Id = "a870b841-b471-49bc-898b-8866ee71a4a4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1540708c-f149-4b35-94a6-3732b0cdbae1",
-                            DateCreate = new DateTime(2023, 8, 1, 11, 30, 32, 378, DateTimeKind.Utc).AddTicks(6026),
+                            ConcurrencyStamp = "ec67c73d-ca94-4c6a-b06b-0935d7d8c15f",
+                            DateCreate = new DateTime(2023, 7, 31, 12, 22, 34, 993, DateTimeKind.Utc).AddTicks(9900),
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
@@ -631,7 +634,7 @@ namespace RestauranteStore.EF.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==",
                             PhoneNumber = "0596549873",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f607a977-8049-4c61-9afd-451de2ddd9d6",
+                            SecurityStamp = "0e298496-0f52-4064-b35c-f94e4f86b6ab",
                             TwoFactorEnabled = false,
                             UserName = "admin",
                             UserType = 2,

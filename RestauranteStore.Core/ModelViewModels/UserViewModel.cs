@@ -13,8 +13,8 @@ namespace RestauranteStore.Core.ModelViewModels
 		[Display(Name = "تاريخ الإضافة")]
 		public DateTime DateCreate { get; set; }
 		public string? DateCreateText { get; set; }
-        public UserType UserType { get; set; }
-        [Display(Name = "الإيميل")]
+		public UserType UserType { get; set; }
+		[Display(Name = "الإيميل")]
 		public string? Email { get; set; }
 		[Display(Name = "اسم المستخدم")]
 		public string? UserName { get; set; }

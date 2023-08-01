@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
@@ -11,6 +12,9 @@ using RestauranteStore.Infrastructure.Services.OrderService;
 using RestauranteStore.Infrastructure.Services.ProductService;
 using RestaurantStore.Core.Dtos;
 using RestaurantStore.Core.ModelViewModels;
+using RestaurantStore.EF.Models;
+using RestaurantStore.Infrastructure.Hubs;
+using RestaurantStore.Infrastructure.Services.NotificationService;
 using System.Linq.Dynamic.Core;
 using static RestauranteStore.Core.Enums.Enums;
 
@@ -19,22 +23,28 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 	public class OrderService : IOrderService
 	{
 		private readonly ApplicationDbContext dbContext;
+		private readonly IHubContext<NotificationHub> hubContext;
 		private readonly IOrderItemService orderItemService;
+		private readonly INotificationService notificationService;
 		private readonly IMapper mapper;
 		private readonly IProductService productService;
 
 		public OrderService(ApplicationDbContext dbContext,
 			IOrderItemService orderItemService,
 			IMapper mapper,
-			IProductService productService)
+			IProductService productService,
+			INotificationService notificationService,
+			IHubContext<NotificationHub> hubContext)
 		{
 			this.dbContext = dbContext;
 			this.orderItemService = orderItemService;
 			this.mapper = mapper;
 			this.productService = productService;
+			this.notificationService = notificationService;
+			this.hubContext = hubContext;
 		}
 
-		public List<Order>? CreateOrder(OrderDto orderDto, string supplierIds, string quantities)
+		public async Task<List<Order>?> CreateOrder(OrderDto orderDto, string supplierIds, string quantities)
 		{
 			if (orderDto == null) return null;
 			List<Order> orders = new List<Order>();
@@ -55,7 +65,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 				};
 				orderItemDtos.Add(orderItemDto);
 			}
-			
+
 			var groups = orderItemDtos.GroupBy(x => x.SupplierId);
 			foreach (var group in groups)
 			{
@@ -73,7 +83,27 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 					item.OrderId = order.Id;
 					orderItemService.CreateOrderItem(item);
 				}
+				
 				orders.Add(order);
+			}
+
+			foreach (var order in orders)
+			{
+				var notifi = new Notification()
+				{
+					OrderId = order.Id,
+					FromUserId = order.RestaurantId,
+					ToUserId = order.SupplierId,
+					DateAdded = DateTime.UtcNow,
+					DateReady = null,
+					Header = "New Order Received",
+					Body = $"Order ID: {order.Id}\r\nRestaurant: {((order.Restaurant?? new Restaurant()).User??new User() { Name = "undefined"}).Name}\r\nTotal Amount: ${order.TotalPrice}\r\n",
+					isRead = false,
+					
+				};
+				notificationService.Create(notifi);
+				var notifiViewModel = mapper.Map<NotificationViewModel>(notifi);
+				await hubContext.Clients.Group(order.SupplierId).SendAsync("ReceiveNotification" , notifiViewModel);
 			}
 
 			return orders;
@@ -173,7 +203,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
 
 
-		public int UpdateStatus(int orderId, string userId, StatusOrder status)
+		public async Task<int> UpdateStatus(int orderId, string userId, StatusOrder status)
 		{
 			var order = GetOrder(orderId, userId);
 			if (order != null)
@@ -182,6 +212,21 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 				order.DateModified = DateTime.UtcNow;
 				dbContext.Orders.Update(order);
 				dbContext.SaveChanges();
+				var notifi = new Notification()
+				{
+					Body = $"change status to {status.ToString()}",
+					DateAdded = DateTime.UtcNow,
+					DateReady = null,
+					FromUserId = userId,
+					ToUserId = order.SupplierId.Equals(userId) ? order.RestaurantId : order.SupplierId,
+					Header = $"change status to {status.ToString()}",
+					isRead = false,
+					OrderId = orderId
+
+				};
+				notificationService.Create(notifi);
+				var notifiViewModel = mapper.Map<NotificationViewModel>(notifi);
+				await hubContext.Clients.Group(notifi.ToUserId).SendAsync("ReceiveNotification", notifiViewModel);
 				return orderId;
 			}
 			return -1;
@@ -238,7 +283,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			return new { data = orderDetailsViewModel };
 		}
 
-		public object? UpdateOrderDetails(OrderDetailsDto orderDetailsDto, string userId)
+		public async Task<object?> UpdateOrderDetails(OrderDetailsDto orderDetailsDto, string userId)
 		{
 			if (orderDetailsDto == null) return -1;
 			var order = GetOrder(orderDetailsDto.Id, userId);
@@ -246,7 +291,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			if (order.StatusOrder == StatusOrder.Draft)
 			{
 				if (!orderDetailsDto.IsDraft)
-					UpdateStatus(order.Id, userId, StatusOrder.Pending);
+					await UpdateStatus(order.Id, userId, StatusOrder.Pending);
 			}
 			order.OrderDate = orderDetailsDto.OrderDate;
 			order.PaymentMethod = orderDetailsDto.PaymentMethod;
@@ -355,6 +400,21 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 			if (orderItemsViewModel == null || orderItemsViewModel.Count() < 1) return null;
 			else return new { data = orderItemsViewModel };
 
+		}
+
+		public async Task<Order?> Cancel(int orderId, string userId)
+		{
+			var order = GetOrder(orderId, userId);
+			if(order == null) return null;
+			if(order.StatusOrder != StatusOrder.Processing 
+				&& order.StatusOrder != StatusOrder.Pending
+				&& order.StatusOrder != StatusOrder.Draft)
+				return null;
+		    var result =  await UpdateStatus(orderId, userId , StatusOrder.Cancelled);
+			if (result > 0)
+				return order;
+			else return null;
+			
 		}
 	}
 

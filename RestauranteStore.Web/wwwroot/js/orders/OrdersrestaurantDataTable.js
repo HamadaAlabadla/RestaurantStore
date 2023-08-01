@@ -1,9 +1,9 @@
 ﻿var datatable;
-debugger
+
 var table = $('[id="OrdersTable"]');
 
 $(document).ready(function () {
-    debugger
+    
     datatable = table.DataTable(
         {
         "serverSide": true,
@@ -15,12 +15,12 @@ $(document).ready(function () {
             "type": "POST",
             "datatype": "json",
             "data": function (filterString) {
-                debugger
+                
                 filterString.filter = '';
 
                 // Get filter values
                 selectOptions.forEach((item, index) => {
-                    debugger
+                    
                     if (item.value && item.value !== '') {
                         
                         if (index !== 0) {
@@ -93,10 +93,24 @@ $(document).ready(function () {
                 "data": null, "name": null, "autowidth": true,
                 "sorting": true,
                 "render": function (data, type, row) {
+
+                    var color = '';
+                    if (data.statusOrder == 'Completed' || data.statusOrder == 'Delivered') {
+                        color = 'success';
+                    } else if (data.statusOrder == 'Denied' || data.statusOrder == 'Expired' || data.statusOrder == 'Failed' || data.statusOrder == 'Cancelled' ) {
+                        color = 'danger';
+                    } else if (data.statusOrder == 'Pending') {
+                        color = 'warning';
+                    } else if (data.statusOrder == 'Processing' || data.statusOrder == 'Delivering') {
+                        color = 'primary';
+                    } else if (data.statusOrder == 'Refunded') {
+                        color = 'info';
+                    }
+
                     return `<!--begin::Status=-->
-							<td class="text-end pe-0" data-order="Completed">
+							<td class="text-end pe-0" data-order="${data.statusOrder}">
 								<!--begin::Badges-->
-								<div class="badge badge-light-success">${data.statusOrder}</div>
+								<div class="badge badge-light-${color}">${data.statusOrder}</div>
 								<!--end::Badges-->
 							</td>
 							<!--end::Status=-->`;
@@ -139,6 +153,20 @@ $(document).ready(function () {
                 "data": null, "name": null, "autowidth": true,
                 "sorting": true,
                 "render": function (data, type, row) {
+                    var deleteHtml = ``;
+                    if (data.statusOrder == 'Pending' || data.statusOrder == 'Processing') {
+                        deleteHtml = `<a id="deleteLink" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+								        <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
+								        <span class="svg-icon svg-icon-3">
+									        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										        <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
+										        <path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
+										        <path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
+									        </svg>
+								        </span>
+								        <!--end::Svg Icon-->
+							        </a>`;
+                    }
                     return `<!--begin::Action=-->
 							<td class="text-end">
                                 <span id="OrderIdSpan"  class="d-none" >${data.id}</span>
@@ -149,12 +177,79 @@ $(document).ready(function () {
 								    </span>
 								    <!--end::Svg Icon-->
 							    </a>
+                                ${deleteHtml}
 							</td>
 							<!--end::Action=-->`;
                 }
             }, 
             
-        ],
+            ],
+            "drawCallback": function () {
+                
+                var deleteLinks = document.querySelectorAll('[id="deleteLink"');
+                if (deleteLinks !== null) {
+                    deleteLinks.forEach(function (deleteLink) {
+                        deleteLink.addEventListener('click', function () {
+                            var tr = this.closest('td');
+                            var orderId = tr.querySelector('[id="OrderIdSpan"]').textContent;
+
+                            Swal.fire({
+                                title: "Confirm Delete",
+                                text: "Are you sure you want to Cancelled this order?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#d33",
+                                cancelButtonColor: "#3085d6",
+                                confirmButtonText: "Delete",
+                                cancelButtonText: "Cancel",
+                            }).then((result) => {
+
+                                if (result.isConfirmed) {
+                                    $.ajax({
+                                        url: '/Orders/CancelOrder',
+                                        type: 'POST',
+                                        data: { id: orderId },
+                                        success: function (data) {
+
+                                            
+                                            // Handle the success response
+                                            // For example, you can close the modal and update the displayed data
+                                            Swal.fire({
+                                                text: "order has been successfully submitted!",
+                                                icon: "success",
+                                                buttonsStyling: false,
+                                                confirmButtonText: "Ok, got it!",
+                                                customClass: {
+                                                    confirmButton: "btn btn-primary"
+                                                }
+                                            }).then(function (result) {
+                                                if (result.isConfirmed) {
+                                                    datatable.draw();
+                                                }
+                                            });
+
+                                            // Perform any other action on success
+                                        },
+                                        error: function (error) {
+                                            
+                                            Swal.fire({
+                                                html: "Sorry, looks like there are some errors detected, please try again.",
+                                                icon: "error",
+                                                buttonsStyling: false,
+                                                confirmButtonText: "Ok, got it!",
+                                                customClass: {
+                                                    confirmButton: "btn btn-primary"
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+                }
+            }
+
         },
     );
 
@@ -180,7 +275,7 @@ $(document).ready(() => {
         dateFormat: "Y-m-d",
         mode: "range",
         onChange: function (selectedDates, dateStr, instance) {
-            debugger
+            
             //handleFlatpickr(selectedDates, dateStr, instance);
             datatable.draw();
         },

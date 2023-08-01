@@ -30,4 +30,8 @@
     <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\js\users\deactivate-account.js" />
+  </ItemGroup>
+
 </Project>

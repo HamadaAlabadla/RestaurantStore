@@ -4,6 +4,7 @@ using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.EF.Models;
 using RestaurantStore.Core.Dtos;
 using RestaurantStore.Core.ModelViewModels;
+using RestaurantStore.EF.Models;
 using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestaurantStore.Infrastructure.AutoMapper
@@ -20,7 +21,7 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 
 			CreateMap<UserDto, User>()
 				.ForMember(dist => dist.Id, src => src.MapFrom(src => src.Id))
-				.ForMember(dist => dist.Name, src => src.MapFrom(src => (!string.IsNullOrEmpty(src.Name))?src.Name: $"{src.FirstName} {src.LastName}"))
+				.ForMember(dist => dist.Name, src => src.MapFrom(src => (!string.IsNullOrEmpty(src.Name)) ? src.Name : $"{src.FirstName} {src.LastName}"))
 				.ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
 				.ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
 				.ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
@@ -33,9 +34,12 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 
 			CreateMap<User, UserDto>()
 				.ForMember(dist => dist.Logo, src => src.Ignore())
-				.ForMember(dist => dist.FirstName, src => src.MapFrom(src => SplitName(src.Name??"")[0]))
+				.ForMember(dist => dist.FirstName, src => src.MapFrom(src => SplitName(src.Name ?? "")[0]))
 				.ForMember(dist => dist.LastName, src => src.MapFrom(src => SplitName(src.Name ?? "")[1]))
 				.ForMember(dist => dist.image, src => src.MapFrom(src => src.Logo));
+
+			CreateMap<User, EditEmailDto>()
+				.ForMember(dist => dist.Password, src => src.Ignore());
 
 
 			CreateMap<RestaurantDto, Restaurant>()
@@ -135,7 +139,16 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 				.ForMember(dist => dist.OrderDate, src => src.MapFrom(src => src.Order.OrderDate.ToShortDateString()))
 				.ForMember(dist => dist.DateCreate, src => src.MapFrom(src => src.Order.DateCreate.ToShortDateString()))
 				.ForMember(dist => dist.Price, src => src.MapFrom(src => src.Price));
-		}
+
+
+			CreateMap<Notification, NotificationViewModel>()
+				.ForMember(dist => dist.FromUserImage, src => src.MapFrom(src => src.FromUser.Logo))
+				.ForMember(dist => dist.FromUserName, src => src.MapFrom(src => src.FromUser.Name))
+				.ForMember(dist => dist.DateReady, src => src.MapFrom(src => (src.DateReady??DateTime.UtcNow).ToShortDateString() ));
+
+        }
+
+		
 
 		private string[] SplitName(string name = "")
 		{

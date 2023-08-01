@@ -1,0 +1,146 @@
+﻿@model IEnumerable<RestaurantStore.Core.ModelViewModels.NotificationViewModel>
+@{
+	var count = Model.Count();
+	var countUnRead = Model.Where(x => !x.isRead).Count();
+}
+<span id="NotifiCount" hidden>@count</span>
+<span id="NotifiCountUnRead" hidden>@countUnRead</span>
+
+@foreach (var item in Model)
+{
+	if (!item.isRead)
+	{
+		<!--begin::Item-->
+		<div href="" class="d-flex flex-stack py-4 bg-light-primary">
+			
+			<!--begin::Section-->
+			<div class="d-flex align-items-center">
+				<!--begin::Symbol-->
+				<div class="symbol symbol-35px me-4">
+					<span class="symbol-label bg-light-primary">
+						<!--begin:: Avatar -->
+						<div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+							<a href="#">
+								<div class="symbol-label">
+									<img src="~/images/users/@item.FromUserImage" alt="@item.FromUserName" class="w-100" />
+								</div>
+							</a>
+						</div>
+						<!--end::Avatar-->
+					</span>
+				</div>
+				<!--end::Symbol-->
+				<!--begin::Title-->
+				<div class="mb-0 me-2">
+					<a href="" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
+						<span hidden id="NotifiIdSpan">@item.Id</span>
+						<span hidden id="OrderIdSpan">@item.OrderId</span>
+						@item.FromUserName
+						</a>
+					<div class="text-gray-400 fs-7">@item.Header</div>
+				</div>
+				<!--end::Title-->
+			</div>
+			<!--end::Section-->
+			@{
+				int date = (int)(DateTime.UtcNow - item.DateAdded).TotalMinutes;
+			}
+			<!--begin::Label-->
+			<span class="badge badge-light fs-8">@date mins ago</span>
+			<!--end::Label-->
+		</div>
+		<!--end::Item-->
+	}
+	else
+	{
+		<!--begin::Item-->
+		<div href=""  class="d-flex flex-stack py-4 ">
+			
+			<!--begin::Section-->
+			<div class="d-flex align-items-center">
+				<!--begin::Symbol-->
+				<div class="symbol symbol-35px me-4">
+					<span class="symbol-label bg-light-primary">
+						<!--begin:: Avatar -->
+						<div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+							<a href="#">
+								<div class="symbol-label">
+									<img src="~/images/users/@item.FromUserImage" alt="@item.FromUserName" class="w-100" />
+								</div>
+							</a>
+						</div>
+						<!--end::Avatar-->
+					</span>
+				</div>
+				<!--end::Symbol-->
+				<!--begin::Title-->
+				<div class="mb-0 me-2">
+					<a asp-controller="Orders" asp-action="DetailsForRestaurant" asp-route-id="@item.OrderId" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
+						<span hidden id="NotifiIdSpan">@item.Id</span>
+						<span hidden id="OrderIdSpan">@item.OrderId</span>
+						@item.FromUserName
+						
+					</a>
+					<div class="text-gray-400 fs-7">@item.Header</div>
+				</div>
+				<!--end::Title-->
+			</div>
+			<!--end::Section-->
+			@{
+				int date = (int)(DateTime.UtcNow - item.DateAdded).TotalMinutes;
+			}
+			<!--begin::Label-->
+			<span class="badge badge-light fs-8">@date mins ago</span>
+			<!--end::Label-->
+		</div>
+		<!--end::Item-->
+	}
+}
+
+@*
+<div class="scroll-y mh-325px my-5 px-8">
+	<span id="NotifiCount" hidden>@count</span>
+	<span id="NotifiCountUnRead" hidden>@countUnRead</span>
+	
+	@foreach (var item in Model)
+	{
+		if (!item.isRead)
+		{
+			<div class="notification-list notification-list--unread">
+				<a href="" id="NotifiLink"  class="notification-list_content">
+					<span hidden id="NotifiIdSpan">@item.Id</span>
+					<span hidden id="OrderIdSpan">@item.OrderId</span>
+					<div class="notification-list_img">
+						<img src="~/images/users/@item.FromUserImage" alt="user">
+					</div>
+					<div class="notification-list_detail">
+						<p><b>@item.FromUserName</b> @item.Header</p>
+						@{
+							var date = (DateTime.UtcNow - item.DateAdded).TotalMinutes;
+						}
+						<p class="text-muted"><small>@date mins ago</small></p>
+					</div>
+				</a>
+			</div>
+		}
+		else
+		{
+			<div class="notification-list ">
+				<a id="NotifiLink" asp-controller="Orders" asp-action="DetailsForRestaurant" asp-route-id="@item.OrderId" class="notification-list_content">
+					<span hidden id="NotifiIdSpan">@item.Id</span>
+					<div class="notification-list_img">
+						<img src="~/images/users/@item.FromUserImage" alt="user">
+					</div>
+					<div class="notification-list_detail">
+						<p><b>@item.FromUserName</b> @item.Header</p>
+						@{
+							var date = (DateTime.UtcNow - item.DateAdded).TotalMinutes;
+						}
+						<p class="text-muted"><small>@date mins ago</small></p>
+					</div>
+				</a>
+			</div>
+		}
+	}
+</div>
+*@

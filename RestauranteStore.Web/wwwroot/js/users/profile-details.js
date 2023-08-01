@@ -104,11 +104,11 @@ var KTAccountSettingsProfileDetails = function () {
     var handleForm = function () {
         submitButton.addEventListener('click', function (e) {
             e.preventDefault();
-            debugger
+            
             validation.validate().then(function (status) {
-                debugger
+                
                 if (status == 'Valid') {
-                    debugger
+                    
                     var formData = new FormData();
                     formData.append("Logo", $("#Logo")[0].files[0]);
                     formData.append("Id", userId);
@@ -170,7 +170,7 @@ var KTAccountSettingsProfileDetails = function () {
     // Public methods
     return {
         init: function () {
-            debugger
+            
             form = document.getElementById('kt_account_profile_details_form');
             
             if (!form) {

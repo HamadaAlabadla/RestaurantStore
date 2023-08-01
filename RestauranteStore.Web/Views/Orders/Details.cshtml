@@ -201,9 +201,23 @@
 														</span>
 														<!--end::Svg Icon-->Status Order
 													</div>
-												</td>
-												<td class="text-end pe-0" data-order="Completed">
-													<div class="badge badge-light-success">@Model.StatusOrder.ToString()</div>
+												</td>@{
+														var status = @Model.StatusOrder.ToString();
+														var color = "";
+														if (status.Equals("Completed") || status.Equals("Delivered")) {
+														color = "badge-light-success";
+														} else if (status.Equals("Denied") || status.Equals("Expired") || status.Equals("Failed") || status.Equals("Cancelled")) {
+														color = "badge-light-danger";
+														} else if (status.Equals("Pending")) {
+														color = "badge-light-warning";
+														} else if (status.Equals("Processing") || status.Equals("Delivering")) {
+														color = "badge-light-primary";
+														} else if (status.Equals("Refunded")) {
+														color = "badge-light-info";
+														}
+												}
+												<td class="text-end pe-0" data-order="@status">
+													<div class="badge @color">@Model.StatusOrder.ToString()</div>
 												</td>
 											</tr>
 											<!--end::Date-->

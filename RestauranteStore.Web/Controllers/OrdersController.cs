@@ -159,11 +159,11 @@ namespace RestaurantStore.Web.Controllers
 
 		// POST: OrdersController/Create
 		[HttpPost]
-		public IActionResult Create(OrderDto orderDto, string selectedProductIds, string quantities)
+		public async Task<IActionResult> Create(OrderDto orderDto, string selectedProductIds, string quantities)
 		{
 			if (ModelState.IsValid)
 			{
-				var orders = orderService.CreateOrder(orderDto, selectedProductIds, quantities);
+				var orders = await orderService.CreateOrder(orderDto, selectedProductIds, quantities);
 				if (orders != null && orders.Count() > 0)
 					return Ok();
 				else
@@ -189,13 +189,13 @@ namespace RestaurantStore.Web.Controllers
 
 		// POST: OrdersController/Edit/5
 		[HttpPost]
-		public IActionResult EditStatus(EditOrderStatusDto editOrderStatusDto)
+		public async Task<IActionResult> EditStatus(EditOrderStatusDto editOrderStatusDto)
 		{
 			if (ModelState.IsValid)
 			{
 				var user = userService.GetUserByContext(HttpContext);
 				if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-				var result = orderService.UpdateStatus(editOrderStatusDto.Id, user.Id, editOrderStatusDto.StatusOrder);
+				var result = await orderService.UpdateStatus(editOrderStatusDto.Id, user.Id, editOrderStatusDto.StatusOrder);
 				if (result > 0)
 					return Ok();
 				else
@@ -280,7 +280,18 @@ namespace RestaurantStore.Web.Controllers
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
 			var result = orderService.DeleteOrder(id, user.Id);
-			if(result != null) return Ok(result);
+			if (result != null) return Ok(result);
+			else return NotFound();
+		}
+		
+		// POST: OrdersController/Delete/5
+		[HttpPost]
+		public async Task<IActionResult> CancelOrder(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var result =await orderService.Cancel(id, user.Id);
+			if (result != null) return Ok();
 			else return NotFound();
 		}
 	}

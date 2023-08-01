@@ -93,10 +93,23 @@ $(document).ready(function () {
                 "data": null, "name": null, "autowidth": true,
                 "sorting": true,
                 "render": function (data, type, row) {
+                    var color = '';
+                    if (data.statusOrder == 'Completed' || data.statusOrder == 'Delivered') {
+                        color = 'success';
+                    } else if (data.statusOrder == 'Denied' || data.statusOrder == 'Expired' || data.statusOrder == 'Failed' || data.statusOrder == 'Cancelled') {
+                        color = 'danger';
+                    } else if (data.statusOrder == 'Pending') {
+                        color = 'warning';
+                    } else if (data.statusOrder == 'Processing' || data.statusOrder == 'Delivering') {
+                        color = 'primary';
+                    } else if (data.statusOrder == 'Refunded') {
+                        color = 'info';
+                    }
+
                     return `<!--begin::Status=-->
-							<td class="text-end pe-0" data-order="Completed">
+							<td class="text-end pe-0" data-order="${data.statusOrder}">
 								<!--begin::Badges-->
-								<div class="badge badge-light-success">${data.statusOrder}</div>
+								<div class="badge badge-light-${color}">${data.statusOrder}</div>
 								<!--end::Badges-->
 							</td>
 							<!--end::Status=-->`;

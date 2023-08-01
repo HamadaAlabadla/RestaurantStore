@@ -10,6 +10,7 @@ using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.FileService;
 using RestauranteStore.Infrastructure.Services.RestoranteService;
+using RestaurantStore.Core.Dtos;
 using System.Linq.Dynamic.Core;
 using System.Security.Claims;
 using static RestauranteStore.Core.Enums.Enums;
@@ -19,6 +20,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 	public class UserService : IUserService
 	{
 		private readonly UserManager<User> userManager;
+		private readonly SignInManager<User> signInManager;
 		private readonly RoleManager<IdentityRole> roleManager;
 		private readonly IUserStore<User> _userStore;
 		private readonly ApplicationDbContext dbContext;
@@ -32,7 +34,8 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			ApplicationDbContext dbContext,
 			IMapper mapper,
 			IFileService fileService,
-			IRestaurantService restoranteService)
+			IRestaurantService restoranteService,
+			SignInManager<User> signInManager)
 		{
 			this.userManager = userManager;
 			this.roleManager = roleManager;
@@ -41,6 +44,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			this.mapper = mapper;
 			this.fileService = fileService;
 			this.restoranteService = restoranteService;
+			this.signInManager = signInManager;
 		}
 
 		public async Task<string?> CreateUser(UserDto userDto, string role)
@@ -82,12 +86,13 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			return null;
 		}
 
-		public async Task<User?> DeleteUser(string id)
+		public User? DeleteUser(string id)
 		{
 			var user = GetUser(id);
 			if (user == null) return null;
 			user.isDelete = true;
-			await userManager.UpdateAsync(user);
+			dbContext.users.Update(user);
+			dbContext.SaveChanges();
 			return user;
 		}
 
@@ -211,22 +216,45 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 			return dbContext.users.Where(x => !x.isDelete && x.UserType == UserType.supplier).ToList();
 		}
 
-        public async Task<string?> UpdateUserDetails(UserDto? userDto)
-        {
-            if(userDto == null) return null;
-			var user = GetUser(userDto.Id??"");
-			if(user == null) return null;
+		public async Task<string?> UpdateUserDetails(UserDto? userDto)
+		{
+			if (userDto == null) return null;
+			var user = GetUser(userDto.Id ?? "");
+			if (user == null) return null;
 			user.Name = $"{userDto.FirstName} {userDto.LastName}";
 			user.PhoneNumber = userDto.PhoneNumber;
-            if (userDto.Logo != null)
-            {
-                var logoPath = await fileService.UploadFile(userDto.Logo, "users", user.UserName ?? "");
-                user.Logo = logoPath;
-            }
+			if (userDto.Logo != null)
+			{
+				var logoPath = await fileService.UploadFile(userDto.Logo, "users", user.UserName ?? "");
+				user.Logo = logoPath;
+			}
 			dbContext.users.Update(user);
 			dbContext.SaveChanges();
 			return user.Id;
-        
-        }
-    }
+
+		}
+
+		public async Task<string?> UpdateEmail(EditEmailDto? editEmailDto)
+		{
+			if (editEmailDto == null) return null;
+			var user = GetUser(editEmailDto.Id ?? "");
+			if (user == null) return null;
+			var result = await signInManager.CheckPasswordSignInAsync(user, editEmailDto.Password, lockoutOnFailure: false);
+			if (!result.Succeeded) return null;
+			user.Email = editEmailDto.Email;
+			dbContext.users.Update(user);
+			dbContext.SaveChanges();
+			return user.Id;
+		}
+
+		public async Task<string?> UpdatePassword(EditPasswordDto? editPasswordDto)
+		{
+			if (editPasswordDto == null || !editPasswordDto.NewPassword.Equals(editPasswordDto.ConfirmPassword)) return null;
+			var user = GetUser(editPasswordDto.Id ?? "");
+			if (user == null) return null;
+			var result = await userManager.ChangePasswordAsync(user, editPasswordDto.Password, editPasswordDto.NewPassword);
+			if (!result.Succeeded) return null;
+			return user.Id;
+		}
+	}
 }
