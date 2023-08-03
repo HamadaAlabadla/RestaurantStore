@@ -1,12 +1,12 @@
 ﻿
 var table;
 var datatable;
-debugger
+
 //var orderId = document.getElementById('OrderIdSpan').textContent;
 var orderId = document.querySelector('[id="OrderIdSpan"]').textContent;
 
 function drawTableProducts() {
-    debugger
+    
     table = document.querySelector('#Order_Products_table');
     function productList() {
         count = 0;
@@ -423,7 +423,7 @@ $(document).on('click', '#submitOrderItems', function (e) {
                         quantities[productId] = quantity;
                     }
                 });
-                debugger
+                
                 var formData = new FormData();
                 formData.append("OrderId", orderId);
                 formData.append("quantities", JSON.stringify(quantities));
@@ -440,7 +440,7 @@ $(document).on('click', '#submitOrderItems', function (e) {
                         var orderItemsTable = document.getElementById('orderItemsTable');
                         var total = 0;
                         data.data.forEach(function (item) {
-                            debugger
+                            
                             var totalPrice = item.price * item.qtyRequierd;
                             total += totalPrice;
                             html += `<tr>

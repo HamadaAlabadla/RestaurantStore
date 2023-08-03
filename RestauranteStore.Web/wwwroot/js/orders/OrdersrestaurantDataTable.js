@@ -9,7 +9,6 @@ $(document).ready(function () {
         "serverSide": true,
         "filter": true,
         "pagination": true,
-        "dataSrc": "",
         "ajax": {
             "url": "/Orders/GetAllOrdersForRestaurant",
             "type": "POST",
@@ -43,7 +42,20 @@ $(document).ready(function () {
                 return filterString;
             }
 
-        },
+            },
+        "columnDefs": [
+            {
+                "targets": [0],
+                "visible": true,
+                "searchable": false,
+            },
+            {
+                "targets": [6],
+                "visible": true,
+                "searchable": false,
+            },
+                
+        ],
         "columns": [
             {
                 "orderable": false,
@@ -58,7 +70,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
+                "data": null, "name": "Supplier", "autowidth": true,
                 
                 "render": function (data, type, row) {
                     var html = '';
@@ -90,8 +102,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "StatusOrder", "autowidth": true,
                 "render": function (data, type, row) {
 
                     var color = '';
@@ -117,8 +128,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "TotalPrice", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Total=-->
 							<td class="text-end pe-0">
@@ -128,8 +138,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "DateCreate", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Date Added=-->
 							<td class="text-end" data-order="2023-01-29">
@@ -139,8 +148,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "DateModified", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Date Modified=-->
 							<td class="text-end" data-order="2023-02-03">
@@ -151,10 +159,11 @@ $(document).ready(function () {
             },
             {
                 "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "orderable": false,
                 "render": function (data, type, row) {
                     var deleteHtml = ``;
-                    if (data.statusOrder == 'Pending' || data.statusOrder == 'Processing') {
+                    var deleveredHtml = ``;
+                    if (data.statusOrder == 'Pending' || data.statusOrder == 'Processing' || data.statusOrder == 'Draft') {
                         deleteHtml = `<a id="deleteLink" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
 								        <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
 								        <span class="svg-icon svg-icon-3">
@@ -167,6 +176,13 @@ $(document).ready(function () {
 								        <!--end::Svg Icon-->
 							        </a>`;
                     }
+                    if (data.statusOrder == 'Delivering') {
+                        deleveredHtml = `<a  class="btn btn-icon btn-bg-light  btn-active-color-light btn-active-success btn-sm me-1" id="confirmOrderLink">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+                                              <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                            </svg>
+                                        </a>`
+                    }
                     return `<!--begin::Action=-->
 							<td class="text-end">
                                 <span id="OrderIdSpan"  class="d-none" >${data.id}</span>
@@ -178,6 +194,7 @@ $(document).ready(function () {
 								    <!--end::Svg Icon-->
 							    </a>
                                 ${deleteHtml}
+                                ${deleveredHtml}
 							</td>
 							<!--end::Action=-->`;
                 }
@@ -185,69 +202,8 @@ $(document).ready(function () {
             
             ],
             "drawCallback": function () {
-                
-                var deleteLinks = document.querySelectorAll('[id="deleteLink"');
-                if (deleteLinks !== null) {
-                    deleteLinks.forEach(function (deleteLink) {
-                        deleteLink.addEventListener('click', function () {
-                            var tr = this.closest('td');
-                            var orderId = tr.querySelector('[id="OrderIdSpan"]').textContent;
-
-                            Swal.fire({
-                                title: "Confirm Delete",
-                                text: "Are you sure you want to Cancelled this order?",
-                                icon: "warning",
-                                showCancelButton: true,
-                                confirmButtonColor: "#d33",
-                                cancelButtonColor: "#3085d6",
-                                confirmButtonText: "Delete",
-                                cancelButtonText: "Cancel",
-                            }).then((result) => {
-
-                                if (result.isConfirmed) {
-                                    $.ajax({
-                                        url: '/Orders/CancelOrder',
-                                        type: 'POST',
-                                        data: { id: orderId },
-                                        success: function (data) {
-
-                                            
-                                            // Handle the success response
-                                            // For example, you can close the modal and update the displayed data
-                                            Swal.fire({
-                                                text: "order has been successfully submitted!",
-                                                icon: "success",
-                                                buttonsStyling: false,
-                                                confirmButtonText: "Ok, got it!",
-                                                customClass: {
-                                                    confirmButton: "btn btn-primary"
-                                                }
-                                            }).then(function (result) {
-                                                if (result.isConfirmed) {
-                                                    datatable.draw();
-                                                }
-                                            });
-
-                                            // Perform any other action on success
-                                        },
-                                        error: function (error) {
-                                            
-                                            Swal.fire({
-                                                html: "Sorry, looks like there are some errors detected, please try again.",
-                                                icon: "error",
-                                                buttonsStyling: false,
-                                                confirmButtonText: "Ok, got it!",
-                                                customClass: {
-                                                    confirmButton: "btn btn-primary"
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                    });
-                }
+                handelDeleteLink();
+                handleConfirmOrderLink();
             }
 
         },
@@ -255,6 +211,139 @@ $(document).ready(function () {
 
     
 },);
+
+function handelDeleteLink() {
+    var deleteLinks = document.querySelectorAll('[id="deleteLink"');
+    if (deleteLinks !== null) {
+        deleteLinks.forEach(function (deleteLink) {
+            deleteLink.addEventListener('click', function () {
+                var tr = this.closest('td');
+                var orderId = tr.querySelector('[id="OrderIdSpan"]').textContent;
+
+                Swal.fire({
+                    title: "Confirm Delete",
+                    text: "Are you sure you want to Cancelled this order?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Delete",
+                    cancelButtonText: "Cancel",
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Orders/CancelOrder',
+                            type: 'POST',
+                            data: { id: orderId },
+                            success: function (data) {
+
+
+                                // Handle the success response
+                                // For example, you can close the modal and update the displayed data
+                                Swal.fire({
+                                    text: "order has been successfully submitted!",
+                                    icon: "success",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                }).then(function (result) {
+                                    if (result.isConfirmed) {
+                                        datatable.draw();
+                                    }
+                                });
+
+                                // Perform any other action on success
+                            },
+                            error: function (error) {
+
+                                Swal.fire({
+                                    html: "Sorry, looks like there are some errors detected, please try again.",
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    }
+
+}
+
+
+function handleConfirmOrderLink() {
+    var confirmOrderLinks = document.querySelectorAll('[id="confirmOrderLink"');
+    if (confirmOrderLinks !== null) {
+        confirmOrderLinks.forEach(function (confirmOrderLink) {
+            confirmOrderLink.addEventListener('click', function () {
+                var tr = this.closest('td');
+                var orderId = tr.querySelector('[id="OrderIdSpan"]').textContent;
+
+                Swal.fire({
+                    title: "Confirm Delivery",
+                    text: "Are you sure you want to deliver this order?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#4CAF50",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Confirm",
+                    cancelButtonText: "Cancel",
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Orders/Delivered',
+                            type: 'POST',
+                            data: { id: orderId },
+                            success: function (data) {
+                                Swal.fire({
+                                    title: "Order Delivered!",
+                                    text: "The order has been delivered successfully.",
+                                    icon: "success",
+                                    confirmButtonColor: "#4CAF50",
+                                }).then(function (result) {
+                                    if (result.isConfirmed) {
+                                        datatable.draw();
+                                    }
+                                });
+
+                                // Perform any other action on success
+                            },
+                            error: function (error) {
+
+                                Swal.fire({
+                                    html: "Sorry, looks like there are some errors detected, please try again.",
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Order Delivery Canceled",
+                            text: "You canceled the order delivery.",
+                            icon: "info",
+                            confirmButtonColor: "#4CAF50",
+                        });
+                    }
+                });
+            });
+        });
+    }
+
+}
 //const filterForm = document.querySelector('[data-kt-user-table-filter="form"]');
 //const filterButton = filterForm.querySelector('[data-kt-user-table-filter="filter"]');
 //const selectOptions = document.querySelectorAll('select');

@@ -43,13 +43,13 @@ namespace RestauranteStore.Web.Controllers
 			return Ok(jsonData);
 		}
 		[HttpPost]
-		public IActionResult GetAllProductsItemDto(int id)
+		public async Task<IActionResult> GetAllProductsItemDto(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
 			if (user.UserType != UserType.supplier)
 				user.Id = "admin";
-			var order = orderService.GetOrder(id, user.Id);
+			var order = await orderService.GetOrder(id, user.Id);
 			var supplierId = (order ?? new Order() { SupplierId = "" }).SupplierId;
 			var jsonData = productService.GetAllProductsItemDto(Request, supplierId, user.Id);
 

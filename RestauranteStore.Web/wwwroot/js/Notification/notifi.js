@@ -33,21 +33,44 @@ function handelLinks() {
         var divClosest = link.parentNode.parentNode.parentNode;
         if (divClosest.classList.contains('bg-light-primary')) {
             
-            link.addEventListener('click', function () {
-                
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                debugger
                 var orderId = link.querySelector('#OrderIdSpan').textContent;
-                $.ajax({
-                    url: '/Notifications/setRead',
-                    type: "POST",
-                    typedata: "json",
-                    data: { id: notifiId },
-                    success: function () {
-                        
-                        divClosest.classList.remove('bg-light-primary');
-                        window.location.href = `/Orders/DetailsForRestaurant/${orderId}`
+                //$.ajax({
+                //    url: '/Notifications/setRead',
+                //    type: "POST",
+                //    typedata: "json",
+                //    data: { id: notifiId },
+                //    success: function () {
+                //        debugger
+                //        divClosest.classList.remove('bg-light-primary');
+                //        //window.location.href = `/Orders/DetailsForRestaurant/${orderId}`;
+                //    },
+                //});
+                fetch(`/Notifications/setRead/${notifiId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json" // Set the appropriate content type for your request
                     },
-                });
-
+                    //body: { id: notifiId },
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            debugger
+                            divClosest.classList.remove('bg-light-primary');
+                            const newPath = link.getAttribute("href");
+                            window.location.href = newPath;
+                        }
+                    })
+                    .then(data => {
+                        
+                    })
+                    .catch(error => {
+                        debugger
+                        // Handle AJAX errors if needed
+                        console.error("Error executing AJAX request:", error);
+                    });
             });
         }
     });
@@ -72,7 +95,7 @@ connection.on("ReceiveNotification", function (notifi) {
 						        <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
 							        <a href="#">
 								        <div class="symbol-label">
-									        <img src="~/images/users/${notifi.fromUserImage}" alt="${notifi.fromUserName}" class="w-100" />
+									        <img src="/images/users/${notifi.fromUserImage}" alt="${notifi.fromUserName}" class="w-100" />
 								        </div>
 							        </a>
 						        </div>
@@ -82,7 +105,7 @@ connection.on("ReceiveNotification", function (notifi) {
 				        <!--end::Symbol-->
 				        <!--begin::Title-->
 				        <div class="mb-0 me-2">
-					        <a href="" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
+					        <a href="${notifi.url}" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
                             <span hidden id="NotifiIdSpan">${notifi.id}</span>
 			                <span hidden id="OrderIdSpan">${notifi.orderId}</span>
                             ${notifi.fromUserName}
@@ -93,7 +116,7 @@ connection.on("ReceiveNotification", function (notifi) {
 			        </div>
 			        <!--end::Section-->
 			        <!--begin::Label-->
-			        <span class="badge badge-light fs-8">${notifi.dateAdded} mins ago</span>
+			        <span class="badge badge-light-success fs-8">${notifi.dateAddedAgo} mins ago</span>
 			        <!--end::Label-->
 		        </div>
 		        <!--end::Item-->`;

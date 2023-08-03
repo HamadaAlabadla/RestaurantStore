@@ -12,7 +12,6 @@
 	{
 		<!--begin::Item-->
 		<div href="" class="d-flex flex-stack py-4 bg-light-primary">
-			
 			<!--begin::Section-->
 			<div class="d-flex align-items-center">
 				<!--begin::Symbol-->
@@ -32,7 +31,7 @@
 				<!--end::Symbol-->
 				<!--begin::Title-->
 				<div class="mb-0 me-2">
-					<a href="" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
+					<a href="@item.URL" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
 						<span hidden id="NotifiIdSpan">@item.Id</span>
 						<span hidden id="OrderIdSpan">@item.OrderId</span>
 						@item.FromUserName
@@ -42,11 +41,8 @@
 				<!--end::Title-->
 			</div>
 			<!--end::Section-->
-			@{
-				int date = (int)(DateTime.UtcNow - item.DateAdded).TotalMinutes;
-			}
 			<!--begin::Label-->
-			<span class="badge badge-light fs-8">@date mins ago</span>
+			<span class="badge badge-light-success fs-8">@item.DateAddedAgo</span>
 			<!--end::Label-->
 		</div>
 		<!--end::Item-->
@@ -55,7 +51,6 @@
 	{
 		<!--begin::Item-->
 		<div href=""  class="d-flex flex-stack py-4 ">
-			
 			<!--begin::Section-->
 			<div class="d-flex align-items-center">
 				<!--begin::Symbol-->
@@ -75,7 +70,7 @@
 				<!--end::Symbol-->
 				<!--begin::Title-->
 				<div class="mb-0 me-2">
-					<a asp-controller="Orders" asp-action="DetailsForRestaurant" asp-route-id="@item.OrderId" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
+					<a href="@item.URL" id="NotifiLink" class="fs-6 text-gray-800 text-hover-primary fw-bold">
 						<span hidden id="NotifiIdSpan">@item.Id</span>
 						<span hidden id="OrderIdSpan">@item.OrderId</span>
 						@item.FromUserName
@@ -86,11 +81,8 @@
 				<!--end::Title-->
 			</div>
 			<!--end::Section-->
-			@{
-				int date = (int)(DateTime.UtcNow - item.DateAdded).TotalMinutes;
-			}
 			<!--begin::Label-->
-			<span class="badge badge-light fs-8">@date mins ago</span>
+			<span class="badge badge-light fs-8">@item.DateAddedAgo</span>
 			<!--end::Label-->
 		</div>
 		<!--end::Item-->

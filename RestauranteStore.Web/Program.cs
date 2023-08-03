@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
@@ -13,6 +14,7 @@ using RestauranteStore.Infrastructure.Services.UnitPriceService;
 using RestauranteStore.Infrastructure.Services.UserService;
 using RestaurantStore.Infrastructure.AutoMapper;
 using RestaurantStore.Infrastructure.Hubs;
+using RestaurantStore.Infrastructure.Services.EmailService;
 using RestaurantStore.Infrastructure.Services.NotificationService;
 using RestaurantStore.Infrastructure.Services.OrderService;
 
@@ -47,6 +49,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+//builder.Services.AddSingleton<IEmailSender, EmailService>();
 
 
 

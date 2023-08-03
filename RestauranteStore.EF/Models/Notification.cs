@@ -18,6 +18,7 @@ namespace RestaurantStore.EF.Models
         public string Header { get; set; } 
         public string Body { get; set; }
         public bool isRead { get; set; }
+        public string URL { get; set; }
         public DateTime? DateReady { get; set; }
         public DateTime DateAdded { get; set; }
     }

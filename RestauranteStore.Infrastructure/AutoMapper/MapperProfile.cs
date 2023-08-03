@@ -144,6 +144,7 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 			CreateMap<Notification, NotificationViewModel>()
 				.ForMember(dist => dist.FromUserImage, src => src.MapFrom(src => src.FromUser.Logo))
 				.ForMember(dist => dist.FromUserName, src => src.MapFrom(src => src.FromUser.Name))
+				.ForMember(dist => dist.DateAddedAgo, src => src.MapFrom(src => GetDateAgo(src.DateAdded)))
 				.ForMember(dist => dist.DateReady, src => src.MapFrom(src => (src.DateReady??DateTime.UtcNow).ToShortDateString() ));
 
         }
@@ -154,6 +155,24 @@ namespace RestaurantStore.Infrastructure.AutoMapper
 		{
 			return name.Split(' ');
 
+		}
+		private string GetDateAgo(DateTime Date)
+		{
+			var dateAgo = "";
+			var diffTime =(DateTime.UtcNow - Date);
+			int second = (int)diffTime.TotalSeconds;
+			int mins = (int)diffTime.TotalMinutes;
+			int hr = (int)diffTime.TotalHours;
+			int days = (int)diffTime.TotalDays;
+			if(second < 60)
+				dateAgo = $"{second} sec ago";
+			else if(mins < 60)
+				dateAgo = $"{mins} mins ago";
+			else if(hr < 24)
+				dateAgo = $"{hr} hr ago";
+			else
+				dateAgo = $"{days} day ago";
+			return dateAgo;
 		}
 	}
 }

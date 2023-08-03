@@ -30,9 +30,8 @@
 				<label class="required fw-semibold fs-6 mb-2">Id</label>
 				<!--end::Label-->
 				<!--begin::Input-->
-				<input type="hidden" asp-for="@Model.Id" />
 				<input readonly asp-for="@Model.Id" class="form-control form-control-solid mb-3 mb-lg-0" />
-				<span asp-validation-for="@Model.Id" class="text-danger"></span>
+				@*<span asp-validation-for="@Model.Id" class="text-danger"></span>*@
 				<!--end::Input-->
 			</div>
 			<!--end::Input group-->

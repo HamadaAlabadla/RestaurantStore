@@ -6,6 +6,7 @@ $(document).ready(function () {
         "filter": true,
         "pagination": true,
         "dataSrc": "",
+        order: [[2, 'asc']],
         "ajax": {
             "url": "/Users/GetAllUsers",
             "type": "POST",
@@ -86,7 +87,7 @@ $(document).ready(function () {
             },
             {
                 "data": null, "name": "Role", "autowidth": true,
-                "sorting": true,
+                "sort": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Role=-->
 							<td>${data.role}</td>

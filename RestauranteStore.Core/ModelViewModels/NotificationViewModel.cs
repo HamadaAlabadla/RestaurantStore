@@ -17,7 +17,8 @@ namespace RestaurantStore.Core.ModelViewModels
         public string Header { get; set; }
         public string Body { get; set; }
         public bool isRead { get; set; }
-        public string DateReady { get; set; }
-        public DateTime DateAdded { get; set; }
+		public string URL { get; set; }
+		public string DateReady { get; set; }
+        public string DateAddedAgo { get; set; }
     }
 }

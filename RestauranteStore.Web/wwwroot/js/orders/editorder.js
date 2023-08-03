@@ -7,6 +7,7 @@ $(document).ready(function () {
         type: "GET",
         typedata: "json",
         success: function (data) {
+            
             OrderDetailsTable.querySelector('[id="DateAdded"]').innerHTML = data.data.dateAdded;
             OrderDetailsTable.querySelector('[id="paymentMethod"]').textContent = data.data.paymentMethod;
             var color = '';
@@ -18,7 +19,7 @@ $(document).ready(function () {
                 color = 'badge-light-warning';
             } else if (data.data.statusOrder == 'Processing' || data.data.statusOrder == 'Delivering') {
                 color = 'badge-light-primary';
-            } else if (data.data.statusOrder == 'Refunded') {
+            } else if (data.data.statusOrder == 'Refunded' || data.data.statusOrder == 'Draft') {
                 color = 'badge-light-info';
             }
             OrderDetailsTable.querySelector('[id="StatusOrder"]').classList.add('badge');
@@ -152,7 +153,22 @@ function loadEditForm(id) {
             // $('#editUserModal').modal('show');
         },
         error: function (error) {
-            console.error('Error while loading the edit form:', error);
+            $('#EditOrderModal').modal('hide');
+            $('#EditOrderModal').hide();
+            var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
+            allHide.forEach(x => {
+                x.classList.add('d-none');
+            });
+            Swal.fire({
+                title: "Not Allowed!",
+                text: "Sorry, you are not allowed to update the order at this time.",
+                icon: "error",
+                confirmButtonColor: "#007bff", // Use a light blue color (you can adjust this to your preference)
+                confirmButtonText: "OK",
+                //background: "#f8f9fa", // Use a light background color (you can adjust this to your preference)
+                //backdrop: "rgba(255, 255, 255, 0.8)", // Use a light backdrop (transparent white)
+                allowOutsideClick: true
+            });
         }
     });
 }
@@ -170,7 +186,22 @@ function loadEditPaymentForm(id) {
             // $('#editUserModal').modal('show');
         },
         error: function (error) {
-            console.error('Error while loading the edit form:', error);
+            $('#EditOrderModal').modal('hide');
+            $('#EditOrderModal').hide();
+            var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
+            allHide.forEach(x => {
+                x.classList.add('d-none');
+            });
+            Swal.fire({
+                title: "Not Allowed!",
+                text: "Sorry, you are not allowed to update the order at this time.",
+                icon: "error",
+                confirmButtonColor: "#007bff", // Use a light blue color (you can adjust this to your preference)
+                confirmButtonText: "OK",
+                //background: "#f8f9fa", // Use a light background color (you can adjust this to your preference)
+                //backdrop: "rgba(255, 255, 255, 0.8)", // Use a light backdrop (transparent white)
+                allowOutsideClick: true
+            });
         }
     });
 }
@@ -181,7 +212,7 @@ function loadEditOrderItemsForm(id) {
 
         url: '/Orders/EditOrderItems',
         type: 'GET',
-        //data: { id: id },
+        data: { id: id },
         success: function (result) {
 
             $('#EditOrderModal .modal-content').html(result);
@@ -191,7 +222,22 @@ function loadEditOrderItemsForm(id) {
 
         },
         error: function (error) {
-            console.error('Error while loading the edit form:', error);
+            $('#EditOrderModal').modal('hide');
+            $('#EditOrderModal').hide();
+            var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
+            allHide.forEach(x => {
+                x.classList.add('d-none');
+            });
+            Swal.fire({
+                title: "Not Allowed!",
+                text: "Sorry, you are not allowed to update the order at this time.",
+                icon: "error",
+                confirmButtonColor: "#007bff", // Use a light blue color (you can adjust this to your preference)
+                confirmButtonText: "OK",
+                //background: "#f8f9fa", // Use a light background color (you can adjust this to your preference)
+                //backdrop: "rgba(255, 255, 255, 0.8)", // Use a light backdrop (transparent white)
+                allowOutsideClick: true
+            });
         }
     });
 }
@@ -229,12 +275,13 @@ $(document).on('submit', '#kt_modal_edit_order_details', function (e) {
     e.preventDefault();
     var formEdit = this;
     var formData = $(this).serialize();
-
+    
     $.ajax({
         url: '/Orders/EditOrderDetails',
         type: 'POST',
         data: formData,
         success: function (data) {
+            
             OrderDetailsTable.querySelector('[id="DateAdded"]').textContent = data.data.dateAdded;
             OrderDetailsTable.querySelector('[id="paymentMethod"]').textContent = data.data.paymentMethod;
             var color = '';

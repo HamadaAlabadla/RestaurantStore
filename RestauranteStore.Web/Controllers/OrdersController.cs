@@ -2,12 +2,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using RestauranteStore.Core.Dtos;
+using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.OrderService;
 using RestauranteStore.Infrastructure.Services.UserService;
 using RestaurantStore.Core.Dtos;
 using RestaurantStore.Core.ModelViewModels;
 using static RestauranteStore.Core.Enums.Enums;
+
 
 namespace RestaurantStore.Web.Controllers
 {
@@ -16,14 +20,17 @@ namespace RestaurantStore.Web.Controllers
 		private readonly IOrderService orderService;
 		private readonly IUserService userService;
 		private readonly IMapper mapper;
+		private readonly IHtmlHelper _htmlHelper;
 
 		public OrdersController(IOrderService orderService,
 			IUserService userService,
-			IMapper mapper)
+			IMapper mapper ,
+			IHtmlHelper _htmlHelper)
 		{
 			this.orderService = orderService;
 			this.userService = userService;
 			this.mapper = mapper;
+			this._htmlHelper = _htmlHelper;
 		}
 
 		[Authorize(Roles = "supplier")]
@@ -62,11 +69,11 @@ namespace RestaurantStore.Web.Controllers
 
 		// GET: OrdersController/Details/5
 		[HttpGet]
-		public IActionResult Details(int id)
+		public async Task<IActionResult> Details(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var order = orderService.GetOrder(id, user.Id);
+			var order = await orderService.GetOrder(id, user.Id);
 			var orderViewModel = mapper.Map<OrderViewModel>(order);
 			if (orderViewModel == null)
 			{
@@ -87,33 +94,33 @@ namespace RestaurantStore.Web.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult OrderDetails(int id)
+		public async Task<IActionResult> OrderDetails(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var orderDetails = orderService.GetOrderDetails(id, user.Id);
+			var orderDetails = await orderService.GetOrderDetails(id, user.Id);
 			if (orderDetails == null)
 				return NotFound();
 			return Ok(orderDetails);
 		}
 
 		[HttpGet]
-		public IActionResult RestaurantDetails(int id)
+		public async Task<IActionResult> RestaurantDetails(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var restaurantDetails = orderService.GetRestaurantDetails(id, user.Id);
+			var restaurantDetails = await orderService.GetRestaurantDetails(id, user.Id);
 			if (restaurantDetails == null)
 				return NotFound();
 			return Ok(restaurantDetails);
 		}
 
 		[HttpGet]
-		public IActionResult SupplierDetails(int id)
+		public async Task<IActionResult> SupplierDetails(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var supplierDetails = orderService.GetSupplierDetails(id, user.Id);
+			var supplierDetails = await orderService.GetSupplierDetails(id, user.Id);
 			if (supplierDetails == null)
 				return NotFound();
 			return Ok(supplierDetails);
@@ -121,11 +128,11 @@ namespace RestaurantStore.Web.Controllers
 
 
 		[HttpGet]
-		public IActionResult PaymentDetails(int id)
+		public async Task<IActionResult> PaymentDetails(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var Payment = orderService.GetPaymentDetails(id, user.Id);
+			var Payment =await orderService.GetPaymentDetails(id, user.Id);
 			if (Payment == null)
 				return NotFound();
 			return Ok(Payment);
@@ -165,15 +172,17 @@ namespace RestaurantStore.Web.Controllers
 			{
 				var orders = await orderService.CreateOrder(orderDto, selectedProductIds, quantities);
 				if (orders != null && orders.Count() > 0)
-					return Ok();
+                    return Ok();
 				else
 					return NotFound();
 			}
 			return NotFound();
 		}
-		[HttpGet]
+
+
+        [HttpGet]
 		// GET: OrdersController/Edit/5
-		public IActionResult EditStatus(int id)
+		public async Task<IActionResult> EditStatus(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
@@ -183,7 +192,7 @@ namespace RestaurantStore.Web.Controllers
 									Text = v.ToString(),
 									Value = ((int)v).ToString()
 								}).ToList();
-			var order = orderService.GetOrder(id, user.Id);
+			var order = await orderService.GetOrder(id, user.Id);
 			return PartialView("EditStatus", new EditOrderStatusDto() { Id = order.Id, StatusOrder = order.StatusOrder, StatusOrders = statusorder });
 		}
 
@@ -209,65 +218,77 @@ namespace RestaurantStore.Web.Controllers
 
 
 		[HttpGet]
-		public IActionResult EditOrderDetails(int id)
+		public async Task<IActionResult> EditOrderDetails(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var order = orderService.GetOrder(id, user.Id);
+			var order = await orderService.GetOrder(id, user.Id);
+			if (order == null || (order.StatusOrder != StatusOrder.Draft
+				&& order.StatusOrder != StatusOrder.Pending
+				&& order.StatusOrder != StatusOrder.Processing ))
+				return NotFound();
 			var orderDetailsDto = mapper.Map<OrderDetailsDto>(order);
 			return PartialView("EditOrderDetails", orderDetailsDto);
 
 		}
 
 		[HttpGet]
-		public IActionResult EditPaymentDetails(int id)
+		public async Task<IActionResult> EditPaymentDetails(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var order = orderService.GetOrder(id, user.Id);
+			var order = await orderService.GetOrder(id, user.Id);
+			if (order == null || (order.StatusOrder != StatusOrder.Draft
+				&& order.StatusOrder != StatusOrder.Pending
+				&& order.StatusOrder != StatusOrder.Processing))
+				return NotFound();
 			var paymentDetailsDto = mapper.Map<EditPaymentDetailsDto>(order);
 			return PartialView("EditPaymentDetails", paymentDetailsDto);
 
 		}
 
 		[HttpGet]
-		public IActionResult EditOrderItems(int id)
+		public async Task<IActionResult> EditOrderItems(int id)
 		{
-			//var user = userService.GetUserByContext(HttpContext);
-			//if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			//var order = orderService.GetOrder(id , user.Id);
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var order =await orderService.GetOrder(id, user.Id);
 			//var paymentDetailsDto = mapper.Map<EditPaymentDetailsDto>(order);
+			if (order == null || (order.StatusOrder != StatusOrder.Draft
+				&& order.StatusOrder != StatusOrder.Pending
+				&& order.StatusOrder != StatusOrder.Processing))
+				return NotFound();
 			return PartialView("EditOrderItems");
 
 		}
 
 
 		[HttpPost]
-		public IActionResult EditOrderItems(int OrderId, string quantities)
+		public async Task<IActionResult> EditOrderItems(int OrderId, string quantities)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var result = orderService.UpdateOrderItems(OrderId, quantities, user.Id);
+			var result = await orderService.UpdateOrderItems(OrderId, quantities, user.Id);
 			if (result == null) return NotFound();
 			else return Ok(result);
 		}
 
 		[HttpPost]
-		public IActionResult EditOrderDetails(OrderDetailsDto orderDetailsDto)
+		public async Task<IActionResult> EditOrderDetails(OrderDetailsDto orderDetailsDto)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var result = orderService.UpdateOrderDetails(orderDetailsDto, user.Id);
+			var result = await orderService.UpdateOrderDetails(orderDetailsDto, user.Id);
 			if (result != null) return Ok(result);
 			else return NotFound();
 		}
 
 		[HttpPost]
-		public IActionResult EditPaymentDetails(EditPaymentDetailsDto editPaymentDetailsDto)
+		public async Task<IActionResult> EditPaymentDetails(EditPaymentDetailsDto editPaymentDetailsDto)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var result = orderService.UpdatePaymentDetails(editPaymentDetailsDto, user.Id);
+			var result =await  orderService.UpdatePaymentDetails(editPaymentDetailsDto, user.Id);
 			if (result != null) return Ok(result);
 			else return NotFound();
 		}
@@ -275,11 +296,11 @@ namespace RestaurantStore.Web.Controllers
 
 		// POST: OrdersController/Delete/5
 		[HttpPost]
-		public ActionResult Delete(int id)
+		public async Task<IActionResult> Delete(int id)
 		{
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
-			var result = orderService.DeleteOrder(id, user.Id);
+			var result = await orderService.DeleteOrder(id, user.Id);
 			if (result != null) return Ok(result);
 			else return NotFound();
 		}
@@ -291,6 +312,38 @@ namespace RestaurantStore.Web.Controllers
 			var user = userService.GetUserByContext(HttpContext);
 			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
 			var result =await orderService.Cancel(id, user.Id);
+			if (result != null) return Ok();
+			else return NotFound();
+		}
+		
+		
+		// POST: OrdersController/Delete/5
+		[HttpPost]
+		public async Task<IActionResult> DeniedOrder(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var result =await orderService.Denied(id, user.Id);
+			if (result != null) return Ok();
+			else return NotFound();
+		}
+		
+		[HttpPost]
+		public async Task<IActionResult> Delivered(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var result =await orderService.Delivered(id, user.Id);
+			if (result != null) return Ok();
+			else return NotFound();
+		}
+		
+		[HttpPost]
+		public async Task<IActionResult> DeliverMoney(int id)
+		{
+			var user = userService.GetUserByContext(HttpContext);
+			if (user == null || string.IsNullOrEmpty(user.Id)) return NotFound();
+			var result =await orderService.DeliverMoney(id, user.Id);
 			if (result != null) return Ok();
 			else return NotFound();
 		}

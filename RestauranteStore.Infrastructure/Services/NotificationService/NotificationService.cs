@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RestauranteStore.EF.Data;
+using RestauranteStore.EF.Models;
 using RestaurantStore.Core.ModelViewModels;
 using RestaurantStore.EF.Models;
+using RestaurantStore.Infrastructure.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,21 +15,31 @@ using System.Threading.Tasks;
 namespace RestaurantStore.Infrastructure.Services.NotificationService
 {
     public class NotificationService : INotificationService
+
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IHubContext<NotificationHub> hubContext;  
         private readonly IMapper mapper;
         public NotificationService(ApplicationDbContext dbContext,
-            IMapper mapper)
+            IMapper mapper,
+            IHubContext<NotificationHub> hubContext)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
+            this.hubContext = hubContext;
         }
-        public Notification? Create(Notification notification)
+        public async Task<Notification?> Create(Notification? notification)
         {
             if (notification == null) return null;
             notification.DateAdded = DateTime.UtcNow;
             dbContext.Notifications.Add(notification);
-            dbContext.SaveChanges();    
+            dbContext.SaveChanges();
+            notification = GetNotification(notification.Id);
+            if (notification != null)
+            {
+                var notifiViewModel = mapper.Map<NotificationViewModel>(notification);
+                await hubContext.Clients.Group(notification.ToUserId).SendAsync("ReceiveNotification", notifiViewModel);
+            }
             return notification;
         }
 
@@ -48,7 +61,7 @@ namespace RestaurantStore.Infrastructure.Services.NotificationService
 		}
         public Notification? GetNotification(int id)
         {
-            return dbContext.Notifications.FirstOrDefault(x => x.Id == id);
+            return dbContext.Notifications.Include(x => x.FromUser).Include(x => x.Order).FirstOrDefault(x => x.Id == id);
         }
 	}
 }

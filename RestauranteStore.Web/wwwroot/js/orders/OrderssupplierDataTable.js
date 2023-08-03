@@ -48,7 +48,6 @@ $(document).ready(function () {
             {
                 "orderable": false,
                 "data": null, "name": null, "autowidth": true,
-                "sorting": false,
                 "render": function (data, type, row) {
                     return `<!--begin::Order ID=-->
 							<td data-kt-ecommerce-order-filter="order_id">
@@ -58,8 +57,8 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "Restaurant", "autowidth": true,
+              
                 "render": function (data, type, row) {
                     var html = '';
                     if (data.restaurantImage === null || data.restaurantImage === "" || data.restaurantImage === " ") {
@@ -90,8 +89,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "StatusOrder", "autowidth": true,
                 "render": function (data, type, row) {
                     var color = '';
                     if (data.statusOrder == 'Completed' || data.statusOrder == 'Delivered') {
@@ -116,8 +114,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "TotalPrice", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Total=-->
 							<td class="text-end pe-0">
@@ -127,8 +124,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "DateCreate", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Date Added=-->
 							<td class="text-end" data-order="2023-01-29">
@@ -138,8 +134,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "DateModified", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Date Modified=-->
 							<td class="text-end" data-order="2023-02-03">
@@ -150,8 +145,33 @@ $(document).ready(function () {
             },
             {
                 "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "orderable": false,
                 "render": function (data, type, row) {
+                    var deleteHtml = ``;
+                    var completeHtml = ``;
+                    if (data.statusOrder == 'Pending' || data.statusOrder == 'Processing' || data.statusOrder == 'Delivering') {
+                        deleteHtml = `<a id="deleteLink" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+								        <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
+								        <span class="svg-icon svg-icon-3">
+									        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										        <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
+										        <path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
+										        <path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
+									        </svg>
+								        </span>
+								        <!--end::Svg Icon-->
+							        </a>`;
+                    }
+                    if (data.statusOrder == 'Delivered') {
+                        completeHtml = `<a id="confirmMoneyLink" class="btn btn-icon btn-bg-light  btn-active-color-light btn-active-success btn-sm me-1" >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16">
+                                              <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"/>
+                                              <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1h-.003zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195l.054.012z"/>
+                                              <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083c.058-.344.145-.678.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1H1z"/>
+                                              <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 5.982 5.982 0 0 1 3.13-1.567z"/>
+                                            </svg>
+                                        </a>`;
+                    }
                     return `<!--begin::Action=-->
 							<td class="text-end">
                                 <span id="OrderIdSpan"  class="d-none" >${data.id}</span>
@@ -172,17 +192,8 @@ $(document).ready(function () {
 								    </span>
 								    <!--end::Svg Icon-->
 							    </a>
-                                <a id="deleteLink" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-								        <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
-								        <span class="svg-icon svg-icon-3">
-									        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-										        <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
-										        <path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
-										        <path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
-									        </svg>
-								        </span>
-								        <!--end::Svg Icon-->
-							        </a>
+                                ${deleteHtml}
+                                ${completeHtml}
 							</td>
 							<!--end::Action=-->`;
                 }
@@ -190,96 +201,171 @@ $(document).ready(function () {
             
             ],
             "drawCallback": function () {
-                debugger
-                var deleteLinks = document.querySelectorAll('[id="deleteLink"');
-                deleteLinks.forEach(function (deleteLink) {
-                    debugger
-                    
-                    deleteLink.addEventListener('click', function () {
-                        var tr = this.closest('td').closest('tr');
-                        var orderId = tr.querySelector('[id="OrderIdA"]').textContent;
-                        debugger
-                        
-                        Swal.fire({
-                            title: "Confirm Delete",
-                            text: "Are you sure you want to delete this order?",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#d33",
-                            cancelButtonColor: "#3085d6",
-                            confirmButtonText: "Delete",
-                            cancelButtonText: "Cancel",
-                        }).then((result) => {
-
-                            if (result.isConfirmed) {
-                                $.ajax({
-                                    url: '/Orders/Delete',
-                                    type: 'POST',
-                                    data: { id : orderId },
-                                    success: function (data) {
-
-                                        debugger
-                                        // Handle the success response
-                                        // For example, you can close the modal and update the displayed data
-                                        Swal.fire({
-                                            text: "order has been successfully submitted!",
-                                            icon: "success",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, got it!",
-                                            customClass: {
-                                                confirmButton: "btn btn-primary"
-                                            }
-                                        }).then(function (result) {
-                                            if (result.isConfirmed) {
-
-                                                // Enable submit button after loading
-                                                $('#EditOrderModal').modal('hide');
-                                                formEdit.reset(); // Reset form			
-                                                $('#EditOrderModal').hide();
-                                                var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
-                                                allHide.forEach(x => {
-                                                    x.classList.add('d-none');
-                                                });
-                                                // Redirect to customers list page
-                                                //window.location = form.getAttribute("data-kt-redirect");
-                                            }
-                                        });
-
-                                        // Perform any other action on success
-                                    },
-                                    error: function (error) {
-                                        debugger
-                                        Swal.fire({
-                                            html: "Sorry, looks like there are some errors detected, please try again.",
-                                            icon: "error",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, got it!",
-                                            customClass: {
-                                                confirmButton: "btn btn-primary"
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    })
-
-                });
-            }
+                handleDeleteLink();
+                handleConfirmMoney();
+             }
         },
     );
 
     
 },);
-//const filterForm = document.querySelector('[data-kt-user-table-filter="form"]');
-//const filterButton = filterForm.querySelector('[data-kt-user-table-filter="filter"]');
-//const selectOptions = document.querySelectorAll('select');
-//filterButton.addEventListener('click', function () {
 
 
-//    // Filter datatable --- official docs reference: https://datatables.net/reference/api/search()
-//    datatable.draw();
-//});
+function handleDeleteLink() {
+    var deleteLinks = document.querySelectorAll('[id="deleteLink"');
+    deleteLinks.forEach(function (deleteLink) {
+        debugger
+
+        deleteLink.addEventListener('click', function () {
+            var tr = this.closest('td').closest('tr');
+            var orderId = tr.querySelector('[id="OrderIdA"]').textContent;
+            debugger
+
+            Swal.fire({
+                title: "Confirm Delete",
+                text: "Are you sure you want to delete this order?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Delete",
+                cancelButtonText: "Cancel",
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Orders/DeniedOrder',
+                        type: 'POST',
+                        data: { id: orderId },
+                        success: function (data) {
+
+                            debugger
+                            // Handle the success response
+                            // For example, you can close the modal and update the displayed data
+                            Swal.fire({
+                                text: "order has been successfully submitted!",
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            }).then(function (result) {
+                                if (result.isConfirmed) {
+                                    datatable.draw();
+                                    // Enable submit button after loading
+                                    $('#EditOrderModal').modal('hide');
+                                    formEdit.reset(); // Reset form			
+                                    $('#EditOrderModal').hide();
+                                    var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
+                                    allHide.forEach(x => {
+                                        x.classList.add('d-none');
+                                    });
+                                    // Redirect to customers list page
+                                    //window.location = form.getAttribute("data-kt-redirect");
+                                }
+                            });
+
+                            // Perform any other action on success
+                        },
+                        error: function (error) {
+                            debugger
+                            Swal.fire({
+                                html: "Sorry, looks like there are some errors detected, please try again.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        })
+
+    });
+
+}
+
+function handleConfirmMoney() {
+    var confirmMoneyLinks = document.querySelectorAll('[id="confirmMoneyLink"');
+    confirmMoneyLinks.forEach(function (confirmMoneyLink) {
+        debugger
+
+        confirmMoneyLink.addEventListener('click', function () {
+            var tr = this.closest('td').closest('tr');
+            var orderId = tr.querySelector('[id="OrderIdA"]').textContent;
+            debugger
+
+            Swal.fire({
+                title: "Confirm Delivering Money",
+                text: "Are you sure you want to confirm delivering money from the customer?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#4CAF50",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Confirm",
+                cancelButtonText: "Cancel",
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Orders/DeliverMoney',
+                        type: 'POST',
+                        data: { id: orderId },
+                        success: function (data) {
+
+                            debugger
+                            // Handle the success response
+                            // For example, you can close the modal and update the displayed data
+                            Swal.fire({
+                                text: "order has been successfully submitted!",
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            }).then(function (result) {
+                                if (result.isConfirmed) {
+                                    datatable.draw();
+                                    // Enable submit button after loading
+                                    $('#EditOrderModal').modal('hide');
+                                    formEdit.reset(); // Reset form			
+                                    $('#EditOrderModal').hide();
+                                    var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
+                                    allHide.forEach(x => {
+                                        x.classList.add('d-none');
+                                    });
+                                    // Redirect to customers list page
+                                    //window.location = form.getAttribute("data-kt-redirect");
+                                }
+                            });
+
+                            // Perform any other action on success
+                        },
+                        error: function (error) {
+                            debugger
+                            Swal.fire({
+                                html: "Sorry, looks like there are some errors detected, please try again.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        })
+
+    });
+}
+
 
 
 $(document).ready(() => {
