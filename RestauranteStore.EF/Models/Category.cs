@@ -1,9 +1,9 @@
 ﻿namespace RestauranteStore.EF.Models
 {
-	public class Category
-	{
-		public int Id { get; set; }
-		public string? Name { get; set; }
-		public bool isDelete { get; set; } = false;
-	}
+    public class Category
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public bool isDelete { get; set; } = false;
+    }
 }

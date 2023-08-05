@@ -6,7 +6,7 @@ $(document).ready(function () {
         "filter": true,
         "pagination": true,
         "dataSrc": "",
-        order: [[2, 'asc']],
+        //order: [[2, 'asc']],
         "ajax": {
             "url": "/Users/GetAllUsers",
             "type": "POST",
@@ -48,7 +48,7 @@ $(document).ready(function () {
             {
                 "orderable": false,
                 "data": null, "name": null, "autowidth": true,
-                "sorting": false,
+                "sort": false,
                 "render": function (data, type, row) {
                     return `<!--begin::Checkbox-->
 							<td>
@@ -60,9 +60,9 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": "User", "autowidth": true,
+                "data": null, "name": "Name", "autowidth": true,
                 class: "d-flex align-items-center",
-                "sorting": true,
+                //"sort": true,
                 "render": function (data, type, row) {
                     return `<!--begin::User=-->
 							<td  class="d-flex align-items-center">
@@ -86,8 +86,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": "Role", "autowidth": true,
-                "sort": true,
+                "data": null, "name": "UserType", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Role=-->
 							<td>${data.role}</td>
@@ -106,8 +105,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": "Joined Date", "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "DateCreate", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Joined-->
 							<td>${data.dateCreateText}</td>

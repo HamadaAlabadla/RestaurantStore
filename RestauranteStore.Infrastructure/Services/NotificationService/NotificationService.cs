@@ -2,15 +2,9 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RestauranteStore.EF.Data;
-using RestauranteStore.EF.Models;
 using RestaurantStore.Core.ModelViewModels;
 using RestaurantStore.EF.Models;
 using RestaurantStore.Infrastructure.Hubs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestaurantStore.Infrastructure.Services.NotificationService
 {
@@ -18,7 +12,7 @@ namespace RestaurantStore.Infrastructure.Services.NotificationService
 
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly IHubContext<NotificationHub> hubContext;  
+        private readonly IHubContext<NotificationHub> hubContext;
         private readonly IMapper mapper;
         public NotificationService(ApplicationDbContext dbContext,
             IMapper mapper,
@@ -47,21 +41,21 @@ namespace RestaurantStore.Infrastructure.Services.NotificationService
         {
             var notifications = dbContext.Notifications.Where(x => x.ToUserId.Equals(userId)).OrderByDescending(x => x.DateAdded).Include(x => x.FromUser).ToList();
             var notificationsViewModel = mapper.Map<IEnumerable<NotificationViewModel>>(notifications).ToList();
-            return notificationsViewModel ;
+            return notificationsViewModel;
         }
 
-		public int SetRead(int id, string userId)
-		{
+        public int SetRead(int id, string userId)
+        {
             var notifi = GetNotification(id);
-            if(notifi == null || !notifi.ToUserId.Equals(userId)) return -1;
+            if (notifi == null || !notifi.ToUserId.Equals(userId)) return -1;
             notifi.isRead = true;
-            dbContext.Notifications.Update(notifi); 
+            dbContext.Notifications.Update(notifi);
             dbContext.SaveChanges();
             return notifi.Id;
-		}
+        }
         public Notification? GetNotification(int id)
         {
             return dbContext.Notifications.Include(x => x.FromUser).Include(x => x.Order).FirstOrDefault(x => x.Id == id);
         }
-	}
+    }
 }

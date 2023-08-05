@@ -1,16 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using RestauranteStore.EF.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using RestauranteStore.EF.Models;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestaurantStore.Infrastructure.Services.EmailService
 {
-    public static class EmailService 
+    public class EmailService : IEmailService
     {
         //public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         //{
@@ -24,7 +18,7 @@ namespace RestaurantStore.Infrastructure.Services.EmailService
 
         //}
 
-        public static async Task SendDistinctiveStyleEmail(string customerEmail, Order order)
+        public async Task SendDistinctiveStyleEmail(string customerEmail, Order order)
         {
             try
             {

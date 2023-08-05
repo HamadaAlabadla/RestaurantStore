@@ -149,7 +149,8 @@ $(document).ready(function () {
                 "render": function (data, type, row) {
                     var deleteHtml = ``;
                     var completeHtml = ``;
-                    if (data.statusOrder == 'Pending' || data.statusOrder == 'Processing' || data.statusOrder == 'Delivering') {
+                    var deleveredHtml = ``;
+                    if (data.statusOrder == 'Pending' || data.statusOrder == 'Processing' ) {
                         deleteHtml = `<a id="deleteLink" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
 								        <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
 								        <span class="svg-icon svg-icon-3">
@@ -161,6 +162,11 @@ $(document).ready(function () {
 								        </span>
 								        <!--end::Svg Icon-->
 							        </a>`;
+                        deleveredHtml = `<a id="confirmOrderLink" class="btn btn-icon btn-bg-light  btn-active-color-light btn-active-success btn-sm me-1" >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+                                              <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                            </svg>
+                                        </a>`
                     }
                     if (data.statusOrder == 'Delivered') {
                         completeHtml = `<a id="confirmMoneyLink" class="btn btn-icon btn-bg-light  btn-active-color-light btn-active-success btn-sm me-1" >
@@ -175,16 +181,7 @@ $(document).ready(function () {
                     return `<!--begin::Action=-->
 							<td class="text-end">
                                 <span id="OrderIdSpan"  class="d-none" >${data.id}</span>
-							    <a id="editModelLink" data-bs-toggle="modal" data-bs-target="#EditOrderModal" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-								    <!--begin::Svg Icon | path: icons/duotune/art/art005.svg-->
-								    <span class="svg-icon svg-icon-3">
-									    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-										    <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
-										    <path d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z" fill="currentColor" />
-									    </svg>
-								    </span>
-								    <!--end::Svg Icon-->
-							    </a>
+                                ${deleveredHtml}
                                 <a href="/Orders/Details/${data.id}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
 								    <!--begin::Svg Icon | path: icons/duotune/art/art005.svg-->
 								    <span class="svg-icon svg-icon-3">
@@ -203,6 +200,7 @@ $(document).ready(function () {
             "drawCallback": function () {
                 handleDeleteLink();
                 handleConfirmMoney();
+                handleConfirmOrderLink();
              }
         },
     );
@@ -366,6 +364,72 @@ function handleConfirmMoney() {
     });
 }
 
+
+function handleConfirmOrderLink() {
+    var confirmOrderLinks = document.querySelectorAll('[id="confirmOrderLink"');
+    if (confirmOrderLinks !== null) {
+        confirmOrderLinks.forEach(function (confirmOrderLink) {
+            confirmOrderLink.addEventListener('click', function () {
+                var tr = this.closest('td');
+                var orderId = tr.querySelector('[id="OrderIdSpan"]').textContent;
+
+                Swal.fire({
+                    title: "Confirm Delivering",
+                    text: "Are you sure you want to deliver this order?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#4CAF50",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Confirm",
+                    cancelButtonText: "Cancel",
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Orders/Delivering',
+                            type: 'POST',
+                            data: { id: orderId },
+                            success: function (data) {
+                                Swal.fire({
+                                    title: "Order Delivereing!",
+                                    text: "The order has been delivereing successfully.",
+                                    icon: "success",
+                                    confirmButtonColor: "#4CAF50",
+                                }).then(function (result) {
+                                    if (result.isConfirmed) {
+                                        datatable.draw();
+                                    }
+                                });
+
+                                // Perform any other action on success
+                            },
+                            error: function (error) {
+
+                                Swal.fire({
+                                    html: "Sorry, looks like there are some errors detected, please try again.",
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Order Delivery Canceled",
+                            text: "You canceled the order delivery.",
+                            icon: "info",
+                            confirmButtonColor: "#4CAF50",
+                        });
+                    }
+                });
+            });
+        });
+    }
+
+}
 
 
 $(document).ready(() => {
