@@ -9,7 +9,7 @@ using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestauranteStore.Web.Controllers
 {
-    [Authorize]
+   
     public class UsersController : Controller
     {
         private readonly IUserService userService;
@@ -22,7 +22,7 @@ namespace RestauranteStore.Web.Controllers
             this.mapper = mapper;
             this.userService = userService;
         }
-
+        [Authorize]
         public IActionResult Welcom()
         {
             return View();
@@ -33,11 +33,11 @@ namespace RestauranteStore.Web.Controllers
         {
             var user = new UserDto()
             {
-                RestoranteDto = new RestaurantDto() { },
                 filter = filter ?? ""
             };
             return View(user);
         }
+        [Authorize]
         public ActionResult Account(string id)
         {
             var user = userService.GetUserByContext(HttpContext);
@@ -47,7 +47,7 @@ namespace RestauranteStore.Web.Controllers
 
             return View(userViewModel);
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult EditUser(string id)
         {
@@ -57,6 +57,7 @@ namespace RestauranteStore.Web.Controllers
             if (userDto == null) return NotFound();
             return PartialView("EditAccount", userDto);
         }
+        [Authorize]
         [HttpGet]
         public IActionResult EditEmail(string id)
         {
@@ -66,7 +67,7 @@ namespace RestauranteStore.Web.Controllers
             if (emailDto == null) return NotFound();
             return PartialView("EditEmail", emailDto);
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult EditPassword(string id)
         {
@@ -75,7 +76,7 @@ namespace RestauranteStore.Web.Controllers
             var editPasswordDto = new EditPasswordDto() { Id = id };
             return PartialView("EditPassword", editPasswordDto);
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult DeleteUser(string id)
         {
@@ -84,6 +85,7 @@ namespace RestauranteStore.Web.Controllers
             var deleteUserDto = new DeleteUserDto() { Id = id };
             return PartialView("DeleteUser", deleteUserDto);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditAccount(UserDto userDto)
         {
@@ -93,7 +95,7 @@ namespace RestauranteStore.Web.Controllers
                 return NotFound();
             else return Ok();
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditEmail(EditEmailDto editEmailDto)
         {
@@ -103,7 +105,7 @@ namespace RestauranteStore.Web.Controllers
                 return NotFound();
             else return Ok();
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditPassword(EditPasswordDto editPasswordDto)
         {
@@ -115,7 +117,7 @@ namespace RestauranteStore.Web.Controllers
         }
 
 
-
+        [Authorize]
         public IActionResult GetSupplier()
         {
             var user = userService.GetUserByContext(HttpContext);
@@ -123,6 +125,7 @@ namespace RestauranteStore.Web.Controllers
             var userViewModel = mapper.Map<UserViewModel>(user);
             return Ok(userViewModel);
         }
+        [Authorize]
         public IActionResult GetRestaurant()
         {
             var user = userService.GetUserByContext(HttpContext);
@@ -171,31 +174,68 @@ namespace RestauranteStore.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UserDto userDto)
         {
-            //ViewData["adminTypes"] = Enum.GetValues(typeof(UserType)).Cast<UserType>()
-            //	.Select(x => new SelectListItem()
-            //	{
-            //		Text = x.ToString(),
-            //		Value = ((int)x).ToString()
-            //	}).ToList();
-            if (userDto.UserType == UserType.restaurant)
-                ModelState.Clear();
+            if (userDto.UserType != UserType.restaurant)
+            {
+                ModelState.Remove("MainBranchName");
+                ModelState.Remove("MainBranchAddress");
+            }
+            ModelState.Remove("FirstName");
+            ModelState.Remove("LastName");
+            
             if (ModelState.IsValid)
             {
                 var result = await userService.CreateUser(userDto, userDto.UserType.ToString().ToLower());
                 if (!string.IsNullOrEmpty(result))
                 {
-                    return Ok();
+                    return RedirectToAction(nameof(Index));
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Error in create user");
-                    return NotFound();
+                    return RedirectToAction(nameof(Index));
                 }
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Model state is inValid");
-                return NotFound();
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Register(UserDto userDto)
+        {
+            if (userDto.UserType == UserType.admin)
+            {
+                ModelState.AddModelError("", "Not allow create Admin Account !!!");
+                return LocalRedirect("/Identity/Account/Login");
+            }
+            if (userDto.UserType != UserType.restaurant)
+            {
+                ModelState.Remove("MainBranchName");
+                ModelState.Remove("MainBranchAddress");
+            }
+            ModelState.Remove("FirstName");
+            ModelState.Remove("LastName");
+
+            if (ModelState.IsValid)
+            {
+                var result = await userService.CreateUser(userDto, userDto.UserType.ToString().ToLower());
+                if (!string.IsNullOrEmpty(result))
+                {
+                    return LocalRedirect("/Identity/Account/Login");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Error in create user");
+                    return LocalRedirect("/Identity/Account/Login");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Model state is inValid");
+                return LocalRedirect("/Identity/Account/Login");
             }
         }
 
@@ -217,7 +257,8 @@ namespace RestauranteStore.Web.Controllers
             else
             {
                 var userDto = mapper.Map<UserDto>(user);
-                userDto.RestoranteDto = mapper.Map<RestaurantDto>(user.Restaurant);
+                userDto.MainBranchName = user.Restaurant!.MainBranchName;
+                userDto.MainBranchAddress = user.Restaurant!.MainBranchAddress;
                 if (userDto == null) return NotFound();
                 return PartialView("EditRestaurant", userDto);
             }
@@ -261,6 +302,7 @@ namespace RestauranteStore.Web.Controllers
                 return NotFound();
             }
         }
+        [Authorize]
         [HttpPost]
         public IActionResult DeleteUser(DeleteUserDto deleteUserDto)
         {

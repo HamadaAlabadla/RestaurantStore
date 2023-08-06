@@ -1,7 +1,9 @@
 ﻿@page
+@using RestauranteStore.Core.Dtos;
 @model LoginModel
 @{
 	Layout = null;
+	var userDto = new UserDto();
 }
 
 <!DOCTYPE html>
@@ -147,7 +149,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Sign up-->
 								<div class="text-gray-500 text-center fw-semibold fs-6">
 									Not a Member yet?
-									<a href="../../demo1/dist/authentication/layouts/creative/sign-up.html" class="link-primary">Sign up</a>
+									<a href="" data-bs-toggle="modal" data-bs-target="#kt_modal_select_role"  class="link-primary">Sign up</a>
 								</div>
 								<!--end::Sign up-->
 							</form>
@@ -238,12 +240,14 @@ License: For each use you must have a valid license purchased only from above li
 		</div>
 		<!--end::Authentication - Sign-in-->
 	</div>
+	<partial name="_SelectRoleRegister.cshtml" , model="@userDto" />
 	<!--end::Root-->
 	<!--begin::Javascript-->
 	<script>var hostUrl = "~/assets/";</script>
 	<!--begin::Global Javascript Bundle(mandatory for all pages)-->
 	<script src="~/assets/plugins/global/plugins.bundle.js"></script>
-	<script src="~/assets/js/scripts.bundle.js"></script>
+    <script src="~/assets/js/scripts.bundle.js"></script>
+    <script src="~/js/users/create-account.js"></script>
 	<!--end::Global Javascript Bundle-->
 	<!--begin::Custom Javascript(used for this page only)-->
 	<script src="~/assets/js/custom/authentication/sign-in/general.js"></script>

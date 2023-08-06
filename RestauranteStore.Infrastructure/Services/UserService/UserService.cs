@@ -55,7 +55,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
                 user = mapper.Map<User>(userDto);
             else
             {
-                user = mapper.Map<User>(userDto.RestoranteDto);
+                user = mapper.Map<User>(userDto);
                 user.UserType = UserType.restaurant;
             }
 
@@ -64,7 +64,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
                 return null;
             role = role.ToLower();
             await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
-            user.Logo = await fileService.UploadFile(userDto.Logo ?? userDto.RestoranteDto!.Logo!, "users", userDto.UserName ?? "");
+            user.Logo = await fileService.UploadFile(userDto.Logo!, "users", userDto.UserName ?? "");
             user.Logo ??= "";
             user.DateCreate = DateTime.UtcNow;
             var result = await userManager.CreateAsync(user, "user_123_USER");
@@ -77,7 +77,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
                 await userManager.AddToRoleAsync(user, role);
                 if (userDto.UserType == UserType.restaurant)
                 {
-                    var restorante = mapper.Map<Restaurant>(userDto.RestoranteDto);
+                    var restorante = mapper.Map<Restaurant>(userDto);
                     restorante.UserId = user.Id;
                     restoranteService.CreateRestorante(restorante);
                 }

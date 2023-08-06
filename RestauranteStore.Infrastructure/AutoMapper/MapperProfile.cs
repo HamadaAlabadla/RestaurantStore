@@ -26,32 +26,34 @@ namespace RestaurantStore.Infrastructure.AutoMapper
                 .ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
                 .ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
 
-            CreateMap<RestaurantDto, User>()
-                .ForMember(dist => dist.Id, src => src.Ignore())
-                .ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
-                .ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
-                .ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
+            //CreateMap<RestaurantDto, User>()
+            //    .ForMember(dist => dist.Id, src => src.Ignore())
+            //    .ForMember(dist => dist.NormalizedEmail, src => src.MapFrom(src => src.Email!.ToUpper()))
+            //    .ForMember(dist => dist.NormalizedUserName, src => src.MapFrom(src => src.UserName!.ToUpper()))
+            //    .ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.PhoneNumber));
 
             CreateMap<User, UserDto>()
                 .ForMember(dist => dist.Logo, src => src.Ignore())
                 .ForMember(dist => dist.FirstName, src => src.MapFrom(src => SplitName(src.Name ?? "")[0]))
                 .ForMember(dist => dist.LastName, src => src.MapFrom(src => SplitName(src.Name ?? "")[1]))
+                .ForMember(dist => dist.MainBranchAddress, src => src.Ignore())
+                .ForMember(dist => dist.MainBranchName, src => src.Ignore())
                 .ForMember(dist => dist.image, src => src.MapFrom(src => src.Logo));
 
             CreateMap<User, EditEmailDto>()
                 .ForMember(dist => dist.Password, src => src.Ignore());
 
 
-            CreateMap<RestaurantDto, Restaurant>()
+            CreateMap<UserDto, Restaurant>()
                 .ForMember(dist => dist.UserId, src => src.Ignore())
                 .ForMember(dist => dist.User, src => src.Ignore());
 
-            CreateMap<Restaurant, RestaurantDto>()
-                .ForMember(dist => dist.UserName, src => src.MapFrom(src => src.User!.UserName))
-                .ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.User!.PhoneNumber))
-                .ForMember(dist => dist.Name, src => src.MapFrom(src => src.User!.Name))
-                .ForMember(dist => dist.Email, src => src.MapFrom(src => src.User!.Email))
-                .ForMember(dist => dist.image, src => src.MapFrom(src => src.User!.Logo));
+            //CreateMap<Restaurant, RestaurantDto>()
+            //    .ForMember(dist => dist.UserName, src => src.MapFrom(src => src.User!.UserName))
+            //    .ForMember(dist => dist.PhoneNumber, src => src.MapFrom(src => src.User!.PhoneNumber))
+            //    .ForMember(dist => dist.Name, src => src.MapFrom(src => src.User!.Name))
+            //    .ForMember(dist => dist.Email, src => src.MapFrom(src => src.User!.Email))
+            //    .ForMember(dist => dist.image, src => src.MapFrom(src => src.User!.Logo));
 
             CreateMap<Product, ProductDto>()
                 .ForMember(dist => dist.Image, src => src.Ignore())

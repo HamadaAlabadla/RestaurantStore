@@ -33,7 +33,12 @@ namespace RestauranteStore.Core.Dtos
         public string? PhoneNumber { get; set; }
         [Required]
         public UserType UserType { get; set; }
-        public RestaurantDto? RestoranteDto { get; set; }
+        [Required(ErrorMessage = "إدخال اسم الفرع الرئيسي مطلوب")]
+        [Display(Name = "اسم الفرع الرئيسي")]
+        public string? MainBranchName { get; set; }
+        [Required(ErrorMessage = "إدخال عنوان الفرع الرئيسي مطلوب")]
+        [Display(Name = "عنوان الفرع الرئيسي")]
+        public string? MainBranchAddress { get; set; }
         public string? filter { get; set; }
     }
 }

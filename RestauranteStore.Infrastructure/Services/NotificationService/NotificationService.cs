@@ -49,6 +49,7 @@ namespace RestaurantStore.Infrastructure.Services.NotificationService
             var notifi = GetNotification(id);
             if (notifi == null || !notifi.ToUserId.Equals(userId)) return -1;
             notifi.isRead = true;
+            notifi.DateReady = DateTime.UtcNow;
             dbContext.Notifications.Update(notifi);
             dbContext.SaveChanges();
             return notifi.Id;

@@ -25,14 +25,14 @@
 			<!--begin::Image input-->
 			<div class="image-input image-input-outline image-input-placeholder" data-kt-image-input="true">
 				<!--begin::Preview existing avatar-->
-				<div class="image-input-wrapper w-125px h-125px" style="background-image: url('/images/users/@Model.RestoranteDto!.image');"></div>
+				<div class="image-input-wrapper w-125px h-125px" style="background-image: url('/images/users/@Model.image');"></div>
 				<!--end::Preview existing avatar-->
 				<!--begin::Label-->
 				<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
 					<i class="bi bi-pencil-fill fs-7"></i>
 					<!--begin::Inputs-->
-					<input asp-for="@Model.RestoranteDto!.Logo" type="file" accept=".png, .jpg, .jpeg" />
-					<span asp-validation-for="@Model.RestoranteDto!.Logo" class="text-danger"></span>
+					<input asp-for="@Model.Logo" type="file" accept=".png, .jpg, .jpeg" />
+					<span asp-validation-for="@Model.Logo" class="text-danger"></span>
 					<input type="hidden" name="avatar_remove" />
 					<!--end::Inputs-->
 				</label>
@@ -60,8 +60,8 @@
 			<label class="required fw-semibold fs-6 mb-2">Full Name</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="text" asp-for="@Model.RestoranteDto!.Name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" />
-			<span asp-validation-for="@Model.RestoranteDto!.Name" class="text-danger"></span>
+			<input type="text" asp-for="@Model.Name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" />
+			<span asp-validation-for="@Model.Name" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
 		<!--end::Input group-->
@@ -71,8 +71,8 @@
 			<label class="required fw-semibold fs-6 mb-2">UserName</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="text" asp-for="@Model.RestoranteDto!.UserName" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
-			<span asp-validation-for="@Model.RestoranteDto!.UserName" class="text-danger"></span>
+			<input type="text" asp-for="@Model.UserName" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
+			<span asp-validation-for="@Model.UserName" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
 		<!--end::Input group-->
@@ -82,8 +82,8 @@
 			<label class="required fw-semibold fs-6 mb-2">Main Branch Name</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="text" asp-for="@Model.RestoranteDto!.MainBranchName" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
-			<span asp-validation-for="@Model.RestoranteDto!.MainBranchName" class="text-danger"></span>
+			<input type="text" asp-for="@Model.MainBranchName" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
+			<span asp-validation-for="@Model.MainBranchName" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
 		<!--end::Input group-->
@@ -93,8 +93,8 @@
 			<label class="required fw-semibold fs-6 mb-2">Main Branch Address</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="text" asp-for="@Model.RestoranteDto!.MainBranchAddress" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
-			<span asp-validation-for="@Model.RestoranteDto!.MainBranchAddress" class="text-danger"></span>
+			<input type="text" asp-for="@Model.MainBranchAddress" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
+			<span asp-validation-for="@Model.MainBranchAddress" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
 		<!--end::Input group-->
@@ -104,8 +104,8 @@
 			<label class="required fw-semibold fs-6 mb-2">Email</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="email" asp-for="@Model.RestoranteDto!.Email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" />
-			<span asp-validation-for="@Model.RestoranteDto!.Email" class="text-danger"></span>
+			<input type="email" asp-for="@Model.Email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" />
+			<span asp-validation-for="@Model.Email" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
 		<!--end::Input group-->
@@ -115,8 +115,8 @@
 			<label class="required fw-semibold fs-6 mb-2">Phone Number</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="number" asp-for="@Model.RestoranteDto!.PhoneNumber" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="+97********" />
-			<span asp-validation-for="@Model.RestoranteDto!.PhoneNumber" class="text-danger"></span>
+			<input type="number" asp-for="@Model.PhoneNumber" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="+97********" />
+			<span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
 		<!--end::Input group-->
