@@ -42,7 +42,7 @@ namespace RestauranteStore.Infrastructure.Services.CategoryService
             toastNotification.AddSuccessToastMessage("Category deleted successfully.");
             return category;
         }
-        }
+        
 
         public Category? DeleteCategory(string name)
         {
