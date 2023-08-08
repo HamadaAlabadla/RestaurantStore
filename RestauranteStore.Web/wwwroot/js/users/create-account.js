@@ -1,5 +1,125 @@
 "use strict";
 
+var table = document.getElementById('UsersTable');
+var toolbarBase;
+var toolbarSelected;
+var selectedCount;
+
+const checkboxes = table.querySelectorAll('[type="checkbox"]');
+
+// Select elements
+toolbarBase = document.querySelector('[data-kt-user-table-toolbar="base"]');
+toolbarSelected = document.querySelector('[data-kt-user-table-toolbar="selected"]');
+selectedCount = document.querySelector('[data-kt-user-table-select="selected_count"]');
+const deleteSelected = document.querySelector('[data-kt-user-table-select="delete_selected"]');
+
+// Toggle delete selected toolbar
+checkboxes.forEach(c => {
+	// Checkbox on click event
+	c.addEventListener('click', function () {
+		setTimeout(function () {
+			toggleToolbars();
+		}, 50);
+	});
+});
+
+
+
+
+
+// Deleted selected rows
+deleteSelected.addEventListener('click', function () {
+	// SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
+	Swal.fire({
+		text: "Are you sure you want to delete selected customers?",
+		icon: "warning",
+		showCancelButton: true,
+		buttonsStyling: false,
+		confirmButtonText: "Yes, delete!",
+		cancelButtonText: "No, cancel",
+		customClass: {
+			confirmButton: "btn fw-bold btn-danger",
+			cancelButton: "btn fw-bold btn-active-light-primary"
+		}
+	}).then(function (result) {
+		if (result.value) {
+			Swal.fire({
+				text: "You have deleted all selected customers!.",
+				icon: "success",
+				buttonsStyling: false,
+				confirmButtonText: "Ok, got it!",
+				customClass: {
+					confirmButton: "btn fw-bold btn-primary",
+				}
+			}).then(function () {
+				// Remove all selected customers
+				checkboxes.forEach(c => {
+					if (c.checked) {
+						datatable.row($(c.closest('tbody tr'))).remove().draw();
+					}
+				});
+
+				// Remove header checked box
+				const headerCheckbox = table.querySelectorAll('[type="checkbox"]')[0];
+				headerCheckbox.checked = false;
+			}).then(function () {
+				toggleToolbars(); // Detect checked checkboxes
+				initToggleToolbar(); // Re-init toolbar to recalculate checkboxes
+			});
+		} else if (result.dismiss === 'cancel') {
+			Swal.fire({
+				text: "Selected customers was not deleted.",
+				icon: "error",
+				buttonsStyling: false,
+				confirmButtonText: "Ok, got it!",
+				customClass: {
+					confirmButton: "btn fw-bold btn-primary",
+				}
+			});
+		}
+	});
+});
+
+
+function toggleToolbars() {
+	
+	// Select refreshed checkbox DOM elements 
+	const allCheckboxes = table.querySelectorAll('tbody [type="checkbox"]');
+
+	// Detect checkboxes state & count
+	let checkedState = false;
+	let count = 0;
+
+	// Count checked boxes
+	allCheckboxes.forEach(c => {
+		if (c.checked) {
+			checkedState = true;
+			count++;
+		}
+	});
+
+	// Toggle toolbars
+	if (checkedState) {
+		selectedCount.innerHTML = count;
+		toolbarBase.classList.add('d-none');
+		toolbarSelected.classList.remove('d-none');
+	} else {
+		toolbarBase.classList.remove('d-none');
+		toolbarSelected.classList.add('d-none');
+	}
+};
+
+
+
+
+
+
+
+
+
+
+
+
 // Class definition
 var KTCreateAccount = function () {
 	// Elements
@@ -25,23 +145,23 @@ var KTCreateAccount = function () {
 		// Stepper change event
 		stepperObj.on('kt.stepper.changed', function (stepper) {
 			if (stepperObj.getCurrentStepIndex() === 1) {
-				debugger
+				
 				formSubmitButton.classList.add('d-none');
 				formSubmitButton.classList.add('d-inline-block');
 				formContinueButton.classList.remove('d-none');
 			} else if (stepperObj.getCurrentStepIndex() === 3 ) {
-				debugger
+				
 				formSubmitButton.classList.remove('d-none');
 				formContinueButton.classList.add('d-none');
 				formSubmitButton.style.display = 'block';
 				formSubmitButton.classList.remove('d-none');
 			} else if (stepperObj.getCurrentStepIndex() === 2 && roleVal !== 'restaurant') {
-				debugger
+				
 				formContinueButton.classList.add('d-none');
 				formSubmitButton.style.display = 'block';
 				formSubmitButton.classList.remove('d-none');
 			} else {
-				debugger
+				
 				formSubmitButton.classList.add('d-inline-block');
 				formSubmitButton.classList.add('d-none');
 				formContinueButton.classList.remove('d-none');
@@ -114,9 +234,9 @@ var KTCreateAccount = function () {
 
 
 	var handleForm = function () {
-		debugger
+		
 		formSubmitButton.addEventListener('click', function (e) {
-			debugger
+			
 			//var currentStepper = stepper.getCurrentStepIndex();
 			// Validate form before change stepper step
 			var validator = validations[currentStepper ]; // get validator for currnt step
@@ -124,7 +244,7 @@ var KTCreateAccount = function () {
 
 			validator.validate().then(function (status) {
 				console.log('validated!');
-				debugger
+				
 				if (status == 'Valid') {
 					// Prevent default button action
 					e.preventDefault();
@@ -155,7 +275,7 @@ var KTCreateAccount = function () {
 	var initValidation = function () {
 		// Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
 		// Step 1
-		debugger
+		
 		validations.push(FormValidation.formValidation(
 			form,
 			{

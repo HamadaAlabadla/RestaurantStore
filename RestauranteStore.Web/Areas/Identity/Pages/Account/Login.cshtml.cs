@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NToastNotify;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.UserService;
 using System.ComponentModel.DataAnnotations;
@@ -17,12 +18,17 @@ namespace RestauranteStore.Web.Areas.Identity.Pages.Account
         private readonly SignInManager<User> _signInManager;
         private readonly IUserService _userManager;
         private readonly ILogger<LoginModel> _logger;
+		private readonly IToastNotification toastNotification;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger, IUserService userManager)
+		public LoginModel(SignInManager<User> signInManager, 
+            ILogger<LoginModel> logger, 
+            IUserService userManager,
+            IToastNotification toastNotification)
         {
             _signInManager = signInManager;
             _logger = logger;
             _userManager = userManager;
+            this.toastNotification = toastNotification;
         }
 
         /// <summary>
@@ -106,19 +112,30 @@ namespace RestauranteStore.Web.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+				// This doesn't count login failures towards account lockout
+				// To enable password failures to trigger account lockout, set lockoutOnFailure: true
+				var user = await _userManager.FindByUserNameAsync(Input.UserName);
+                if (user == null)
+                {
+					toastNotification.AddErrorToastMessage("Invalid login attempt.");
+					return Page();
+				}
+				var role = await _userManager.GetRoleByUser(user.Id ?? "");
+				if (user.isDelete)
+                {
+                    toastNotification.AddWarningToastMessage("This account has been deleted");
+                    return Page();
+                }
+				if (string.IsNullOrEmpty(role))
+				{
+					toastNotification.AddWarningToastMessage("There are no permissions for this account");
+					return Page();
+				}
+				var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByUserNameAsync(Input.UserName);
-                    if (user.isDelete)
-                        return Page();
-                    var userId = user.Id;
-                    var role = await _userManager.GetRoleByUser(userId ?? "");
-                    if (string.IsNullOrEmpty(role))
-                        return Page();
-                    _logger.LogInformation("User logged in.");
+					toastNotification.AddSuccessToastMessage("Logged in successfully !");
+					_logger.LogInformation("User logged in.");
                     if (!string.IsNullOrEmpty(returnUrl))
                         return LocalRedirect(returnUrl);
                     else
@@ -136,13 +153,13 @@ namespace RestauranteStore.Web.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    toastNotification.AddErrorToastMessage( "Invalid login attempt.");
                     return Page();
                 }
             }
-
-            // If we got this far, something failed, redisplay form
-            return Page();
+			toastNotification.AddErrorToastMessage("ModelState Invalid ");
+			// If we got this far, something failed, redisplay form
+			return Page();
         }
     }
 }

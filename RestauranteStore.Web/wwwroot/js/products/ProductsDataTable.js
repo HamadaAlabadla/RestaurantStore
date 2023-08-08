@@ -15,6 +15,9 @@ $(document).ready(function () {
                 { orderable: false, targets: 5 }, // Disable ordering on column 6 (actions)                
             ],
             "data": function (filterString) {
+                var searchContent = searchBox.value;
+
+                filterString.search = searchContent;
                 filterString.filter = '';
 
                 // Get filter values
@@ -43,9 +46,7 @@ $(document).ready(function () {
         },
         "columns": [
             {
-                "orderable": false,
-                "data": null, "name": null, "autowidth": true,
-                "sorting": false,
+                "data": null, "name": "Name", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<td class ="min-w-70px">
 							    <div class="d-flex align-items-center">
@@ -64,8 +65,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "ProductNumber", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<td class="text-end pe-0 min-w-70px">
 								<span class="fw-bold">${data.productNumber}</span>
@@ -73,8 +73,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "Category", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<!--begin::Last login=-->
 							<td class ="min-w-70px" >
@@ -84,8 +83,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "QTY", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<td class="text-end pe-0 min-w-70px" data-order="18">
 						        <span class="fw-bold ms-3">${data.qty} ${data.nameShortenQuantityUnit}</span>
@@ -93,15 +91,13 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "Price", "autowidth": true,
                 "render": function (data, type, row) {
                     return `<td class="text-end pe-0 min-w-70px">${data.price} ${data.nameShortenUnitPrice}</td>`;
                 }
             }, 
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "Rating", "autowidth": true,
                 "render": function (data, type, row) {
                     var rate = data.rating;
                     var stars = 5;
@@ -146,8 +142,7 @@ $(document).ready(function () {
 
             
             {
-                "data": null, "name": null, "autowidth": true,
-                "sorting": true,
+                "data": null, "name": "Status", "autowidth": true,
                 "render": function (data, type, row) {
                     var status = data.status;
                     if (status == "Scheduled")
@@ -179,7 +174,6 @@ $(document).ready(function () {
             
             {
                 "data": null, "name": null, "autowidth": true,
-                "sorting": true,
                 "render": function (data, type, row) {
                     var role = document.getElementById('role').textContent;
                     if (role == "supplier") {
@@ -245,4 +239,11 @@ filterButton.addEventListener('click', function () {
     // Filter datatable --- official docs reference: https://datatables.net/reference/api/search()
     datatable.draw();
 });
+debugger
+var searchBox = document.querySelector('[data-kt-ecommerce-product-filter="search"]');
+searchBox.addEventListener('change', function () {
 
+
+    // Filter datatable --- official docs reference: https://datatables.net/reference/api/search()
+    datatable.draw();
+});
