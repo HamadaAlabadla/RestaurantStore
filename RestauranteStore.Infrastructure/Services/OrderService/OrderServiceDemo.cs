@@ -35,36 +35,49 @@ namespace RestauranteStore.Infrastructure.Services.OrderService
         
         public async Task<int> CreateOrder(OrderDto orderDto)
         {
-            // Create a new order using the provided OrderDto object
-            // Save the order to the database
-            // Return the ID of the newly created order
+            var order = mapper.Map<Order>(orderDto);
+            dbContext.Orders.Add(order);
+            await dbContext.SaveChangesAsync();
+            return order.Id;
         }
         
         public async Task<OrderDto> UpdateOrder(int id, OrderDto orderDto)
         {
-            // Retrieve the existing order from the database using the provided id
-            // Update the order using the provided OrderDto object
-            // Save the changes to the database
-            // Return the updated OrderDto object
+            var order = await dbContext.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return null;
+            }
+            mapper.Map(orderDto, order);
+            await dbContext.SaveChangesAsync();
+            return mapper.Map<OrderDto>(order);
         }
         
         public async Task<bool> DeleteOrder(int id)
         {
-            // Retrieve the existing order from the database using the provided id
-            // Delete the order from the database
-            // Save the changes to the database
-            // Return true if the operation was successful, otherwise return false
+            var order = await dbContext.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return false;
+            }
+            dbContext.Orders.Remove(order);
+            await dbContext.SaveChangesAsync();
+            return true;
         }
         
         public async Task<OrderDto> GetOrder(int id)
         {
-            // Retrieve the existing order from the database using the provided id
-            // Return the OrderDto object
+            var order = await dbContext.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return null;
+            }
+            return mapper.Map<OrderDto>(order);
         }
         
         public async Task SendNotification(string message)
         {
-            // Send a notification with the provided message
+            toastNotification.AddInfoToastMessage(message);
         }
     }
 }
