@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RestauranteStore.Infrastructure.Services.UserService;
 using RestaurantStore.Infrastructure.Services.NotificationService;
+using NToastNotify;
 
 namespace RestaurantStore.Web.Controllers
 {
@@ -10,12 +11,15 @@ namespace RestaurantStore.Web.Controllers
     {
         private readonly INotificationService notificationService;
         private readonly IUserService userService;
+        private readonly IToastNotification toastNotification;
 
         public NotificationsController(INotificationService notificationService,
-            IUserService userService)
+            IUserService userService,
+            IToastNotification toastNotification)
         {
             this.notificationService = notificationService;
             this.userService = userService;
+            this.toastNotification = toastNotification;
         }
         // GET: NotificationsController
         public ActionResult Index()
@@ -66,6 +70,7 @@ namespace RestaurantStore.Web.Controllers
             }
             catch
             {
+                toastNotification.AddErrorToastMessage("Failed to create notification.");
                 return View();
             }
         }
@@ -87,6 +92,7 @@ namespace RestaurantStore.Web.Controllers
             }
             catch
             {
+                toastNotification.AddErrorToastMessage("Failed to edit notification.");
                 return View();
             }
         }
@@ -108,6 +114,7 @@ namespace RestaurantStore.Web.Controllers
             }
             catch
             {
+                toastNotification.AddErrorToastMessage("Failed to delete notification.");
                 return View();
             }
         }
