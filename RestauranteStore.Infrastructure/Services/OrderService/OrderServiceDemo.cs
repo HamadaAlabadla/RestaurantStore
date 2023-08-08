@@ -35,27 +35,36 @@ namespace RestauranteStore.Infrastructure.Services.OrderService
         
         public async Task<int> CreateOrder(OrderDto orderDto)
         {
-            // Implementation goes here...
+            // Create a new order using the provided OrderDto object
+            // Save the order to the database
+            // Return the ID of the newly created order
         }
         
         public async Task<OrderDto> UpdateOrder(int id, OrderDto orderDto)
         {
-            // Implementation goes here...
+            // Retrieve the existing order from the database using the provided id
+            // Update the order using the provided OrderDto object
+            // Save the changes to the database
+            // Return the updated OrderDto object
         }
         
         public async Task<bool> DeleteOrder(int id)
         {
-            // Implementation goes here...
+            // Retrieve the existing order from the database using the provided id
+            // Delete the order from the database
+            // Save the changes to the database
+            // Return true if the operation was successful, otherwise return false
         }
         
         public async Task<OrderDto> GetOrder(int id)
         {
-            // Implementation goes here...
+            // Retrieve the existing order from the database using the provided id
+            // Return the OrderDto object
         }
         
         public async Task SendNotification(string message)
         {
-            // Implementation goes here...
+            // Send a notification with the provided message
         }
     }
 }
