@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NToastNotify;
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.Infrastructure.Services.UserService;
@@ -13,15 +14,18 @@ namespace RestauranteStore.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService userService;
-        private readonly IMapper mapper;
+        private readonly IToastNotification toastNotification;
+		private readonly IMapper mapper;
 
         public UsersController(
             IMapper mapper,
-            IUserService userService)
+            IUserService userService,
+			IToastNotification toastNotification )
         {
             this.mapper = mapper;
             this.userService = userService;
-        }
+            this.toastNotification = toastNotification;
+		}
         [Authorize]
         public IActionResult Welcom()
         {
@@ -40,7 +44,7 @@ namespace RestauranteStore.Web.Controllers
         [Authorize]
         public ActionResult Account(string id)
         {
-            var user = userService.GetUserByContext(HttpContext);
+			var user = userService.GetUserByContext(HttpContext);
             if (user == null) return NotFound();
             var userViewModel = mapper.Map<UserViewModel>(user);
             if (userViewModel == null) return NotFound();
@@ -83,6 +87,7 @@ namespace RestauranteStore.Web.Controllers
             var user = userService.GetUserByContext(HttpContext);
             if (user == null || string.IsNullOrEmpty(user.Id) || !user.Id.Equals(id)) return NotFound();
             var deleteUserDto = new DeleteUserDto() { Id = id };
+            
             return PartialView("DeleteUser", deleteUserDto);
         }
         [Authorize]
@@ -147,8 +152,14 @@ namespace RestauranteStore.Web.Controllers
             var filter = Request.Form["filter"];
 
             var jsonData = await userService.GetAllUsers(pageLength, skiped, searchData, sortColumn, sortDir, filter);
-
-            return Ok(jsonData);
+			if (jsonData == null)
+			{
+				var recordsTotal = 0;
+				toastNotification.AddErrorToastMessage($"An error occurred while fetching data");
+				jsonData = new { recordsFiltered = recordsTotal, recordsTotal, data = new List<OrderItemDto>() };
+				return Ok(jsonData);
+			}
+			return Ok(jsonData);
         }
         [Authorize(Roles = "admin")]
         [HttpPost]
@@ -163,8 +174,14 @@ namespace RestauranteStore.Web.Controllers
             var filter = Request.Form["filter"];
 
             var jsonData = await userService.GetAllUsers(pageLength, skiped, searchData, sortColumn, sortDir, "supplier");
-
-            return Ok(jsonData);
+			if (jsonData == null)
+			{
+				var recordsTotal = 0;
+				toastNotification.AddErrorToastMessage($"An error occurred while fetching data");
+				jsonData = new { recordsFiltered = recordsTotal, recordsTotal, data = new List<OrderItemDto>() };
+				return Ok(jsonData);
+			}
+			return Ok(jsonData);
         }
 
 
@@ -208,7 +225,7 @@ namespace RestauranteStore.Web.Controllers
         {
             if (userDto.UserType == UserType.admin)
             {
-                ModelState.AddModelError("", "Not allow create Admin Account !!!");
+                toastNotification.AddErrorToastMessage("Not allow create <stronge> Admin </stronge> Account !!!" );
                 return LocalRedirect("/Identity/Account/Login");
             }
             if (userDto.UserType != UserType.restaurant)
@@ -224,17 +241,16 @@ namespace RestauranteStore.Web.Controllers
                 var result = await userService.CreateUser(userDto, userDto.UserType.ToString().ToLower());
                 if (!string.IsNullOrEmpty(result))
                 {
-                    return LocalRedirect("/Identity/Account/Login");
+					return LocalRedirect("/Identity/Account/Login");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Error in create user");
                     return LocalRedirect("/Identity/Account/Login");
                 }
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Model state is inValid");
+				toastNotification.AddWarningToastMessage("Model state is <stronge> inValid </stronge>" );
                 return LocalRedirect("/Identity/Account/Login");
             }
         }

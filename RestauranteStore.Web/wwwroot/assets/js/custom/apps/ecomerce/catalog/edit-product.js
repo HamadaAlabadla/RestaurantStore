@@ -199,32 +199,33 @@ var KTAppEcommerceSaveProduct = function () {
     // Category status handler
     const handleStatus = () => {
         const target = document.getElementById('kt_ecommerce_add_product_status');
-        const select = document.getElementById('kt_ecommerce_add_product_status_select');
+        const select = document.querySelector('[data-id = "kt_ecommerce_add_product_status_select"]');
         const statusClasses = ['bg-success', 'bg-warning', 'bg-danger'];
 
         $(select).on('change', function (e) {
+            debugger
             const value = e.target.value;
 
             switch (value) {
-                case "published": {
+                case "0": {
                     target.classList.remove(...statusClasses);
                     target.classList.add('bg-success');
                     hideDatepicker();
                     break;
                 }
-                case "scheduled": {
+                case "1": {
                     target.classList.remove(...statusClasses);
                     target.classList.add('bg-warning');
                     showDatepicker();
                     break;
                 }
-                case "inactive": {
+                case "2": {
                     target.classList.remove(...statusClasses);
                     target.classList.add('bg-danger');
                     hideDatepicker();
                     break;
                 }
-                case "draft": {
+                case "3": {
                     target.classList.remove(...statusClasses);
                     target.classList.add('bg-primary');
                     hideDatepicker();

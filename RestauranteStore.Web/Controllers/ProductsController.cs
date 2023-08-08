@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NToastNotify;
 using RestauranteStore.Core.Dtos;
+using RestauranteStore.Core.ModelViewModels;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.OrderService;
 using RestauranteStore.Infrastructure.Services.ProductService;
@@ -17,15 +19,18 @@ namespace RestauranteStore.Web.Controllers
         private readonly IOrderService orderService;
         private readonly IUserService userService;
         private readonly IMapper mapper;
+        private readonly IToastNotification toastNotification;
         public ProductsController(IProductService productService,
             IUserService userService,
             IMapper mapper,
-            IOrderService orderService)
+            IOrderService orderService,
+            IToastNotification toastNotification)
         {
             this.productService = productService;
             this.userService = userService;
             this.mapper = mapper;
             this.orderService = orderService;
+            this.toastNotification = toastNotification;
         }
         // GET: ProductsController
         public ActionResult Index()
@@ -55,7 +60,13 @@ namespace RestauranteStore.Web.Controllers
             var order = await orderService.GetOrder(id, user.Id);
             var supplierId = (order ?? new Order() { SupplierId = "" }).SupplierId;
             var jsonData = productService.GetAllProductsItemDto(Request, supplierId, user.Id);
-
+            if (jsonData == null)
+            {
+                var recordsTotal = 0;
+                toastNotification.AddErrorToastMessage($"An error occurred while fetching data");
+                jsonData = new { recordsFiltered = recordsTotal, recordsTotal, data = new List<OrderItemDto>() };
+				return Ok(jsonData);
+            }
             return Ok(jsonData);
         }
         [Authorize(Roles = "supplier")]
@@ -65,12 +76,8 @@ namespace RestauranteStore.Web.Controllers
 
             return View();
         }
-        //[HttpGet]
-        //public IActionResult Add_Product(ProductDto productDto)
-        //{
-        //	return View(productDto);
-        //}
-        // POST: ProductsController/Create
+
+
         [Authorize(Roles = "supplier")]
         [HttpPost]
         public async Task<ActionResult> Create(ProductDto productDto)
@@ -78,7 +85,10 @@ namespace RestauranteStore.Web.Controllers
             if (ModelState.IsValid)
             {
                 var result = await productService.CreateProduct(productDto);
-                return Ok();
+                if (result > 0)
+                    return Ok();
+                else
+                    return NotFound();
             }
             else
             {

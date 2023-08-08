@@ -56,7 +56,6 @@
 						<input type="hidden" asp-for="CategoryId" />
 						<input type="hidden" asp-for="QuantityUnitId" />
 						<input type="hidden" asp-for="UnitPriceId" />
-						<input type="hidden" asp-for="Status" />
 						<!--begin::Aside column-->
 						<div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
 							<!--begin::Thumbnail settings-->
@@ -135,7 +134,7 @@
 								<!--begin::Card body-->
 								<div class="card-body pt-0">
 									<!--begin::Select2-->
-									<select asp-for="Status" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" >
+									<select asp-for="Status" data-id="kt_ecommerce_add_product_status_select" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true">
 										<option></option>
 										<option value="0">Published</option>
 										<option value="3">Draft</option>

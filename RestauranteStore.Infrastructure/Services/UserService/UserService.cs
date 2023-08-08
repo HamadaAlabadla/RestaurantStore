@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
+using NToastNotify;
 using RestauranteStore.Core.Dtos;
 using RestauranteStore.Core.ModelViewModels;
 //using Microsoft.EntityFrameworkCore;
@@ -27,15 +28,17 @@ namespace RestauranteStore.Infrastructure.Services.UserService
         private readonly IMapper mapper;
         private readonly IFileService fileService;
         private readonly IRestaurantService restoranteService;
+		private readonly IToastNotification toastNotification;
 
-        public UserService(UserManager<User> userManager,
+		public UserService(UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
             IUserStore<User> userStore,
             ApplicationDbContext dbContext,
             IMapper mapper,
             IFileService fileService,
             IRestaurantService restoranteService,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            IToastNotification toastNotification)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -45,23 +48,32 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             this.fileService = fileService;
             this.restoranteService = restoranteService;
             this.signInManager = signInManager;
-        }
+            this.toastNotification = toastNotification;
+
+
+		}
+
+        
 
         public async Task<string?> CreateUser(UserDto userDto, string role)
         {
-            if (userDto == null) return null;
-            User? user;
-            if (userDto.UserType != UserType.restaurant)
-                user = mapper.Map<User>(userDto);
-            else
+            if (userDto == null)
             {
-                user = mapper.Map<User>(userDto);
+                toastNotification.AddWarningToastMessage("Error entering <stronge> user </stronge> data");
+                return null;
+            }
+            User? user = mapper.Map<User>(userDto);
+			if (userDto.UserType == UserType.restaurant)
+            {
                 user.UserType = UserType.restaurant;
             }
 
             if (user == null
                 || string.IsNullOrWhiteSpace(role))
+            {
+                toastNotification.AddAlertToastMessage("Error receiving user data");
                 return null;
+            }
             role = role.ToLower();
             await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
             user.Logo = await fileService.UploadFile(userDto.Logo!, "users", userDto.UserName ?? "");
@@ -81,18 +93,25 @@ namespace RestauranteStore.Infrastructure.Services.UserService
                     restorante.UserId = user.Id;
                     restoranteService.CreateRestorante(restorante);
                 }
+                toastNotification.AddSuccessToastMessage($"The user has been added successfully #{user.UserType.ToString()}");
                 return user.Id;
             }
+            toastNotification.AddErrorToastMessage($"Failed to add user #{user.UserType.ToString()}");
             return null;
         }
 
         public User? DeleteUser(string id)
         {
             var user = GetUser(id);
-            if (user == null) return null;
+            if (user == null) 
+            {
+                toastNotification.AddWarningToastMessage($"The user #{id} does not exist");
+                return null; 
+            }
             user.isDelete = true;
             dbContext.users.Update(user);
             dbContext.SaveChanges();
+            toastNotification.AddSuccessToastMessage($"The user #{user.UserName} has been removed successfully");
             return user;
         }
 
@@ -158,8 +177,12 @@ namespace RestauranteStore.Infrastructure.Services.UserService
         public async Task<string?> GetRoleByUser(string userId)
         {
             var user = GetUser(userId);
-            if (user == null) return null;
-            var role = (await userManager.GetRolesAsync(user))[0];
+			if (user == null)
+			{
+				toastNotification.AddWarningToastMessage($"The user #{userId} does not exist");
+				return null;
+			}
+			var role = (await userManager.GetRolesAsync(user))[0];
             return role;
         }
 
@@ -173,9 +196,18 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 
         public async Task<string?> UpdateUser(UserDto? userDto)
         {
-            if (userDto == null) return null;
-            var user = mapper.Map<User>(userDto);
-            if (user == null || string.IsNullOrEmpty(user.Id)) return null;
+			if (userDto == null)
+			{
+				toastNotification.AddWarningToastMessage("Error entering user data");
+				return null;
+			}
+			var user = mapper.Map<User>(userDto);
+            if (user == null
+                || string.IsNullOrWhiteSpace(user.Id))
+            {
+                toastNotification.AddAlertToastMessage("Error receiving user data");
+                return null;
+            }
             var userDb = GetUser(user.Id);
             if (userDb == null) return null;
             if (userDto.Logo != null)
@@ -191,7 +223,8 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             userDb.PhoneNumber = user.PhoneNumber;
             userDb.UserType = user.UserType;
             await userManager.UpdateAsync(userDb);
-            return user.Id;
+			toastNotification.AddSuccessToastMessage($"The user has been Updated successfully #{user.UserType.ToString()}");
+			return user.Id;
         }
 
         public User? GetUserByContext(HttpContext context)
@@ -202,7 +235,11 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             {
                 userId = userContext.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             }
-            if (string.IsNullOrEmpty(userId)) return null;
+            if (string.IsNullOrEmpty(userId))
+            {
+                toastNotification.AddErrorToastMessage("You must login");
+                return null;
+            }
             var user = GetUser(userId);
             return user;
         }
@@ -214,10 +251,18 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 
         public async Task<string?> UpdateUserDetails(UserDto? userDto)
         {
-            if (userDto == null) return null;
-            var user = GetUser(userDto.Id ?? "");
-            if (user == null) return null;
-            user.Name = $"{userDto.FirstName} {userDto.LastName}";
+			if (userDto == null)
+			{
+				toastNotification.AddWarningToastMessage("Error entering user data");
+				return null;
+			}
+			var user = GetUser(userDto.Id ?? "");
+			if (user == null)
+			{
+				toastNotification.AddWarningToastMessage($"The user #{userDto.Id} does not exist");
+				return null;
+			}
+			user.Name = $"{userDto.FirstName} {userDto.LastName}";
             user.PhoneNumber = userDto.PhoneNumber;
             if (userDto.Logo != null)
             {
@@ -226,31 +271,60 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             }
             dbContext.users.Update(user);
             dbContext.SaveChanges();
+            toastNotification.AddSuccessToastMessage("User data has been updated successfully");
             return user.Id;
 
         }
 
         public async Task<string?> UpdateEmail(EditEmailDto? editEmailDto)
         {
-            if (editEmailDto == null) return null;
-            var user = GetUser(editEmailDto.Id ?? "");
-            if (user == null) return null;
-            var result = await signInManager.CheckPasswordSignInAsync(user, editEmailDto.Password, lockoutOnFailure: false);
-            if (!result.Succeeded) return null;
+			if (editEmailDto == null)
+			{
+				toastNotification.AddWarningToastMessage("Error entering user data");
+				return null;
+			}
+			var user = GetUser(editEmailDto.Id ?? "");
+			if (user == null)
+			{
+				toastNotification.AddWarningToastMessage($"The user #{editEmailDto.Id} does not exist");
+				return null;
+			}
+			var result = await signInManager.CheckPasswordSignInAsync(user, editEmailDto.Password, lockoutOnFailure: false);
+            if (!result.Succeeded)
+            {
+                toastNotification.AddErrorToastMessage("Please check the <stronge> password </stronge>" );
+                return null;
+            }
             user.Email = editEmailDto.Email;
             dbContext.users.Update(user);
             dbContext.SaveChanges();
-            return user.Id;
+			toastNotification.AddSuccessToastMessage("User Email has been updated successfully");
+
+			return user.Id;
         }
 
         public async Task<string?> UpdatePassword(EditPasswordDto? editPasswordDto)
         {
-            if (editPasswordDto == null || !editPasswordDto.NewPassword.Equals(editPasswordDto.ConfirmPassword)) return null;
+            if (editPasswordDto == null || !editPasswordDto.NewPassword.Equals(editPasswordDto.ConfirmPassword))
+            {
+				toastNotification.AddWarningToastMessage("Error entering user data");
+				return null;
+            }
             var user = GetUser(editPasswordDto.Id ?? "");
-            if (user == null) return null;
-            var result = await userManager.ChangePasswordAsync(user, editPasswordDto.Password, editPasswordDto.NewPassword);
-            if (!result.Succeeded) return null;
-            return user.Id;
+			if (user == null)
+			{
+				toastNotification.AddWarningToastMessage($"The user #{editPasswordDto.Id} does not exist");
+				return null;
+			}
+			var result = await userManager.ChangePasswordAsync(user, editPasswordDto.Password, editPasswordDto.NewPassword);
+			if (!result.Succeeded)
+			{
+				toastNotification.AddErrorToastMessage("Please check the password");
+				return null;
+			}
+			toastNotification.AddSuccessToastMessage("User Password has been updated successfully");
+
+			return user.Id;
         }
     }
 }

@@ -2,6 +2,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NToastNotify;
 using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
 using RestauranteStore.Infrastructure.Services.CategoryService;
@@ -39,6 +40,20 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddMvc().AddNToastNotifyToastr(new ToastrOptions()
+{
+	ProgressBar = true,
+	CloseButton = true,
+	TimeOut = 5000,
+	HideDuration = 3000,
+	ExtendedTimeOut = 3000,
+	ShowDuration = 3000,
+	TapToDismiss = true,
+	CloseOnHover = true,
+	EscapeHtml = false,
+
+});
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IFileService, FileService>();
@@ -84,6 +99,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseNToastNotify();
 
 app.MapControllerRoute(
     name: "default",

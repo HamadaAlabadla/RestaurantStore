@@ -121,13 +121,13 @@
 						<!--begin::Table row-->
 						<tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
 							<th class="min-w-70px">Product</th>
-							<th class="text-end min-w-70px">NO. </th>
-							<th class="text-end min-w-70px">Category</th>
-							<th class="text-end min-w-70px">Qty</th>
-							<th class="text-end min-w-70px">Price</th>
-							<th class="text-end min-w-70px">Rating</th>
-							<th class="text-end min-w-70px">Status</th>
-							<th class="text-end min-w-70px">Actions</th>
+							<th class="min-w-70px">NO. </th>
+							<th class="min-w-70px">Category</th>
+							<th class="min-w-70px">Qty</th>
+							<th class="min-w-70px">Price</th>
+							<th class="min-w-70px">Rating</th>
+							<th class="min-w-70px">Status</th>
+							<th class="min-w-70px">Actions</th>
 						</tr>
 						<!--end::Table row-->
 					</thead>
@@ -150,10 +150,10 @@
 	<!--begin::Vendors Javascript(used for this page only)-->
     <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
     <script src="~/js/products/productsdatatable.js"></script>
-	@if (role.Equals("supplier"))
+	@*@if (role.Equals("supplier"))
 	{
 		<script src="~/assets/js/custom/apps/ecomerce/catalog/save-product.js"></script>
-	}
+	}*@
     <!--end::Vendors Javascript-->
 	<script src="~/assets/js/custom/apps/ecomerce/catalog/dalete-product.js"></script>
 	<!--begin::Custom Javascript(used for this page only)-->
