@@ -1,33 +1,47 @@
 ﻿using RestauranteStore.EF.Data;
 using RestauranteStore.EF.Models;
+using NToastNotify;
 
 namespace RestauranteStore.Infrastructure.Services.CategoryService
 {
     public class CategoryService : ICategoryService
     {
         private readonly ApplicationDbContext dbContext;
-        public CategoryService(ApplicationDbContext dbContext)
+        private readonly IToastNotification toastNotification;
+
+        public CategoryService(ApplicationDbContext dbContext, IToastNotification toastNotification)
         {
             this.dbContext = dbContext;
+            this.toastNotification = toastNotification;
         }
 
         public int CreateCategory(Category category)
         {
             var categoryOld = GetCategory(category.Name ?? "");
-            if (categoryOld != null) return -1;
+            if (categoryOld != null) 
+            {
+                toastNotification.AddErrorToastMessage("Category already exists.");
+                return -1;
+            }
             dbContext.Categories.Add(category);
             dbContext.SaveChanges();
+            toastNotification.AddSuccessToastMessage("Category created successfully.");
             return category.Id;
         }
 
         public Category? DeleteCategory(int id)
         {
             var category = GetCategory(id);
-            if (category == null) return null;
+            if (category == null) 
+            {
+                toastNotification.AddErrorToastMessage("Category does not exist.");
+                return null;
+            }
             category.isDelete = true;
             UpdateCategory(category);
+            toastNotification.AddSuccessToastMessage("Category deleted successfully.");
             return category;
-
+        }
         }
 
         public Category? DeleteCategory(string name)
@@ -61,13 +75,22 @@ namespace RestauranteStore.Infrastructure.Services.CategoryService
 
         public int UpdateCategory(Category? category)
         {
-            if (category == null) return -1;
+            if (category == null) 
+            {
+                toastNotification.AddErrorToastMessage("Category does not exist.");
+                return -1;
+            }
             var categoryNew = GetCategory(category.Id);
-            if (categoryNew == null) return -1;
+            if (categoryNew == null) 
+            {
+                toastNotification.AddErrorToastMessage("Category does not exist.");
+                return -1;
+            }
             categoryNew.isDelete = category.isDelete;
             categoryNew.Name = category.Name;
             dbContext.Categories.Update(categoryNew);
             dbContext.SaveChanges();
+            toastNotification.AddSuccessToastMessage("Category updated successfully.");
             return category.Id;
         }
     }
