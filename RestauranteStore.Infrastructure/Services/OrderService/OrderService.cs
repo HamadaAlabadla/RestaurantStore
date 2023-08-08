@@ -19,6 +19,7 @@ using RestaurantStore.Infrastructure.Services.EmailService;
 using RestaurantStore.Infrastructure.Services.NotificationService;
 using System.Linq.Dynamic.Core;
 using static RestauranteStore.Core.Enums.Enums;
+using NToastNotify;
 
 namespace RestaurantStore.Infrastructure.Services.OrderService
 {
@@ -32,6 +33,7 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
         private readonly IMapper mapper;
         private readonly IProductService productService;
         private readonly IEmailService emailSender;
+        private readonly IToastNotification toastNotification;
 
         public OrderService(ApplicationDbContext dbContext,
             IOrderItemService orderItemService,
@@ -40,7 +42,8 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
             INotificationService notificationService,
             IHubContext<NotificationHub> hubContext,
             IEmailService emailSender,
-            IBackgroundJobClient backgroundJob
+            IBackgroundJobClient backgroundJob,
+            IToastNotification toastNotification
             )
         {
             this.dbContext = dbContext;
@@ -51,13 +54,18 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
             this.hubContext = hubContext;
             this.emailSender = emailSender;
             this.backgroundJob = backgroundJob;
+            this.toastNotification = toastNotification;
 
         }
 
         public async Task<bool> CreateOrderAsync(OrderDto orderDto, string supplierIds, string quantities)
         {
 
-            if (orderDto == null) return false;
+            if (orderDto == null) 
+            {
+                toastNotification.AddErrorToastMessage("Order creation failed. OrderDto is null.");
+                return false;
+            }
             List<Order> orders = new List<Order>();
             Dictionary<int, string> suppliersDectionary = JsonConvert.DeserializeObject<Dictionary<int, string>>(supplierIds) ?? new Dictionary<int, string>();
 
