@@ -22,7 +22,7 @@ using static RestauranteStore.Core.Enums.Enums;
 
 namespace RestaurantStore.Infrastructure.Services.OrderService
 {
-    public class OrderService : IOrderService
+    public class OrderService : IOrderService, IToastNotification
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IBackgroundJobClient backgroundJob;
