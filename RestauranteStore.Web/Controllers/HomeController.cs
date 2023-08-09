@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace RestauranteStore.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : Controller, IToastNotification
     {
         private readonly ILogger<HomeController> _logger;
 
