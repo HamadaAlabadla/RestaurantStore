@@ -8,7 +8,7 @@ using RestaurantStore.Infrastructure.Hubs;
 
 namespace RestaurantStore.Infrastructure.Services.NotificationService
 {
-    public class NotificationService : INotificationService
+    public class NotificationService : INotificationService, IToastNotification
 
     {
         private readonly ApplicationDbContext dbContext;
