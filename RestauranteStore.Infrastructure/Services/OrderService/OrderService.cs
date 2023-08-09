@@ -287,116 +287,126 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
             if (order == null) return null;
             if (order.SupplierId.Equals(userId) && order.StatusOrder == StatusOrder.Pending)
             {
-                order.StatusOrder = StatusOrder.Processing;
-                order.DateModified = DateTime.UtcNow;
-                dbContext.Orders.Update(order);
-                dbContext.SaveChanges();
-                var notifi = new Notification()
+                public async Task<int> UpdateStatus(int orderId, string userId, StatusOrder status)
                 {
-                    Body = $"Your request is being processed",
-                    DateAdded = DateTime.UtcNow,
-                    DateReady = null,
-                    FromUserId = userId,
-                    ToUserId = order.SupplierId.Equals(userId) ? order.RestaurantId : order.SupplierId,
-                    Header = $"Your request is being processed",
-                    isRead = false,
-                    OrderId = order.Id,
-                    URL = order.SupplierId.Equals(userId) ? $"/Orders/DetailsForRestaurant/{order.Id}" : $"/Orders/Details/{order.Id}"
-
-                };
-                await notificationService.Create(notifi);
-            }
-            return order;
-        }
-
-        public Order? UpdateOrder(OrderDto orderDto, string userId)
-        {
-            throw new NotImplementedException();
-        }
-        public async Task<Order?> UpdateOrder(Order order, string userId)
-        {
-            if (order == null) return null;
-            var orderNew = await GetOrder(order.Id, userId);
-            if (orderNew == null) return null;
-            orderNew.isDelete = order.isDelete;
-            orderNew.PaymentMethod = order.PaymentMethod;
-            orderNew.ShippingAddress = order.ShippingAddress;
-            orderNew.ShippingCity = order.ShippingCity;
-            orderNew.StatusOrder = order.StatusOrder;
-            orderNew.TotalPrice = order.TotalPrice;
-            orderNew.DateModified = DateTime.UtcNow;
-            dbContext.Orders.Update(orderNew);
-            dbContext.SaveChanges();
-            return orderNew;
-        }
-
-        public async Task<object?> GetOrderDetails(int id, string userId)
-        {
-            var order = await GetOrder(id, userId);
-            if (order == null) return null;
-            var orderDetailsViewModel = mapper.Map<OrderDetailsViewModel>(order);
-            return new { data = orderDetailsViewModel };
-        }
-
-        public async Task<object?> UpdateOrderDetails(OrderDetailsDto orderDetailsDto, string userId)
-        {
-            if (orderDetailsDto == null) return -1;
-            var order = await GetOrder(orderDetailsDto.Id, userId);
-            if (order == null || (order.StatusOrder != StatusOrder.Draft
-                && order.StatusOrder != StatusOrder.Pending
-                && order.StatusOrder != StatusOrder.Processing))
-                return -1;
-            if (order.StatusOrder == StatusOrder.Draft)
-            {
-                if (!orderDetailsDto.IsDraft)
-                {
-                    await UpdateStatus(order.Id, userId, StatusOrder.Pending);
-                    var notifi = new Notification()
+                    var order = await GetOrder(orderId, userId);
+                    if (order != null)
                     {
-                        OrderId = order.Id,
-                        FromUserId = order.RestaurantId,
-                        ToUserId = order.SupplierId,
-                        DateAdded = DateTime.UtcNow,
-                        DateReady = null,
-                        Header = "New Order Received",
-                        Body = $"Order ID: {order.Id}\r\nRestaurant: {((order.Restaurant ?? new Restaurant()).User ?? new User() { Name = "undefined" }).Name}\r\nTotal Amount: {order.TotalPrice}\r\n",
-                        isRead = false,
-                        URL = $"/Orders/Details/{order.Id}"
-
-                    };
-                    await notificationService.Create(notifi);
+                        order.StatusOrder = status;
+                        order.DateModified = DateTime.UtcNow;
+                        dbContext.Orders.Update(order);
+                        dbContext.SaveChanges();
+                        var notifi = new Notification()
+                        {
+                            Body = $"The status of the order #{order.Id} has been updated to {status.ToString()}",
+                            DateAdded = DateTime.UtcNow,
+                            DateReady = null,
+                            FromUserId = userId,
+                            ToUserId = order.SupplierId.Equals(userId) ? order.RestaurantId : order.SupplierId,
+                            Header = $"The status of the order #{order.Id} has been updated",
+                            isRead = false,
+                            OrderId = orderId,
+                            URL = order.SupplierId.Equals(userId) ? $"/Orders/DetailsForRestaurant/{order.Id}" : $"/Orders/Details/{order.Id}"
+                        };
+                        await notificationService.Create(notifi);
+                        return orderId;
+                    }
+                    return -1;
                 }
-                order.OrderDate = orderDetailsDto.OrderDate;
-                order.PaymentMethod = orderDetailsDto.PaymentMethod;
-                dbContext.Orders.Update(order);
-                dbContext.SaveChanges();
-            }
-            else
-            {
-                order.OrderDate = orderDetailsDto.OrderDate;
-                order.PaymentMethod = orderDetailsDto.PaymentMethod;
-                dbContext.Orders.Update(order);
-                dbContext.SaveChanges();
-                var notifi = new Notification()
+                
+                public async Task<Order?> GetOrder(int id, string userId)
                 {
-                    Body = $"The request information has been updated  #{order.Id}",
-                    DateAdded = DateTime.UtcNow,
-                    DateReady = null,
-                    FromUserId = userId,
-                    ToUserId = order.RestaurantId,
-                    Header = $"The request information has been updated from Restaurant",
-                    isRead = false,
-                    OrderId = order.Id,
-                    URL = $"/Orders/Details/{order.Id}"
-
-                };
-                await notificationService.Create(notifi);
-            }
-
-            var orderDetailsViewModel = mapper.Map<OrderDetailsViewModel>(order);
-            var jsondata = new { data = orderDetailsViewModel };
-            return jsondata;
-        }
+                    var order = dbContext.Orders.Where(x => !x.isDelete && x.Id == id
+                        && (
+                                x.SupplierId.Equals(userId)
+                                ||
+                                x.RestaurantId.Equals(userId)
+                            )
+                        && (
+                            x.RestaurantId.Equals(userId) ? true : x.StatusOrder != StatusOrder.Draft
+                        ))
+                        .Include(x => x.Supplier).Include(x => x.Restaurant).ThenInclude(x => x.User).Include(x => x.OrderItems).ThenInclude(x => x.Product).FirstOrDefault(x => x.Id == id);
+                    if (order == null) return null;
+                    if (order.SupplierId.Equals(userId) && order.StatusOrder == StatusOrder.Pending)
+                    {
+                        order.StatusOrder = StatusOrder.Processing;
+                        order.DateModified = DateTime.UtcNow;
+                        dbContext.Orders.Update(order);
+                        dbContext.SaveChanges();
+                        var notifi = new Notification()
+                        {
+                            Body = $"Your request is being processed",
+                            DateAdded = DateTime.UtcNow,
+                            DateReady = null,
+                            FromUserId = userId,
+                            ToUserId = order.SupplierId.Equals(userId) ? order.RestaurantId : order.SupplierId,
+                            Header = $"Your request is being processed",
+                            isRead = false,
+                            OrderId = order.Id,
+                            URL = order.SupplierId.Equals(userId) ? $"/Orders/DetailsForRestaurant/{order.Id}" : $"/Orders/Details/{order.Id}"
+                        };
+                        await notificationService.Create(notifi);
+                    }
+                    return order;
+                }
+                
+                public async Task<object?> UpdateOrderDetails(OrderDetailsDto orderDetailsDto, string userId)
+                {
+                    if (orderDetailsDto == null) return -1;
+                    var order = await GetOrder(orderDetailsDto.Id, userId);
+                    if (order == null || (order.StatusOrder != StatusOrder.Draft
+                        && order.StatusOrder != StatusOrder.Pending
+                        && order.StatusOrder != StatusOrder.Processing))
+                        return -1;
+                    if (order.StatusOrder == StatusOrder.Draft)
+                    {
+                        if (!orderDetailsDto.IsDraft)
+                        {
+                            await UpdateStatus(order.Id, userId, StatusOrder.Pending);
+                            var notifi = new Notification()
+                            {
+                                OrderId = order.Id,
+                                FromUserId = order.RestaurantId,
+                                ToUserId = order.SupplierId,
+                                DateAdded = DateTime.UtcNow,
+                                DateReady = null,
+                                Header = "New Order Received",
+                                Body = $"Order ID: {order.Id}\r\nRestaurant: {((order.Restaurant ?? new Restaurant()).User ?? new User() { Name = "undefined" }).Name}\r\nTotal Amount: {order.TotalPrice}\r\n",
+                                isRead = false,
+                                URL = $"/Orders/Details/{order.Id}"
+                            };
+                            await notificationService.Create(notifi);
+                        }
+                        order.OrderDate = orderDetailsDto.OrderDate;
+                        order.PaymentMethod = orderDetailsDto.PaymentMethod;
+                        dbContext.Orders.Update(order);
+                        dbContext.SaveChanges();
+                    }
+                    else
+                    {
+                        order.OrderDate = orderDetailsDto.OrderDate;
+                        order.PaymentMethod = orderDetailsDto.PaymentMethod;
+                        dbContext.Orders.Update(order);
+                        dbContext.SaveChanges();
+                        var notifi = new Notification()
+                        {
+                            Body = $"The request information has been updated  #{order.Id}",
+                            DateAdded = DateTime.UtcNow,
+                            DateReady = null,
+                            FromUserId = userId,
+                            ToUserId = order.RestaurantId,
+                            Header = $"The request information has been updated from Restaurant",
+                            isRead = false,
+                            OrderId = order.Id,
+                            URL = $"/Orders/Details/{order.Id}"
+                        };
+                        await notificationService.Create(notifi);
+                    }
+                
+                    var orderDetailsViewModel = mapper.Map<OrderDetailsViewModel>(order);
+                    var jsondata = new { data = orderDetailsViewModel };
+                    return jsondata;
+                }
 
         public async Task<object?> GetRestaurantDetails(int id, string userId)
         {
