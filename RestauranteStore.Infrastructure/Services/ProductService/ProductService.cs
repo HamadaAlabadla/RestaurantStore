@@ -48,7 +48,11 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
             if (productDto.Image != null)
             {
                 var imagePath = await fileService.UploadFile(productDto.Image, "products", Guid.NewGuid().ToString());
-                product.Image = imagePath ?? "";
+                if (string.IsNullOrEmpty(imagePath))
+                {
+					return -1;
+                }
+                product.Image = imagePath ;
             }
             if (product == null)
             {
@@ -210,7 +214,9 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
             if (productDto.Image != null)
             {
                 var imagePath = await fileService.UploadFile(productDto.Image, "products", product.ProductNumber + "");
-                product.Image = imagePath ?? "";
+				if (string.IsNullOrEmpty(imagePath))
+					return -1;
+				product.Image = imagePath ?? "";
             }
             var id = UpdateProduct(product);
             return id;

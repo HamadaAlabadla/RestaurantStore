@@ -85,7 +85,7 @@
 										<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
 											<i class="bi bi-pencil-fill fs-7"></i>
 											<!--begin::Inputs-->
-											<input asp-for="Image" type="file" accept=".png, .jpg, .jpeg" />
+											<input asp-for="Image" name="Image" type="file" accept=".png, .jpg, .jpeg" />
 											<input type="hidden" name="avatar_remove" />
 											<!--end::Inputs-->
 										</label>
@@ -341,7 +341,7 @@
 								<a href="#" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancel</a>
 								<!--end::Button-->
 								<!--begin::Button-->
-								<button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+								<button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary ">
 									<span class="indicator-label">Save Changes</span>
 									<span class="indicator-progress">
 										Please wait...

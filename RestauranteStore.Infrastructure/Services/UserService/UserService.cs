@@ -77,7 +77,9 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             role = role.ToLower();
             await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
             user.Logo = await fileService.UploadFile(userDto.Logo!, "users", userDto.UserName ?? "");
-            user.Logo ??= "";
+			if (string.IsNullOrEmpty(user.Logo))
+				return null;
+			user.Logo ??= "";
             user.DateCreate = DateTime.UtcNow;
             var result = await userManager.CreateAsync(user, "user_123_USER");
 
@@ -213,7 +215,9 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             if (userDto.Logo != null)
             {
                 var logoPath = await fileService.UploadFile(userDto.Logo, "users", user.UserName ?? "");
-                userDb.Logo = logoPath;
+				if (string.IsNullOrEmpty(logoPath))
+					return null;
+				userDb.Logo = logoPath;
             }
             userDb.UserName = user.UserName;
             userDb.Name = user.Name;
@@ -267,7 +271,9 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             if (userDto.Logo != null)
             {
                 var logoPath = await fileService.UploadFile(userDto.Logo, "users", user.UserName ?? "");
-                user.Logo = logoPath;
+				if (string.IsNullOrEmpty(logoPath))
+					return null;
+				user.Logo = logoPath;
             }
             dbContext.users.Update(user);
             dbContext.SaveChanges();

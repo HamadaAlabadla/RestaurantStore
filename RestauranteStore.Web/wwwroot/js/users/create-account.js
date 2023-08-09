@@ -247,15 +247,39 @@ var KTCreateAccount = function () {
 				console.log('validated!');
 				
 				if (status == 'Valid') {
-					// Prevent default button action
-					e.preventDefault();
+					const fileInput = document.getElementById('Logo');
+					const file = fileInput.files[0];
+					debugger
+					if (file) {
+						if (file.type.startsWith('image/')) {
+							// It's an image, allow form submission
+							e.preventDefault();
 
-					// Disable button to avoid multiple click 
-					formSubmitButton.disabled = true;
+							// Disable button to avoid multiple click 
+							formSubmitButton.disabled = true;
 
-					// Show loading indication
-					formSubmitButton.setAttribute('data-kt-indicator', 'on');
-					form.submit();
+							// Show loading indication
+							formSubmitButton.setAttribute('data-kt-indicator', 'on');
+							form.submit();
+						} else {
+							// Show a SweetAlert2 popup for non-image files
+							e.preventDefault(); // Prevent form submission
+							Swal.fire({
+								icon: 'error',
+								title: 'Oops...',
+								text: 'Please select a valid image file.',
+							});
+						}
+					}
+					else {
+						// Show a SweetAlert2 popup for non-image files
+						e.preventDefault(); // Prevent form submission
+						Swal.fire({
+							icon: 'error',
+							title: 'Oops...',
+							text: 'Please select a valid image file.',
+						});
+					}
 
 
 				}
@@ -424,4 +448,31 @@ var KTCreateAccount = function () {
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
 	KTCreateAccount.init();
+});
+
+
+function handleImage() {
+	document.getElementById('Logo').addEventListener('change', validateImage);
+	function validateImage() {
+		const fileInput = document.getElementById('Logo');
+		const file = fileInput.files[0];
+		if (file) {
+			if (file.type.startsWith('image/')) {
+				// It's an image, proceed with the upload
+				console.log('Valid image selected.');
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Please select a valid image file.',
+				});
+				fileInput.value = ''; // Clear the input
+			}
+		}
+	}
+}
+
+
+$(document).ready(function () {
+	handleImage();
 });
