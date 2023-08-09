@@ -14,9 +14,9 @@ $(document).ready(function () {
             "url": "/Orders/GetAllOrdersForSupplier",
             "type": "POST",
             "datatype": "json",
-            "data": function (filterString) {
+            "data": function (d) {
                 
-                filterString.filter = '';
+                d.filter = '';
 
                 // Get filter values
                 selectOptions.forEach((item, index) => {
@@ -24,23 +24,17 @@ $(document).ready(function () {
                     if (item.value && item.value !== '') {
                         
                         if (index !== 0) {
-                            filterString.filter += ' ';
+                            d.filter += ' ';
                         }
 
                         // Build filter value options
-                        filterString.filter += item.value;
+                        d.filter += item.value;
                     }
                 });
-                //var tempFilter = document.getElementById('tempFilter');
-                //var buttonFilter = document.getElementById('buttonFilter');
-                //if (tempFilter.textContent !== '' && tempFilter.textContent !== null) {
-                //    filterString.filter = tempFilter.textContent;
-                //    buttonFilter.classList.add('d-none');
-                //} else {
-                //    buttonFilter.classList.remove('d-none');
-                //}
-                //d.filter = $('#mySelect').val();
-                return filterString;
+
+                d.minDate = document.getElementById('minDate').textContent;
+                d.maxDate = document.getElementById('maxDate').textContent;
+                return d;
             }
 
         },
@@ -212,12 +206,12 @@ $(document).ready(function () {
 function handleDeleteLink() {
     var deleteLinks = document.querySelectorAll('[id="deleteLink"');
     deleteLinks.forEach(function (deleteLink) {
-        debugger
+        
 
         deleteLink.addEventListener('click', function () {
             var tr = this.closest('td').closest('tr');
             var orderId = tr.querySelector('[id="OrderIdA"]').textContent;
-            debugger
+            
 
             Swal.fire({
                 title: "Confirm Delete",
@@ -237,7 +231,7 @@ function handleDeleteLink() {
                         data: { id: orderId },
                         success: function (data) {
 
-                            debugger
+                            
                             // Handle the success response
                             // For example, you can close the modal and update the displayed data
                             Swal.fire({
@@ -267,7 +261,7 @@ function handleDeleteLink() {
                             // Perform any other action on success
                         },
                         error: function (error) {
-                            debugger
+                            
                             Swal.fire({
                                 html: "Sorry, looks like there are some errors detected, please try again.",
                                 icon: "error",
@@ -290,12 +284,12 @@ function handleDeleteLink() {
 function handleConfirmMoney() {
     var confirmMoneyLinks = document.querySelectorAll('[id="confirmMoneyLink"');
     confirmMoneyLinks.forEach(function (confirmMoneyLink) {
-        debugger
+        
 
         confirmMoneyLink.addEventListener('click', function () {
             var tr = this.closest('td').closest('tr');
             var orderId = tr.querySelector('[id="OrderIdA"]').textContent;
-            debugger
+            
 
             Swal.fire({
                 title: "Confirm Delivering Money",
@@ -315,7 +309,7 @@ function handleConfirmMoney() {
                         data: { id: orderId },
                         success: function (data) {
 
-                            debugger
+                            
                             // Handle the success response
                             // For example, you can close the modal and update the displayed data
                             Swal.fire({
@@ -345,7 +339,7 @@ function handleConfirmMoney() {
                             // Perform any other action on success
                         },
                         error: function (error) {
-                            debugger
+                            
                             Swal.fire({
                                 html: "Sorry, looks like there are some errors detected, please try again.",
                                 icon: "error",
@@ -435,15 +429,18 @@ function handleConfirmOrderLink() {
 $(document).ready(() => {
     
     const element = document.querySelector('#kt_ecommerce_sales_flatpickr');
+    var maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() - 1);
     flatpickr = $(element).flatpickr({
-        altInput: true,
-        altFormat: "d/m/Y",
-        dateFormat: "Y-m-d",
+        //altInput: true,
+        //altFormat: "d/m/Y",
+        dateFormat: "d/m/Y", 
         mode: "range",
+        maxDate: maxDate,
         onChange: function (selectedDates, dateStr, instance) {
             
             //handleFlatpickr(selectedDates, dateStr, instance);
-            datatable.draw();
+            handleFlatpickr(selectedDates, dateStr, instance);
         },
     });
 
@@ -453,7 +450,16 @@ $(document).ready(() => {
         flatpickr.clear();
     });
 });
+// Handle flatpickr --- more info: https://flatpickr.js.org/events/
+var handleFlatpickr = (selectedDates, dateStr, instance) => {
+    minDate = selectedDates[0] ? new Date(selectedDates[0]) : null;
+    maxDate = selectedDates[1] ? new Date(selectedDates[1]) : null;
 
+    document.getElementById('minDate').textContent = minDate;
+    document.getElementById('maxDate').textContent = maxDate;
+
+    datatable.draw();
+}
 
 
 

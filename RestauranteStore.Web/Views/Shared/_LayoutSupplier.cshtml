@@ -1,17 +1,42 @@
-﻿
-<!--begin:Menu link-->
-<a id="usersLink" class="menu-link active" asp-controller="Products" asp-action="Index">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
+﻿													<!--begin:Menu item-->
+<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion menu-sub-indention">
+	<!--begin:Menu link-->
+	<span class="menu-link">
+		<span class="menu-bullet">
+			<span class="bullet bullet-dot"></span>
+		</span>
+		<span class="menu-title">Sales</span>
+		<span class="menu-arrow"></span>
 	</span>
-	<span class="menu-title">Product Management</span>
-</a>
+	<!--end:Menu link-->
+	<!--begin:Menu sub-->
+	<div class="menu-sub menu-sub-accordion">
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a id="usersLink" class="menu-link" asp-controller="Products" asp-action="Index">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Product Management</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
+		<!--begin:Menu item-->
+		<div class="menu-item">
+			<!--begin:Menu link-->
+			<a id="usersLink" class="menu-link " asp-controller="Orders" asp-action="IndexSupplier">
+				<span class="menu-bullet">
+					<span class="bullet bullet-dot"></span>
+				</span>
+				<span class="menu-title">Order List</span>
+			</a>
+			<!--end:Menu link-->
+		</div>
+		<!--end:Menu item-->
 
+	</div>
+	<!--end:Menu sub-->
+</div>
 
-<!--begin:Menu link-->
-<a id="usersLink" class="menu-link active" asp-controller="Orders" asp-action="IndexSupplier">
-	<span class="menu-bullet">
-		<span class="bullet bullet-dot"></span>
-	</span>
-	<span class="menu-title">Order List</span>
-</a>

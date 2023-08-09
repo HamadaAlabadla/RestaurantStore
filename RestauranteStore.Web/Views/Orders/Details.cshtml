@@ -104,7 +104,7 @@
 							</span>
 							<!--end::Svg Icon--> Edit Status
 						</a>
-						<a asp-controller="Orders" asp-action="Index" class="btn btn-success btn-sm me-lg-n7">
+						<a asp-controller="Orders" asp-action="IndexSupplier" class="btn btn-success btn-sm me-lg-n7">
 							<!--begin::Svg Icon | path: icons/duotune/arrows/arr074.svg-->
 							<span class="svg-icon svg-icon-2">
 								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -116,9 +116,6 @@
 						<!--end::Button-->
 						@if (role.Equals("restaurant"))
 						{
-							<!--begin::Button-->
-							<a asp-action="" asp-controller="" class="btn btn-success btn-sm me-lg-n7">Edit Status</a>
-							<!--end::Button-->
 							<!--begin::Button-->
 							<a href="../../demo1/dist/apps/ecommerce/sales/add-order.html" class="btn btn-primary btn-sm">Add New Order</a>
 							<!--end::Button-->

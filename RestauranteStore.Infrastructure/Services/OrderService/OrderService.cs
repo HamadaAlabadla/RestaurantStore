@@ -17,6 +17,7 @@ using RestaurantStore.EF.Models;
 using RestaurantStore.Infrastructure.Hubs;
 using RestaurantStore.Infrastructure.Services.EmailService;
 using RestaurantStore.Infrastructure.Services.NotificationService;
+using System.Globalization;
 using System.Linq.Dynamic.Core;
 using static RestauranteStore.Core.Enums.Enums;
 
@@ -63,19 +64,6 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
             // Convert the JSON string to a Dictionary<int, int> for quantities
             Dictionary<int, double> quantityDictionary = JsonConvert.DeserializeObject<Dictionary<int, double>>(quantities) ?? new Dictionary<int, double>();
-            //List<OrderItemDto> orderItemDtos = new List<OrderItemDto>();
-            //foreach (var item in quantityDictionary)
-            //{
-            //	var orderItemDto = new OrderItemDto()
-            //	{
-            //		SupplierId = suppliersDectionary.GetValueOrDefault(item.Key) ?? "",
-            //		isDelete = false,
-            //		Price = (productService.GetProduct(item.Key) ?? new Product() { Price = 0.0 }).Price,
-            //		ProductId = item.Key,
-            //		QTYRequierd = item.Value,
-            //	};
-            //	orderItemDtos.Add(orderItemDto);
-            //}
             var orderItemDtos = quantityDictionary.Select(item => new OrderItemDto
             {
                 SupplierId = suppliersDectionary.TryGetValue(item.Key, out var supplierId) ? supplierId : "",
@@ -192,14 +180,17 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
                 );
         }
         public object? GetAllSupplierOrders(HttpRequest request, string userId)
-        {
+        { 
             var pageLength = int.Parse((request.Form["length"].ToString()) ?? "");
             var skiped = int.Parse((request.Form["start"].ToString()) ?? "");
             var searchData = request.Form["search[value]"];
             var sortColumn = request.Form[string.Concat("columns[", request.Form["order[0][column]"], "][name]")];
             var sortDir = request.Form["order[0][dir]"];
             var filter = request.Form["filter"];
-            if (string.IsNullOrEmpty(filter))
+            var minDate = ConvertToDateTime(request.Form["minDate"].ToString().Split(' ') , 0);
+            var maxDate = ConvertToDateTime(request.Form["maxDate"].ToString().Split(' ') , 1);
+
+			if (string.IsNullOrEmpty(filter))
                 filter = new StringValues("") { };
             var orders = GetAllOrders(searchData[0] ?? "", filter[0] ?? "", userId);
             var recordsTotal = orders.Count();
@@ -209,12 +200,27 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
 
             var data = orders.Include(x => x.Restaurant).ThenInclude(x => x.User)
+                .Where(x => ((minDate == null) || x.DateCreate >= minDate ) && ((maxDate == null) || x.DateCreate <= maxDate))
                 .Skip(skiped).Take(pageLength).ToList();
             var orderListSupplierViewModel = mapper.Map<IEnumerable<OrderListSupplierViewModel>>(data);
             var jsonData = new { recordsFiltered = recordsTotal, recordsTotal, data = orderListSupplierViewModel };
             return jsonData;
         }
 
+        private DateTime? ConvertToDateTime(string[] date , int state)
+        {
+			if (date != null && date.Length > 5)
+			{
+				var year = date[3];
+				var day = date[2];
+				var month = DateTime.ParseExact(date[1], "MMM", CultureInfo.InvariantCulture).Month;
+                if(state == 0)
+				    return new DateTime(int.Parse(year), month, int.Parse(day) , 0,0 , 0 ,0,0);
+                else
+				    return new DateTime(int.Parse(year), month, int.Parse(day) , 23,59 , 59 ,0,0);
+			}
+            return null;
+		}
         public object? GetAllRestaurantOrders(HttpRequest request, string userId)
         {
             var pageLength = int.Parse((request.Form["length"].ToString()) ?? "");
