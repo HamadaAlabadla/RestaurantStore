@@ -40,5 +40,7 @@ namespace RestauranteStore.Core.Dtos
         [Display(Name = "عنوان الفرع الرئيسي")]
         public string? MainBranchAddress { get; set; }
         public string? filter { get; set; }
+        public string? Password { get; set; }
+        public string? ConfirmPassword { get; set; }
     }
 }

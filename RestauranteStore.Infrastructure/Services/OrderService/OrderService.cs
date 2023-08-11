@@ -57,7 +57,6 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
         public async Task<bool> CreateOrderAsync(OrderDto orderDto, string supplierIds, string quantities)
         {
-
             if (orderDto == null) return false;
             List<Order> orders = new List<Order>();
             Dictionary<int, string> suppliersDectionary = JsonConvert.DeserializeObject<Dictionary<int, string>>(supplierIds) ?? new Dictionary<int, string>();
@@ -72,42 +71,60 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
                 ProductId = item.Key,
                 QTYRequierd = item.Value,
             }).ToList();
+            foreach (var item in orderItemDtos)
+            {
+                var product = productService.GetProduct(item.ProductId);
+                if(product == null ||product.QTY < item.QTYRequierd)
+                {
+                    orderItemDtos.Remove(item);
+                }
+            }
             try
             {
                 var groups = orderItemDtos.GroupBy(x => x.SupplierId);
+                bool check = false;
                 foreach (var group in groups)
                 {
-                    await CreateOrderAsync(group.ToList(), orderDto);
+                    var result = await CreateOrderAsync(group.ToList(), orderDto);
+                    if (result != null)
+                    {
+                        check = true;
+                    }
                 }
-                return true;
+                return check;
             }
             catch (Exception ex)
             {
                 return false;
             }
         }
-        public async Task CreateOrderAsync(List<OrderItemDto> group, OrderDto orderDto)
+        public async Task<Order?> CreateOrderAsync(List<OrderItemDto> group, OrderDto orderDto)
         {
-            var order = mapper.Map<Order>(orderDto);
-            order.StatusOrder = orderDto.IsDraft ? StatusOrder.Draft : StatusOrder.Pending;
-            order.TotalPrice = group.Sum(x => x.Price * x.QTYRequierd);
-            order.SupplierId = group[0].SupplierId; // Since all items in the group belong to the same supplier
-            order.DateCreate = DateTime.UtcNow;
-            await dbContext.Orders.AddAsync(order);
-            await dbContext.SaveChangesAsync();
+            if (group != null && group.Count() > 0)
+            {
+                var order = mapper.Map<Order>(orderDto);
+                order.StatusOrder = orderDto.IsDraft ? StatusOrder.Draft : StatusOrder.Pending;
+                order.TotalPrice = group.Sum(x => x.Price * x.QTYRequierd);
+                order.SupplierId = group[0].SupplierId; // Since all items in the group belong to the same supplier
+                order.DateCreate = DateTime.UtcNow;
+                await dbContext.Orders.AddAsync(order);
+                await dbContext.SaveChangesAsync();
 
-            //await emailSender.SendEmailAsync("alkhoulyibraheem@gmail.com", "hello", html);
-            foreach (var item in group)
-            {
-                item.OrderId = order.Id;
-                await orderItemService.CreateOrderItemAsync(item);
+                //await emailSender.SendEmailAsync("alkhoulyibraheem@gmail.com", "hello", html);
+                foreach (var item in group)
+                {
+                    item.OrderId = order.Id;
+                    await orderItemService.CreateOrderItemAsync(item);
+                }
+                order = await GetOrder(order.Id, order.RestaurantId);
+                if (order != null)
+                {
+                    backgroundJob.Enqueue(() => SendEmail("sadeg.magde024@gmail.com", order));
+                    backgroundJob.Enqueue(() => SendNotifi(order));
+                }
+                return order;
             }
-            order = await GetOrder(order.Id, order.RestaurantId);
-            if (order != null)
-            {
-                backgroundJob.Enqueue(() => SendEmail("sadeg.magde024@gmail.com", order));
-                backgroundJob.Enqueue(() => SendNotifi(order));
-            }
+            return null;
         }
         public async Task SendNotifi(Order order)
         {
@@ -685,6 +702,17 @@ namespace RestaurantStore.Infrastructure.Services.OrderService
 
             };
             await notificationService.Create(notifi);
+            foreach (var item in order.OrderItems)
+            {
+                if(item.Product.QTY >= item.QTY)
+                    item.Product.QTY -= item.QTY;
+                else
+                {
+                    item.QTY = item.Product.QTY;
+                    item.Product.QTY = 0;
+                }
+                productService.UpdateProduct(item.Product);
+            }
             if (result > 0)
                 return order;
             else return null;

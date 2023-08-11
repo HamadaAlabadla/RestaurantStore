@@ -21,7 +21,7 @@
 			<label class="required fw-semibold fs-6 mb-2">Name</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input asp-for="@Model.Name" class="form-control form-control-solid mb-3 mb-lg-0" />
+			<input asp-for="@Model.Name" required class="form-control form-control-solid mb-3 mb-lg-0" />
 			<span asp-validation-for="@Model.Name" class="text-danger"></span>
 			<!--end::Input-->
 		</div>

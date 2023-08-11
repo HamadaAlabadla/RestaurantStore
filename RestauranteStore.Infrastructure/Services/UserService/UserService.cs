@@ -81,7 +81,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
 				return null;
 			user.Logo ??= "";
             user.DateCreate = DateTime.UtcNow;
-            var result = await userManager.CreateAsync(user, "user_123_USER");
+            var result = await userManager.CreateAsync(user, (!string.IsNullOrEmpty(userDto.Password) )? userDto.Password: "user_123_USER" );
 
             if (result.Succeeded)
             {
@@ -136,7 +136,7 @@ namespace RestauranteStore.Infrastructure.Services.UserService
             //    }
             //}
 
-            var users = dbContext.users.Include(x => x.Restaurant)
+            var users = dbContext.users
                 .Where(x => !x.isDelete
                 && (
                     (!string.IsNullOrEmpty(filter))?(Enum.TryParse(filter, out filterEnum)? x.UserType == filterEnum :false):true

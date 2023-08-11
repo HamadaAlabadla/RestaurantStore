@@ -8,6 +8,43 @@
         success: function (result) {
             
             $('#EditCategoryModal .modal-body').html(result);
+            const cancelButtonEdit = elementEdit.querySelector('[data-kt-users-modal-action="cancel"]');
+            cancelButtonEdit.addEventListener('click', e => {
+                e.preventDefault();
+
+                Swal.fire({
+                    text: "Are you sure you would like to cancel?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    confirmButtonText: "Yes, cancel it!",
+                    cancelButtonText: "No, return",
+                    customClass: {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: "btn btn-active-light"
+                    }
+                }).then(function (result) {
+                    if (result.value) {
+                        modalEdit.hide();
+                        var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
+                        allHide.forEach(x => {
+                            x.classList.add('d-none');
+                        });
+                    } else if (result.dismiss === 'cancel') {
+                        Swal.fire({
+                            text: "Your form has not been cancelled!.",
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary",
+                            }
+                        });
+                    }
+                });
+            });
+
+
            // $('#editUserModal').modal('show');
         },
         error: function (error) {
@@ -18,13 +55,59 @@
 
 $(document).on('click', '#editModelLink', function (e) {
     e.preventDefault();
-    debugger
+    
     // Replace "modelId" with the ID of the model you want to edit
     var modelId = this.closest('td').querySelector('span[id="CategoryIdSpan"]').textContent;
     
 
     loadEditForm(modelId);
 });
+const elementEdit = document.getElementById('EditCategoryModal');
+let closeButtonEdit = elementEdit.querySelector('[data-kt-users-modal-action="close"]');
+//const formEdit = element.querySelector('#kt_modal_edit_user_form');
+const modalEdit = new bootstrap.Modal(elementEdit);
+closeButtonEdit.addEventListener('click', e => {
+    e.preventDefault();
+
+    Swal.fire({
+        text: "Are you sure you would like to cancel?",
+        icon: "warning",
+        showCancelButton: true,
+        buttonsStyling: false,
+        confirmButtonText: "Yes, cancel it!",
+        cancelButtonText: "No, return",
+        customClass: {
+            confirmButton: "btn btn-primary",
+            cancelButton: "btn btn-active-light"
+        }
+    }).then(function (result) {
+        
+        if (result.value) {
+            //formEdit.reset(); // Reset form			
+            modalEdit.hide();
+            var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
+            allHide.forEach(x => {
+                x.classList.add('d-none');
+            }
+
+            );
+        } else if (result.dismiss === 'cancel') {
+            Swal.fire({
+                text: "Your form has not been cancelled!.",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary",
+                }
+            });
+        }
+    });
+});
+
+
+
+
 
 function deleteUser(id) {
     Swal.fire({
@@ -53,6 +136,7 @@ function deleteUser(id) {
                             confirmButton: "btn btn-primary",
                         }
                     });
+                    window.location.href = '/Categories/Index';
                     // $('#editUserModal').modal('show');
                 },
                 error: function (error) {
@@ -85,7 +169,7 @@ function deleteUser(id) {
 
 $(document).on('click', '#deleteLink', function (e) {
     e.preventDefault();
-    debugger
+    
     // Replace "modelId" with the ID of the model you want to edit
     var modelId = this.closest('td').querySelector('span[id="CategoryIdSpan"]').textContent;
 
@@ -93,7 +177,7 @@ $(document).on('click', '#deleteLink', function (e) {
     deleteUser(modelId);
 });
 $(document).on('submit', '#kt_modal_edit_user_form', function (e) {
-    debugger
+    
     e.preventDefault();
     var formEdit = this;
     var formData = $(this).serialize();
@@ -103,7 +187,7 @@ $(document).on('submit', '#kt_modal_edit_user_form', function (e) {
         type: 'POST',
         data: formData,
         success: function (result) {
-            debugger
+            
             // Handle the success response
             // For example, you can close the modal and update the displayed data
             Swal.fire({
@@ -115,9 +199,9 @@ $(document).on('submit', '#kt_modal_edit_user_form', function (e) {
                     confirmButton: "btn btn-primary"
                 }
             }).then(function (result) {
-                debugger
+                
                 if (result.isConfirmed) {
-                    debugger
+                    
                     // Enable submit button after loading
                     $('#EditCategoryModal').modal('hide');
                     formEdit.reset(); // Reset form			

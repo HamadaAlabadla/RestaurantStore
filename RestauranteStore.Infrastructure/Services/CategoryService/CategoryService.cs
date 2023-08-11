@@ -37,9 +37,15 @@ namespace RestauranteStore.Infrastructure.Services.CategoryService
                 toastNotification.AddErrorToastMessage("Category does not exist.");
                 return null;
             }
-            category.isDelete = true;
-            UpdateCategory(category);
-            toastNotification.AddSuccessToastMessage("Category deleted successfully.");
+			if (dbContext.Products.Where(x => !x.isDelete).Any(x => x.CategoryId == category.Id))
+			{
+				toastNotification.AddErrorToastMessage("This category cannot be deleted because it is related to other products");
+				return null;
+			}
+			category.isDelete = true;
+			dbContext.Categories.Update(category);
+			dbContext.SaveChanges();
+			toastNotification.AddSuccessToastMessage("Category deleted successfully.");
             return category;
         }
         
@@ -47,14 +53,19 @@ namespace RestauranteStore.Infrastructure.Services.CategoryService
         public Category? DeleteCategory(string name)
         {
             var category = GetCategory(name);
-            if (category == null) return null;
-
-            //if(dbContext.dfgsd.Any(x => x.Catego != category.Id))
-            //{
-            //	return null;
-            //}
-            category.isDelete = true;
-            UpdateCategory(category);
+			if (category == null)
+			{
+				toastNotification.AddErrorToastMessage("Category does not exist.");
+				return null;
+			}
+			if(dbContext.Products.Where(x => !x.isDelete).Any(x => x.CategoryId == category.Id))
+			{
+				toastNotification.AddErrorToastMessage("This category cannot be deleted because it is related to other products");
+				return null;
+			}
+			category.isDelete = true;
+            dbContext.Categories.Update(category);
+            dbContext.SaveChanges();
             return category;
         }
 

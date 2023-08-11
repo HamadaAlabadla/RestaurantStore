@@ -7,6 +7,7 @@
 	<input type="hidden" asp-for="image" id="usertype" />
 	<!--begin::Scroll-->
 	<div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+
 		<!--begin::Input group-->
 		<div class="fv-row mb-7">
 			<!--begin::Label-->
@@ -15,11 +16,11 @@
 			<!--begin::Image placeholder-->
 			<style>
 				.image-input-placeholder {
-					background-image: url('/assets/media/svg/files/blank-image.svg');
+					background-image: url('/images/users/@Model.image');
 				}
 
 				[data-bs-theme="dark"] .image-input-placeholder {
-					background-image: url('/assets/media/svg/files/blank-image-dark.svg');
+					background-image: url('/images/users/@Model.image');
 				}</style>
 			<!--end::Image placeholder-->
 			<!--begin::Image input-->
@@ -31,7 +32,7 @@
 				<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
 					<i class="bi bi-pencil-fill fs-7"></i>
 					<!--begin::Inputs-->
-					<input asp-for="@Model.Logo" type="file" accept=".png, .jpg, .jpeg" />
+					<input asp-for="Logo" type="file" accept=".png, .jpg, .jpeg" />
 					<span asp-validation-for="@Model.Logo" class="text-danger"></span>
 					<input type="hidden" name="avatar_remove" />
 					<!--end::Inputs-->
@@ -60,7 +61,7 @@
 			<label class="required fw-semibold fs-6 mb-2">Full Name</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="text" asp-for="@Model.Name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" />
+			<input type="text" required asp-for="@Model.Name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" />
 			<span asp-validation-for="@Model.Name" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
@@ -71,7 +72,7 @@
 			<label class="required fw-semibold fs-6 mb-2">UserName</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="text" asp-for="@Model.UserName" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
+			<input type="text" required asp-for="@Model.UserName" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="UserName" />
 			<span asp-validation-for="@Model.UserName" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
@@ -82,7 +83,7 @@
 			<label class="required fw-semibold fs-6 mb-2">Email</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="email" asp-for="@Model.Email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" />
+			<input type="email" required asp-for="@Model.Email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" />
 			<span asp-validation-for="@Model.Email" class="text-danger"></span>
 			<!--end::Input-->
 		</div>
@@ -93,7 +94,7 @@
 			<label class="required fw-semibold fs-6 mb-2">Phone Number</label>
 			<!--end::Label-->
 			<!--begin::Input-->
-			<input type="number" asp-for="@Model.PhoneNumber" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="+97********" />
+			<input type="number" required asp-for="@Model.PhoneNumber" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="+97********" />
 			<span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
 			<!--end::Input-->
 		</div>

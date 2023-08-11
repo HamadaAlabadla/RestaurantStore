@@ -85,7 +85,7 @@
 										<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
 											<i class="bi bi-pencil-fill fs-7"></i>
 											<!--begin::Inputs-->
-											<input asp-for="Image" name="Image" type="file" accept=".png, .jpg, .jpeg" />
+											<input required asp-for="Image" name="Image" type="file" accept=".png, .jpg, .jpeg" />
 											<input type="hidden" name="avatar_remove" />
 											<!--end::Inputs-->
 										</label>
@@ -128,7 +128,7 @@
 								<!--begin::Card body-->
 								<div class="card-body pt-0">
 									<!--begin::Select2-->
-									<select asp-for="Status" data-id="kt_ecommerce_add_product_status_select" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true">
+									<select required asp-for="Status" data-id="kt_ecommerce_add_product_status_select" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true">
 										<option></option>
 										<option value="0">Published</option>
 										<option value="3">Draft</option>
@@ -142,7 +142,7 @@
 									<!--begin::Datepicker-->
 									<div class="d-none mt-10">
 										<label for="kt_ecommerce_add_product_status_datepicker" class="form-label">Select publishing date and time</label>
-										<input class="form-control" id="kt_ecommerce_add_product_status_datepicker" placeholder="Pick date & time" />
+										<input required class="form-control" id="kt_ecommerce_add_product_status_datepicker" placeholder="Pick date & time" />
 									</div>
 									<!--end::Datepicker-->
 								</div>
@@ -167,7 +167,7 @@
 									<label class="form-label">Categories</label>
 									<!--end::Label-->
 									<!--begin::Select2-->
-									<select asp-for="CategoryId" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" >
+									<select asp-for="CategoryId" required class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" >
 										<option></option>
 									</select>
 									<!--end::Select2-->
@@ -214,7 +214,7 @@
 													<label class="required form-label">Product Name</label>
 													<!--end::Label-->
 													<!--begin::Input-->
-													<input type="text" asp-for="Name" class="form-control mb-2" placeholder="Product name" />
+													<input type="text" asp-for="Name" required class="form-control mb-2" placeholder="Product name" />
 													<!--end::Input-->
 													<!--begin::Description-->
 													<div class="text-muted fs-7">A product name is required and recommended to be unique.</div>
@@ -258,7 +258,7 @@
 													<label class="required form-label">Base Price</label>
 													<!--end::Label-->
 													<!--begin::Input-->
-													<input type="number" asp-for="Price" class="form-control mb-2" placeholder="Product price"/>
+													<input required type="number" asp-for="Price" class="form-control mb-2" placeholder="Product price"/>
 													<!--end::Input-->
 													<!--begin::Description-->
 													<div class="text-muted fs-7">Set the product price.</div>
@@ -272,7 +272,7 @@
 													<label class="required form-label">Unit Price</label>
 													<!--end::Label-->
 													<!--begin::Select2-->
-													<select asp-for="UnitPriceId" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true">
+													<select required asp-for="UnitPriceId" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true">
 														<option></option>
 													</select>
 													<!--end::Select2-->
@@ -303,7 +303,7 @@
 												<label class="required form-label">Quantity</label>
 												<!--end::Label-->
 												<!--begin::Input-->
-												<input type="number" asp-for="QTY" class="form-control mb-2" placeholder="Product Quantity" />
+												<input required type="number" asp-for="QTY" class="form-control mb-2" placeholder="Product Quantity" />
 												<!--end::Input-->
 												<!--begin::Description-->
 												<div class="text-muted fs-7">Add the product Quantity.</div>
@@ -317,7 +317,7 @@
 												<label class="required form-label">Quantity Unit</label>
 												<!--end::Label-->
 												<!--begin::Select2-->
-												<select asp-for="QuantityUnitId" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" >
+												<select required asp-for="QuantityUnitId" class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" >
 													<option></option>
 												</select>
 												<!--end::Select2-->

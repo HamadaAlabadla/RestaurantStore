@@ -7,10 +7,10 @@
 			<!--begin::Modal header-->
 			<div class="modal-header" id="kt_modal_add_user_header">
 				<!--begin::Modal title-->
-				<h2 class="fw-bold">Add User</h2>
+				<h2 class="fw-bold">Add Category</h2>
 				<!--end::Modal title-->
 				<!--begin::Close-->
-				<div data-kt-users-modal-action="cancel" class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
+				<div data-kt-users-modal-action="close" class="btn btn-icon btn-sm btn-active-icon-primary">
 					<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
 					<span class="svg-icon svg-icon-1">
 						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,7 +36,7 @@
 							<label class="required fw-semibold fs-6 mb-2">Name</label>
 							<!--end::Label-->
 							<!--begin::Input-->
-							<input type="text" asp-for="@Model.Name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Name Category" />
+							<input type="text" asp-for="@Model.Name" required class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Name Category" />
 							<span asp-validation-for="@Model.Name" class="text-danger"></span>
 							<!--end::Input-->
 						</div>

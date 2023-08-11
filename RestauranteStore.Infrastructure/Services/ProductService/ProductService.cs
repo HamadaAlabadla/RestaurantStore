@@ -81,6 +81,7 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
         }
         private IQueryable<Product> GetAllProducts(string search, string filter, string supplierId)
         {
+            search = search.ToLower();
             StatusProduct? filterEnum = null;
             if (!string.IsNullOrEmpty(filter))
             {
@@ -93,11 +94,17 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
                     filterEnum = null;
                 }
             }
-            var users = dbContext.Set<Product>()
+            var users = dbContext.Products.Include(x => x.User)
                 .Where(x => !x.isDelete
                         &&( (!string.IsNullOrEmpty(supplierId))? (x.Status == StatusProduct.Draft ? true :false):true )
                         &&( (filterEnum == null) ? true : x.Status == filterEnum )
                         &&( (string.IsNullOrEmpty(supplierId) || x.UserId.Equals(supplierId)) )
+                        &&( string.IsNullOrEmpty(search) 
+                            || x.Name.ToLower().Contains(search)
+                            || x.ProductNumber.ToString().ToLower().Contains(search)
+                            || x.Price.ToString().ToLower().Contains(search)
+                            || (x.User.Name??"").ToLower().Contains(search)
+                          )
                       );
             return users;
 
@@ -144,20 +151,13 @@ namespace RestauranteStore.Infrastructure.Services.ProductService
 
             return jsonData;
         }
-		public static bool IsStatusMatch(StatusProduct status, string searchData)
-		{
-            return false;
-		}
-
-
-
 
 
 		public object? GetAllProductsItemDto(HttpRequest request, string supplierId, string userId)
         {
             var pageLength = int.Parse((request.Form["length"].ToString()) ?? "");
             var skiped = int.Parse((request.Form["start"].ToString()) ?? "");
-            var searchData = request.Form["search[value]"];
+            var searchData = request.Form["search"];
             var sortColumn = request.Form[string.Concat("columns[", request.Form["order[0][column]"], "][name]")];
             var sortDir = request.Form["order[0][dir]"];
             var filter = request.Form["filter"];

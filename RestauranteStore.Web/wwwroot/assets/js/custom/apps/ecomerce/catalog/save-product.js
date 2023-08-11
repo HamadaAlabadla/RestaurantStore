@@ -1,5 +1,5 @@
 "use strict";
-
+var form = document.getElementById('kt_ecommerce_add_product_form');
 // Class definition
 var KTAppEcommerceSaveProduct = function () {
 
@@ -273,144 +273,111 @@ var KTAppEcommerceSaveProduct = function () {
     // Submit form handler
     const handleSubmit = () => {
         // Define variables
-        let validator;
 
         // Get elements
-        const form = document.getElementById('kt_ecommerce_add_product_form');
+        
         const submitButton = document.getElementById('kt_ecommerce_add_product_submit');
 
-        // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
-        validator = FormValidation.formValidation(
-            form,
-            {
-                fields: {
-                    //'Image': {
-                    //    validators: {
-                    //        file: {
-                    //            type: 'image', // Validate by MIME type
-                    //            message: 'Please select a valid image file.'
-                    //        }
-                    //    }
-                    //}
-
-                    
-                },
-            }
-        );
-
+        
         // Handle submit button
         submitButton.addEventListener('click', e => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent the form from submitting
+            e.stopPropagation(); // Prevent event from bubbling up
+
+            form.classList.add("was-validated");
             
-            // Validate form before submit
-            if (validator) {
-                validator.validate().then(function (status) {
-                    console.log('validated!');
-                    const fileInput = document.getElementById('Image');
-                    const file = fileInput.files[0];
-                    debugger
-                    if (file) {
-                        if (file.type.startsWith('image/')) {
-                            // It's an image, allow form submission
-                            console.log('Valid image selected.');
-                            if (status == 'Valid') {
-                                submitButton.setAttribute('data-kt-indicator', 'on');
+            if (form.checkValidity() === false) {
+                // Form is invalid, do not proceed with submission
+                return;
+            }
+            const fileInput = document.getElementById('Image');
+            const file = fileInput.files[0];
+                    
+            if (file) {
+                if (file.type.startsWith('image/')) {
+                        submitButton.setAttribute('data-kt-indicator', 'on');
 
-                                // Disable submit button whilst loading
-                                submitButton.disabled = true;
+                        // Disable submit button whilst loading
+                        submitButton.disabled = true;
 
-                                setTimeout(function () {
-                                    submitButton.removeAttribute('data-kt-indicator');
-                                    var des = document.getElementById('kt_ecommerce_add_product_description').textContent;
-                                    document.getElementById('Description').value = des;
+                        setTimeout(function () {
+                            submitButton.removeAttribute('data-kt-indicator');
+                            var des = document.getElementById('kt_ecommerce_add_product_description').textContent;
+                            document.getElementById('Description').value = des;
 
-                                    var formData = new FormData();
-                                    formData.append("Image", $("#Image")[0].files[0]);
-                                    formData.append("Name", $("#Name").val());
-                                    formData.append("QTY", $("#QTY").val());
-                                    formData.append("Description", $("#Description").val());
-                                    formData.append("UserId", $("#UserId").val());
-                                    formData.append("CategoryId", $("#CategoryId").val());
-                                    formData.append("QuantityUnitId", $("#QuantityUnitId").val());
-                                    formData.append("UnitPriceId", $("#UnitPriceId").val());
-                                    formData.append("Price", $("#Price").val());
-                                    formData.append("Status", $("#Status").val());
-                                    $.ajax({
-                                        url: '/Products/Create',
-                                        type: "Post",
-                                        datatype: "json",
-                                        data: formData,
-                                        contentType: false,
-                                        processData: false,
-                                        success: function () {
-                                            document.getElementById('kt_ecommerce_add_product_form').reset();
-                                            Swal.fire({
-                                                text: "Product has been successfully submitted!",
-                                                icon: "success",
-                                                buttonsStyling: false,
-                                                confirmButtonText: "Ok, got it!",
-                                                customClass: {
-                                                    confirmButton: "btn btn-primary"
-                                                }
-                                            }).then(function (result) {
-                                                if (result.isConfirmed) {
-                                                    // Enable submit button after loading
-                                                    submitButton.disabled = false;
-
-                                                    // Redirect to customers list page
-                                                    window.location = form.getAttribute("data-kt-redirect");
-                                                }
-                                            });
-                                        },
-                                        error: function () {
+                            var formData = new FormData();
+                            formData.append("Image", $("#Image")[0].files[0]);
+                            formData.append("Name", $("#Name").val());
+                            formData.append("QTY", $("#QTY").val());
+                            formData.append("Description", $("#Description").val());
+                            formData.append("UserId", $("#UserId").val());
+                            formData.append("CategoryId", $("#CategoryId").val());
+                            formData.append("QuantityUnitId", $("#QuantityUnitId").val());
+                            formData.append("UnitPriceId", $("#UnitPriceId").val());
+                            formData.append("Price", $("#Price").val());
+                            formData.append("Status", $("#Status").val());
+                            $.ajax({
+                                url: '/Products/Create',
+                                type: "Post",
+                                datatype: "json",
+                                data: formData,
+                                contentType: false,
+                                processData: false,
+                                success: function () {
+                                    document.getElementById('kt_ecommerce_add_product_form').reset();
+                                    Swal.fire({
+                                        text: "Product has been successfully submitted!",
+                                        icon: "success",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn btn-primary"
+                                        }
+                                    }).then(function (result) {
+                                        if (result.isConfirmed) {
+                                            // Enable submit button after loading
                                             submitButton.disabled = false;
-                                            Swal.fire({
-                                                html: "Sorry, looks like there are some errors detected, please try again.",
-                                                icon: "error",
-                                                buttonsStyling: false,
-                                                confirmButtonText: "Ok, got it!",
-                                                customClass: {
-                                                    confirmButton: "btn btn-primary"
-                                                }
-                                            });
-                                        },
-                                    });
-                                }, 2000);
-                            }
-                            else {
-                                Swal.fire({
-                                    html: "Sorry, looks like there are some errors detected",
-                                    icon: "error",
-                                    buttonsStyling: false,
-                                    confirmButtonText: "Ok, got it!",
-                                    customClass: {
-                                        confirmButton: "btn btn-primary"
-                                    }
-                                });
-                            }
 
-                        } else {
-                            // Show a SweetAlert2 popup for non-image files
-                            e.preventDefault(); // Prevent form submission
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Please select a valid image file.',
+                                            // Redirect to customers list page
+                                            window.location = form.getAttribute("data-kt-redirect");
+                                        }
+                                    });
+                                },
+                                error: function () {
+                                    submitButton.disabled = false;
+                                    Swal.fire({
+                                        html: "Sorry, looks like there are some errors detected, please try again.",
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn btn-primary"
+                                        }
+                                    });
+                                },
                             });
-                        }
-                    }
-                    else {
-                        // Show a SweetAlert2 popup for non-image files
-                        e.preventDefault(); // Prevent form submission
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Please select a valid image file.',
-                        });
-                    }
+                        }, 2000);
+                }
+                else {
+                    // Show a SweetAlert2 popup for non-image files
+                    e.preventDefault(); // Prevent form submission
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please select a valid image file.',
+                    });
+                }
+            }
+            else {
+                // Show a SweetAlert2 popup for non-image files
+                e.preventDefault(); // Prevent form submission
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a valid image file.',
                 });
             }
-        })
+        });
     }
 
     // Public methods

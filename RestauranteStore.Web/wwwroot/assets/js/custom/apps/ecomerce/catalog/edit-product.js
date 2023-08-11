@@ -279,117 +279,77 @@ var KTAppEcommerceSaveProduct = function () {
         const form = document.getElementById('kt_ecommerce_add_product_form');
         const submitButton = document.getElementById('kt_ecommerce_add_product_submit');
 
-        // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
-        validator = FormValidation.formValidation(
-            form,
-            {
-                fields: {
-                    'Name': {
-                        validators: {
-                            notEmpty: {
-                                message: 'Product name is required'
-                            }
-                        }
-                    },
-                    'QTY': {
-                        validators: {
-                            notEmpty: {
-                                message: 'QTY is required'
-                            }
-                        }
-                    },
-                    'Price': {
-                        validators: {
-                            notEmpty: {
-                                message: 'Price is required'
-                            }
-                        }
-                    },
-                    
-                },
-                plugins: {
-                    trigger: new FormValidation.plugins.Trigger(),
-                    bootstrap: new FormValidation.plugins.Bootstrap5({
-                        rowSelector: '.fv-row',
-                        eleInvalidClass: '',
-                        eleValidClass: ''
-                    })
-                }
-            }
-        );
 
         // Handle submit button
         submitButton.addEventListener('click', e => {
             e.preventDefault();
-            
-            // Validate form before submit
-            if (validator) {
-                validator.validate().then(function (status) {
-                    console.log('validated!');
+            e.stopPropagation(); // Prevent event from bubbling up
 
-                    if (status == 'Valid') {
-                        submitButton.setAttribute('data-kt-indicator', 'on');
+            form.classList.add("was-validated");
 
-                        // Disable submit button whilst loading
-                        submitButton.disabled = true;
+            if (form.checkValidity() === false) {
+                // Form is invalid, do not proceed with submission
+                return;
+            }
 
-                        setTimeout(function () {
-                            submitButton.removeAttribute('data-kt-indicator');
-                            var des = document.getElementById('kt_ecommerce_add_product_description').textContent;
-                            document.getElementById('Description').value = des;
+            submitButton.setAttribute('data-kt-indicator', 'on');
+
+            // Disable submit button whilst loading
+            submitButton.disabled = true;
+
+            setTimeout(function () {
+                submitButton.removeAttribute('data-kt-indicator');
+                var des = document.getElementById('kt_ecommerce_add_product_description').textContent;
+                document.getElementById('Description').value = des;
                             
-                            var formData = new FormData();
-                            if ($("#Image")[0].files !== null) {
-                                formData.append("Image", $("#Image")[0].files[0]);
-                            }
-                            formData.append("Name", $("#Name").val());
-                            formData.append("QTY", $("#QTY").val());
-                            formData.append("Description", $("#Description").val());
-                            formData.append("ProductNumber", $("#ProductNumber").val());
-                            formData.append("UserId", $("#UserId").val());
-                            formData.append("CategoryId", $("#CategoryId").val());
-                            formData.append("QuantityUnitId", $("#QuantityUnitId").val());
-                            formData.append("UnitPriceId", $("#UnitPriceId").val());
-                            formData.append("Price", $("#Price").val());
-                            formData.append("Status", $("#Status").val());
-                            $.ajax({
-                                url: '/Products/Edit',
-                                type: "Post",
-                                datatype: "json",
-                                data: formData,
-                                contentType: false,
-                                processData: false,
-                                success: function () {
-                                    debugger
-                                    document.getElementById('kt_ecommerce_add_product_form').reset();
-                                    Swal.fire({
-                                        text: "Product has been successfully submitted!",
-                                        icon: "success",
-                                        buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
-                                        customClass: {
-                                            confirmButton: "btn btn-primary"
-                                        }
-                                    }).then(function (result) {
-                                        if (result.isConfirmed) {
-                                            debugger
-                                            // Enable submit button after loading
-                                            submitButton.disabled = false;
-
-                                            // Redirect to customers list page
-                                            window.location = form.getAttribute("data-kt-redirect");
-                                            window.location.href = "/Products/Index";
-                                        }
-                                    });
-                                },
-                                error: function () {
-                                    alert: "Something Error !"
-                                },
-                            });
-                        }, 2000);
-                    } else {
+                var formData = new FormData();
+                if ($("#Image")[0].files !== null) {
+                    formData.append("Image", $("#Image")[0].files[0]);
+                }
+                formData.append("Name", $("#Name").val());
+                formData.append("QTY", $("#QTY").val());
+                formData.append("Description", $("#Description").val());
+                formData.append("ProductNumber", $("#ProductNumber").val());
+                formData.append("UserId", $("#UserId").val());
+                formData.append("CategoryId", $("#CategoryId").val());
+                formData.append("QuantityUnitId", $("#QuantityUnitId").val());
+                formData.append("UnitPriceId", $("#UnitPriceId").val());
+                formData.append("Price", $("#Price").val());
+                formData.append("Status", $("#Status").val());
+                $.ajax({
+                    url: '/Products/Edit',
+                    type: "Post",
+                    datatype: "json",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        debugger
+                        document.getElementById('kt_ecommerce_add_product_form').reset();
                         Swal.fire({
-                            html: "Sorry, looks like there are some errors detected, please try again. <br/><br/>Please note that there may be errors in the <strong>General</strong> or <strong>Advanced</strong> tabs",
+                            text: "Product has been successfully submitted!",
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        }).then(function (result) {
+                            if (result.isConfirmed) {
+                                debugger
+                                // Enable submit button after loading
+                                submitButton.disabled = false;
+
+                                // Redirect to customers list page
+                                window.location = form.getAttribute("data-kt-redirect");
+                                window.location.href = "/Products/Index";
+                            }
+                        });
+                    },
+                    error: function () {
+                        submitButton.disabled = true;
+                        Swal.fire({
+                            html: "Sorry, looks like there are some errors detected, please try again.",
                             icon: "error",
                             buttonsStyling: false,
                             confirmButtonText: "Ok, got it!",
@@ -397,9 +357,9 @@ var KTAppEcommerceSaveProduct = function () {
                                 confirmButton: "btn btn-primary"
                             }
                         });
-                    }
+                    },
                 });
-            }
+            }, 2000);
         })
     }
 

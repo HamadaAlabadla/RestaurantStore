@@ -5,6 +5,7 @@ var toolbarBase;
 var toolbarSelected;
 var selectedCount;
 var checkboxes; 
+var passwordMeter;
 if (table != null) {
 	checkboxes = table.querySelectorAll('[type="checkbox"]');
 
@@ -371,16 +372,47 @@ var KTCreateAccount = function () {
 							}
 						}
 					},
+					'Password': {
+						validators: {
+							notEmpty: {
+								message: 'The password is required'
+							},
+							callback: {
+								message: 'Please enter valid password',
+								callback: function (input) {
+									if (input.value.length > 0) {
+										return validatePassword();
+									}
+								}
+							}
+						}
+					},
+					'confirm-password': {
+						validators: {
+							notEmpty: {
+								message: 'The password confirmation is required'
+							},
+							identical: {
+								compare: function () {
+									return form.querySelector('[name="password"]').value;
+								},
+								message: 'The password and its confirm are not the same'
+							}
+						}
+					},
 				},
-				//plugins: {
-				//	trigger: new FormValidation.plugins.Trigger(),
-				//	// Bootstrap Framework Integration
-				//	bootstrap: new FormValidation.plugins.Bootstrap5({
-				//		rowSelector: '.fv-row',
-    //                    eleInvalidClass: '',
-    //                    eleValidClass: ''
-				//	})
-				//}
+				plugins: {
+					trigger: new FormValidation.plugins.Trigger({
+						event: {
+							password: false
+						}
+					}),
+					bootstrap: new FormValidation.plugins.Bootstrap5({
+						rowSelector: '.fv-row',
+						eleInvalidClass: '',  // comment to enable invalid state icons
+						eleValidClass: '' // comment to enable valid state icons
+					})
+				}
 			}
 		));
 
@@ -405,25 +437,19 @@ var KTCreateAccount = function () {
 						}
 					}
 				},
-				//plugins: {
-				//	trigger: new FormValidation.plugins.Trigger(),
-				//	// Bootstrap Framework Integration
-				//	bootstrap: new FormValidation.plugins.Bootstrap5({
-				//		rowSelector: '.fv-row',
-    //                    eleInvalidClass: '',
-    //                    eleValidClass: ''
-				//	})
-				//}
 			}
 		));
-}
+	}
+	// Password input validation
+	var validatePassword = function () {
+		return (passwordMeter.getScore() === 100);
+	}
 
 	return {
 		// Public Functions
 		init: function () {
 			// Elements
 			modalEl = document.querySelector('#kt_modal_create_account');
-
 			if ( modalEl ) {
 				modal = new bootstrap.Modal(modalEl);	
 			}					

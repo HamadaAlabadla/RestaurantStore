@@ -1,5 +1,6 @@
 "use strict";
 // Class definition
+var searchBox = document.querySelector('[data-kt-ecommerce-edit-order-filter="search"]');
 var table;
 var datatable;
 table = document.querySelector('#Order_Products_table');
@@ -47,6 +48,7 @@ var KTAppEcommerceSalesSaveOrder = function () {
             altInput: true,
             altFormat: "d F, Y",
             dateFormat: "Y-m-d",
+            minDate: "today" // Set the minimum date to today
         });
 
         // Init select2 country options
@@ -95,9 +97,12 @@ var KTAppEcommerceSalesSaveOrder = function () {
                     "url": "/Products/GetAllProductsItemDto",
                     "type": "POST",
                     "datatype": "json",
-                    "data": function (filterString) {
+                    "data": function (d) {
+                        var searchContent = searchBox.value;
+
+                        d.search = searchContent;
                         //filterString.filter = selectOptions.value;
-                        return filterString;
+                        return d;
                     }
 
                 },
@@ -105,7 +110,6 @@ var KTAppEcommerceSalesSaveOrder = function () {
                     {
                         "orderable": false,
                         "data": null, "name": null, "autowidth": true,
-                        "sorting": false,
                         "render": function (data, type, row) {
                             return `<td>
 								<div class="form-check form-check-sm form-check-custom form-check-solid">
@@ -115,9 +119,7 @@ var KTAppEcommerceSalesSaveOrder = function () {
                         }
                     },
                     {
-                        "orderable": false,
-                        "data": null, "name": null, "autowidth": true,
-                        "sorting": false,
+                        "data": null, "name": "Price", "autowidth": true,
                         "render": function (data, type, row) {
                             return `<!--begin::Product=-->
 						    <td>
@@ -144,9 +146,7 @@ var KTAppEcommerceSalesSaveOrder = function () {
 						    <!--end::Product=-->`;
                         }
                     }, {
-                        "orderable": false,
-                        "data": null, "name": null, "autowidth": true,
-                        "sorting": false,
+                        "data": null, "name": "User", "autowidth": true,
                         "render": function (data, type, row) {
                             return ` <!--begin::Qty=-->
 						    <td class="pe-5 " data-order="28">
@@ -158,7 +158,6 @@ var KTAppEcommerceSalesSaveOrder = function () {
                     },{
                         "orderable": false,
                         "data": null, "name": null, "autowidth": true,
-                        "sorting": false,
                         "render": function (data, type, row) {
                             return ` <!--begin::Qty=-->
 						    <td class="text-end pe-5 " data-order="28">
@@ -168,13 +167,11 @@ var KTAppEcommerceSalesSaveOrder = function () {
                         }
                     },
                     {
-                        "orderable": false,
-                        "data": null, "name": null, "autowidth": true,
-                        "sorting": false,
+                        "data": null, "name": "QTY", "autowidth": true,
                         "render": function (data, type, row) {
                             return ` <!--begin::Qty=-->
 						    <td class="text-end pe-5" data-order="28">
-							    <span class="fw-bold ms-3">${data.qty}</span>
+							    <span id="QTYRemining" class="fw-bold ms-3">${data.qty}</span>
 						    </td>
 						    <!--end::Qty=-->`;
                         }
@@ -325,7 +322,11 @@ var KTAppEcommerceSalesSaveOrder = function () {
         // Get elements
         const form = document.getElementById('kt_ecommerce_edit_order_form');
         const submitButton = document.getElementById('kt_ecommerce_edit_order_submit');
-
+        form.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+            }
+        });
         // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
         validator = FormValidation.formValidation(
             form,
@@ -529,17 +530,46 @@ $(document).on('click', function () {
     if (count == 0) {
         handleProductSelect();
         const QTYs = document.querySelectorAll("[name='productQTY']");
-
+        
         QTYs.forEach(function (item) {
             item.addEventListener("change", function (e) {
                 // Enforce the minimum value of 1
+                debugger
+                var target = item.closest('tr');
+                var QTYRemining = target.querySelector("[id='QTYRemining']").textContent;
+                var check = target.querySelector("[id='Checked']");
                 if (this.value < 1) {
                     this.value = 0;
                 }
-                var target = item.closest('tr');
-                var check = target.querySelector("[id='Checked']");
-                if (check.checked) {
+                if (this.value >= parseInt(QTYRemining)) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Are you sure?',
+                        text: `You have chosen the maximum available quantity of ${QTYRemining}. Continue?`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            
+                            check.checked = false;
+                            addProduct(check, "change")
+                            this.value = parseInt(QTYRemining);
+                            check.checked = true;
+                            addProduct(check, "change")
+                        }
+                        else {
+                            this.value = '';
+                            check.checked = false;
+                            addProduct(check, "change")
+                        }
+                    });
                     
+                }
+
+                
+                
+                if (check.checked) {
                     var td = target.getElementsByTagName('td')[1].getElementsByTagName('div')[0];
                     var productId = td.getAttribute('data-kt-ecommerce-edit-order-id');
                     var span = document.querySelector(`[data-id="${productId}"]`);

@@ -1,4 +1,5 @@
-﻿function loadEditForm(id) {
+﻿var form;
+function loadEditForm(id) {
     
     $.ajax({
         
@@ -6,8 +7,28 @@
         type: 'GET',
         data: { id: id },
         success: function (result) {
-            
+            debugger
             $('#editUserModal .modal-body').html(result);
+            form = document.getElementById('kt_modal_edit_user_form');
+            var fileInput = document.getElementById('Logo');
+            fileInput.addEventListener('change', validateImage);
+            function validateImage() {
+                
+                const file = fileInput.files[0];
+                if (file) {
+                    if (file.type.startsWith('image/')) {
+                        // It's an image, proceed with the upload
+                        console.log('Valid image selected.');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Please select a valid image file.',
+                        });
+                        fileInput.value = ''; // Clear the input
+                    }
+                }
+            }
            // $('#editUserModal').modal('show');
         },
         error: function (error) {
@@ -94,55 +115,63 @@ $(document).on('click', '#deleteLink', function (e) {
 });
 $(document).on('submit', '#kt_modal_edit_user_form', function (e) {
     e.preventDefault();
-    var formEdit = this;
-    var formData = $(this).serialize();
+    e.stopPropagation(); // Prevent event from bubbling up
+    debugger
+    form.classList.add("was-validated");
 
-    $.ajax({
-        url: '/Users/Edit',
-        type: 'POST',
-        data: formData,
-        success: function (result) {
-            debugger
-            // Handle the success response
-            // For example, you can close the modal and update the displayed data
-            Swal.fire({
-                text: "order has been successfully submitted!",
-                icon: "success",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn btn-primary"
-                }
-            }).then(function (result) {
-                debugger
-                if (result.isConfirmed) {
-                    debugger
-                    // Enable submit button after loading
-                    $('#editUserModal').modal('hide');
-                    formEdit.reset(); // Reset form			
-                    $('#editUserModal').hide();
-                    var allHide = document.querySelectorAll('[class="modal-backdrop show"]');
-                    allHide.forEach(x => {
-                        x.classList.add('d-none');
-                    });
-                    datatable.draw();
-                    // Redirect to customers list page
-                    //window.location = form.getAttribute("data-kt-redirect");
-                }
-            });
-            
-            // Perform any other action on success
-        },
-        error: function (error) {
-            Swal.fire({
-                html: "Sorry, looks like there are some errors detected, please try again.",
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn btn-primary"
-                }
-            });
+    if (form.checkValidity() === false) {
+        // Form is invalid, do not proceed with submission
+        return;
+    }
+    const fileInput = document.getElementById('Logo');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        if (true) {
+            var formEdit = this;
+            formEdit.submit();
         }
-    });
+        else {
+                // Show a SweetAlert2 popup for non-image files
+                e.preventDefault(); // Prevent form submission
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a valid image file.',
+                });
+            }
+        }
+    else {
+        // Show a SweetAlert2 popup for non-image files
+        e.preventDefault(); // Prevent form submission
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please select a valid image file.',
+        });
+    }
 });
+
+
+
+function handleImage() {
+    debugger
+    document.getElementById('Logo').addEventListener('change', validateImage);
+    function validateImage() {
+        const fileInput = document.getElementById('Logo');
+        const file = fileInput.files[0];
+        if (file) {
+            if (file.type.startsWith('image/')) {
+                // It's an image, proceed with the upload
+                console.log('Valid image selected.');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a valid image file.',
+                });
+                fileInput.value = ''; // Clear the input
+            }
+        }
+    }
+}

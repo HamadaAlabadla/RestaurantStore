@@ -250,7 +250,9 @@ License: For each use you must have a valid license purchased only from above li
     <script src="~/js/users/create-account.js"></script>
 	<!--end::Global Javascript Bundle-->
 	<!--begin::Custom Javascript(used for this page only)-->
-	<script src="~/assets/js/custom/authentication/sign-in/general.js"></script>
+    @*<script src="~/assets/js/custom/authentication/sign-in/general.js"></script>*@
+    
+	<script src="~/js/users/general.js"></script>
 	<!--end::Custom Javascript-->
 	<!--end::Javascript-->
 	@await Component.InvokeAsync("NToastNotify")

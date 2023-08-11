@@ -198,7 +198,10 @@ namespace RestauranteStore.Web.Controllers
             }
             ModelState.Remove("FirstName");
             ModelState.Remove("LastName");
-            
+            ModelState.Remove("Password");
+            ModelState.Remove("ConfirmPassword");
+            userDto.Password = "";
+            userDto.Password = "";
             if (ModelState.IsValid)
             {
                 var result = await userService.CreateUser(userDto, userDto.UserType.ToString().ToLower());
@@ -227,6 +230,12 @@ namespace RestauranteStore.Web.Controllers
             {
                 toastNotification.AddErrorToastMessage("Not allow create <stronge> Admin </stronge> Account !!!" );
                 return LocalRedirect("/Identity/Account/Login");
+            }
+            if(string.IsNullOrEmpty(userDto.Password)  || !userDto.Password.Equals(userDto.ConfirmPassword))
+            {
+                toastNotification.AddErrorToastMessage("The password and its confirm are not the same");
+                return LocalRedirect("/Identity/Account/Login");
+
             }
             if (userDto.UserType != UserType.restaurant)
             {
@@ -284,23 +293,30 @@ namespace RestauranteStore.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(UserDto userDto)
         {
+			ModelState.Remove("FirstName");
+			ModelState.Remove("LastName");
 
+			if (userDto.UserType != UserType.restaurant)
+            {
+                ModelState.Remove("MainBranchName");
+                ModelState.Remove("MainBranchAddress");
+            }
             if (ModelState.IsValid)
             {
                 var errorModel = await userService.UpdateUser(userDto);
                 if (!string.IsNullOrEmpty(errorModel))
-                    return Ok();
+                    return RedirectToAction(nameof(Index));
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Error in update user");
-                    return NotFound(errorModel);
-                }
+					return RedirectToAction(nameof(Index));
+				}
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Model state is inValid");
-                return NotFound(userDto);
-            }
+				return RedirectToAction(nameof(Index));
+			}
         }
 
         [Authorize(Roles = "admin")]
