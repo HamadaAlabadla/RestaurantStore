@@ -408,6 +408,10 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Content wrapper-->
 						@*<div class=" app-container container-fluid d-flex flex-column flex-column-fluid">*@
 							<!--begin::Content-->
+						<cache enabled="true" expires-after="@TimeSpan.FromSeconds(15)" priority="Microsoft.Extensions.Caching.Memory.CacheItemPriority.Low">
+							@DateTime.Now
+							<vc:blog-post-list-group-by-types viewname="HomeGroupByTypePosts" viewtype="CustomViews" blog-group-by="Category" blog-type="Blogs" take="1" select-featured="false" select-popular="true" select-full-info="false" order-by="Asc" num="1" size="20"></vc:blog-post-list-group-by-types>
+						</cache>
 							@RenderBody()
 							<!--end::Content-->
 						@*</div>*@

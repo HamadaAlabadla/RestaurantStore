@@ -24,7 +24,7 @@ $(document).ready(function () {
                 selectOptions.forEach((item, index) => {
                     if (item.value && item.value !== '') {
                         if (index !== 0) {
-                            filterString.filter += ' ';
+                            filterString.filte += ' ';
                         }
 
                         // Build filter value options

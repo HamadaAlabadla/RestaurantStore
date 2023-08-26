@@ -51,7 +51,7 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c3f4b162-90fe-472c-8b29-bfe1e8651827",
+                            Id = "5bb1850f-61b2-40fc-8925-92d914a4f497",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -146,8 +146,8 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "eb2914ba-6996-4ec3-a339-8a2b2db4f3d9",
-                            RoleId = "c3f4b162-90fe-472c-8b29-bfe1e8651827"
+                            UserId = "afc26c50-f215-4617-8647-7aad26c2a1bc",
+                            RoleId = "5bb1850f-61b2-40fc-8925-92d914a4f497"
                         });
                 });
 
@@ -217,6 +217,71 @@ namespace RestauranteStore.EF.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("RestaurantStore.EF.Models.TestExcel.CategoryExcel", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("CategoryExcels");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "4M",
+                            Name = "4MName"
+                        },
+                        new
+                        {
+                            Code = "TPM",
+                            Name = "TPMName"
+                        });
+                });
+
+            modelBuilder.Entity("RestaurantStore.EF.Models.TestExcel.ProductExcel", b =>
+                {
+                    b.Property<string>("SKU")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Band")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CategoryExcelCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<double>("DiscountedPrice")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ListPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Manufacturer")
+                        .HasColumnType("int");
+
+                    b.Property<double>("MinimumDiscount")
+                        .HasColumnType("float");
+
+                    b.HasKey("SKU");
+
+                    b.HasIndex("CategoryExcelCode");
+
+                    b.ToTable("ProductExcels");
                 });
 
             modelBuilder.Entity("RestauranteStore.EF.Models.Category", b =>
@@ -621,10 +686,10 @@ namespace RestauranteStore.EF.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "eb2914ba-6996-4ec3-a339-8a2b2db4f3d9",
+                            Id = "afc26c50-f215-4617-8647-7aad26c2a1bc",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "673a5619-1361-406b-bf23-e9d9d5cf7c53",
-                            DateCreate = new DateTime(2023, 8, 2, 8, 5, 47, 491, DateTimeKind.Utc).AddTicks(1137),
+                            ConcurrencyStamp = "ecb8ef7b-1920-4056-8be6-957b113a5431",
+                            DateCreate = new DateTime(2023, 8, 22, 11, 37, 59, 221, DateTimeKind.Utc).AddTicks(6370),
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
@@ -635,7 +700,7 @@ namespace RestauranteStore.EF.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAED3EhZpief2srOsE6dbRM46UJ8fDiKLX5TuyuLO9WafYZ1nPgvDpqg//t/iV3E38zA==",
                             PhoneNumber = "0596549873",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4602b039-6006-4db3-a2eb-ba253cc1bd26",
+                            SecurityStamp = "1bfb4dd6-7f9b-4351-a1f1-a06ab4b04c61",
                             TwoFactorEnabled = false,
                             UserName = "admin",
                             UserType = 2,
@@ -711,6 +776,17 @@ namespace RestauranteStore.EF.Migrations
                     b.Navigation("FromUser");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("RestaurantStore.EF.Models.TestExcel.ProductExcel", b =>
+                {
+                    b.HasOne("RestaurantStore.EF.Models.TestExcel.CategoryExcel", "CategoryExcel")
+                        .WithMany()
+                        .HasForeignKey("CategoryExcelCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CategoryExcel");
                 });
 
             modelBuilder.Entity("RestauranteStore.EF.Models.Order", b =>

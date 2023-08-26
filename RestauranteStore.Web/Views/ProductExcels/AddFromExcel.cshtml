@@ -1,0 +1,170 @@
+﻿@*@model RestaurantStore.Core.ModelViewModels.FileValidationViewModel*@
+<!--begin::Main-->
+<div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+	<!--begin::Content wrapper-->
+	<div class="d-flex flex-column flex-column-fluid">
+		<!--begin::Toolbar-->
+		<div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+			<!--begin::Toolbar container-->
+			<div id="kt_app_toolbar_container" class="app-container container-xxl d-flex flex-stack">
+				<!--begin::Page title-->
+				<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+					<!--begin::Title-->
+					<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Add Excel File</h1>
+					<!--end::Title-->
+					<!--begin::Breadcrumb-->
+					<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+						<!--begin::Item-->
+						<li class="breadcrumb-item text-muted">
+							<a href="../../demo1/dist/index.html" class="text-muted text-hover-primary">Home</a>
+						</li>
+						<!--end::Item-->
+					</ul>
+					<!--end::Breadcrumb-->
+				</div>
+				<!--end::Page title-->
+			</div>
+			<!--end::Toolbar container-->
+		</div>
+		<!--end::Toolbar-->
+		<!--begin::Content-->
+		<div id="kt_app_content" class="app-content flex-column-fluid">
+			<!--begin::Content container-->
+			<div id="kt_app_content_container" class="app-container container-xxl">
+				<!--begin::Card-->
+				<div class="card">
+					<!--begin::Card body-->
+					<div class="card-body">
+						<!--begin::Heading-->
+						<div class="card-px text-center pt-15 pb-15">
+							<!--begin::Title-->
+							<h2 class="fs-2x fw-bold mb-0">Add Excel File</h2>
+							<!--end::Title-->
+							<!--begin::Description-->
+							<p class="text-gray-400 fs-4 fw-semibold py-7">Click on the below buttons to launch
+							<br />a new file.</p>
+							<!--end::Description-->
+							<!--begin::Action-->
+							<a href="#" class="btn btn-primary er fs-6 px-8 py-4" data-bs-toggle="modal" data-bs-target="#kt_modal_upload">Add New file</a>
+							<!--end::Action-->
+						</div>
+						<!--end::Heading-->
+						<!--begin::Illustration-->
+						<div class="text-center pb-15 px-5">
+							<img src="assets/media/illustrations/sketchy-1/6.png" alt="" class="mw-100 h-200px h-sm-325px" />
+						</div>
+						<!--end::Illustration-->
+					</div>
+					<!--end::Card body-->
+				</div>
+				<!--end::Card-->
+			</div>
+			<!--end::Content container-->
+		</div>
+		<!--end::Content-->
+	</div>
+	<!--end::Content wrapper-->
+</div>
+<!--end:::Main-->
+<!--begin::Modal - Upload File-->
+<div class="modal fade" id="kt_modal_upload" tabindex="-1" aria-hidden="true">
+	<!--begin::Modal dialog-->
+	<div class="modal-dialog modal-dialog-centered mw-650px">
+		<!--begin::Modal content-->
+		<div class="modal-content">
+			<!--begin::Form-->
+			<form class="form" enctype="multipart/form-data" asp-controller="ProductExcels" method="post" asp-action="AddExcel" id="kt_modal_upload_form">
+				<!--begin::Modal header-->
+				<div class="modal-header">
+					<!--begin::Modal title-->
+					<h2 class="fw-bold">Upload files</h2>
+					<!--end::Modal title-->
+					<!--begin::Close-->
+					<div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
+						<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+						<span class="svg-icon svg-icon-1">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+								<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+							</svg>
+						</span>
+						<!--end::Svg Icon-->
+					</div>
+					<!--end::Close-->
+				</div>
+				<!--end::Modal header-->
+				<!--begin::Modal body-->
+				<div class="modal-body pt-10 pb-15 px-lg-17">
+					<!--begin::Input group-->
+					<div class="form-group">
+						<!--begin::Dropzone-->
+						<div class="dropzone dropzone-queue mb-2" id="kt_modal_upload_dropzone">
+							<!--begin::Controls-->
+							<div class="dropzone-panel mb-4">
+								<a class="dropzone-select btn btn-sm btn-primary me-2">Attach files</a>
+								<a class="dropzone-upload btn btn-sm btn-light-primary me-2">Upload All</a>
+								<a class="dropzone-remove-all btn btn-sm btn-light-primary">Remove All</a>
+							</div>
+							<!--end::Controls-->
+							<div class="progress">
+								<div id="progressBar" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+								<div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 0%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+								<div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 0%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+							</div>
+							<!--begin::Items-->
+							<div class="dropzone-items wm-200px">
+								<div class="dropzone-item p-5" style="display:none">
+									<!--begin::File-->
+									<div class="dropzone-file">
+										<div class="dropzone-filename text-dark" title="some_image_file_name.jpg">
+											<span data-dz-name="">some_image_file_name.jpg</span>
+											<strong>
+												(
+												<span data-dz-size="">340kb</span>)
+											</strong>
+										</div>
+										<div class="dropzone-error mt-0" data-dz-errormessage=""></div>
+									</div>
+									<!--end::File-->
+									<!--begin::Progress-->
+									<div class="dropzone-progress">
+										<div class="progress bg-light-primary">
+											<div class="progress-bar bg-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-dz-uploadprogress=""></div>
+										</div>
+									</div>
+									<!--end::Progress-->
+									<!--begin::Toolbar-->
+									<div class="dropzone-toolbar">
+										<span class="dropzone-start">
+											<i class="bi bi-play-fill fs-3"></i>
+										</span>
+										<span class="dropzone-cancel" data-dz-remove="" style="display: none;">
+											<i class="bi bi-x fs-3"></i>
+										</span>
+										<span class="dropzone-delete" data-dz-remove="">
+											<i class="bi bi-x fs-1"></i>
+										</span>
+									</div>
+									<!--end::Toolbar-->
+								</div>
+							</div>
+							<!--end::Items-->
+						</div>
+						<!--end::Dropzone-->
+						<!--begin::Hint-->
+						<span class="form-text fs-6 text-muted">Max file size is 1MB per file.</span>
+						<!--end::Hint-->
+					</div>
+					<!--end::Input group-->
+				</div>
+				<!--end::Modal body-->
+			</form>
+			<!--end::Form-->
+		</div>
+	</div>
+</div>
+<!--end::Modal - Upload File-->
+@section Scripts{
+    <script src="~/js/excel/list.js"></script>
+	<script src="~/js/excel/excelhub.js"></script>
+}

@@ -2,9 +2,9 @@
 
 namespace RestauranteStore.Infrastructure.Services.FileService
 {
-    public interface IFileService
-    {
-        Task<string?> UploadFile(IFormFile ufile, string path = "", string userName = "");
-    }
+	public interface IFileService
+	{
+		Task<string?> UploadFile(IFormFile ufile, string path = "", string userName = "");
+	}
 
 }

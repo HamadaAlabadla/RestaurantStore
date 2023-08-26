@@ -120,23 +120,25 @@ if (table != null) {
 
 
 
+var validations = [];
+var modal;	
+var modalEl;
+
+let currentStepper;
+var stepper;
+var form;
+var formSubmitButton;
+var formContinueButton;
+
+// Variables
+var stepperObj;
 
 
 // Class definition
 var KTCreateAccount = function () {
 	// Elements
-	var modal;	
-	var modalEl;
-
-	let currentStepper;
-	var stepper;
-	var form;
-	var formSubmitButton;
-	var formContinueButton;
-
-	// Variables
-	var stepperObj;
-	var validations = [];
+	
+	
 
 	// Private Functions
 	var initStepper = function () {
@@ -232,21 +234,23 @@ var KTCreateAccount = function () {
 			stepper.goPrevious();
 			KTUtil.scrollTop();
 		});
+
+
 	}
 
 
 	var handleForm = function () {
-		
+		debugger
 		formSubmitButton.addEventListener('click', function (e) {
-			
+			debugger
 			//var currentStepper = stepper.getCurrentStepIndex();
 			// Validate form before change stepper step
-			var validator = validations[currentStepper ]; // get validator for currnt step
+			var validator = validations[currentStepper]; // get validator for currnt step
 
 
 			validator.validate().then(function (status) {
 				console.log('validated!');
-				
+
 				if (status == 'Valid') {
 					const fileInput = document.getElementById('Logo');
 					const file = fileInput.files[0];
@@ -297,8 +301,10 @@ var KTCreateAccount = function () {
 				}
 			});
 		});
+
 	}
 	var initValidation = function () {
+		debugger
 		// Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
 		// Step 1
 		
@@ -380,6 +386,7 @@ var KTCreateAccount = function () {
 							callback: {
 								message: 'Please enter valid password',
 								callback: function (input) {
+
 									if (input.value.length > 0) {
 										return validatePassword();
 									}
@@ -387,35 +394,15 @@ var KTCreateAccount = function () {
 							}
 						}
 					},
-					'confirm-password': {
-						validators: {
-							notEmpty: {
-								message: 'The password confirmation is required'
-							},
-							identical: {
-								compare: function () {
-									return form.querySelector('[name="password"]').value;
-								},
-								message: 'The password and its confirm are not the same'
-							}
-						}
-					},
 				},
-				plugins: {
-					trigger: new FormValidation.plugins.Trigger({
-						event: {
-							password: false
-						}
-					}),
-					bootstrap: new FormValidation.plugins.Bootstrap5({
-						rowSelector: '.fv-row',
-						eleInvalidClass: '',  // comment to enable invalid state icons
-						eleValidClass: '' // comment to enable valid state icons
-					})
-				}
 			}
+			
 		));
-
+		form.querySelector('input[name="Password"]').addEventListener('input', function () {
+			if (this.value.length > 0) {
+				validator.updateFieldStatus('Password', 'NotValidated');
+			}
+		});
 
 		// Step 3
 		validations.push(FormValidation.formValidation(
@@ -445,6 +432,7 @@ var KTCreateAccount = function () {
 		return (passwordMeter.getScore() === 100);
 	}
 
+
 	return {
 		// Public Functions
 		init: function () {
@@ -463,6 +451,7 @@ var KTCreateAccount = function () {
 			form = stepper.querySelector('#kt_create_account_form');
 			formSubmitButton = stepper.querySelector('[data-kt-stepper-action="submit"]');
 			formContinueButton = stepper.querySelector('[data-kt-stepper-action="next"]');
+			passwordMeter = KTPasswordMeter.getInstance(form.querySelector('[data-kt-password-meter="true"]'));
 
 			initStepper();
 			initValidation();
