@@ -1,5 +1,6 @@
-﻿@using RestauranteStore.EF.Models;
-@model RestauranteStore.Core.Dtos.OrderDto;
+﻿@using RestaurantStore.EF.Models;
+@using RestaurantStore.Core.Dtos;
+@model             OrderDto;
 @{
 	var suppliers = new SelectList(ViewData["suppliers"] as List<User> , "Id" , "Name");
 	var status = new SelectList(ViewData["status"] as List<SelectListItem>, "Value", "Text");

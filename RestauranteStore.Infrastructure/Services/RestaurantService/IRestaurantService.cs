@@ -1,10 +1,10 @@
-﻿using RestauranteStore.EF.Models;
+﻿using RestaurantStore.EF.Models;
 
-namespace RestauranteStore.Infrastructure.Services.RestoranteService
+namespace RestaurantStore.Infrastructure.Services.RestaurantService
 {
-	public interface IRestaurantService
-	{
-		string? CreateRestorante(Restaurant restorante);
-		Restaurant? GetRestaurant(string id);
-	}
+    public interface IRestaurantService
+    {
+        string? CreateRestorante(Restaurant restorante);
+        Restaurant? GetRestaurant(string id);
+    }
 }

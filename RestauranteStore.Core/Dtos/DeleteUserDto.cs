@@ -2,10 +2,10 @@
 
 namespace RestaurantStore.Core.Dtos
 {
-	public class DeleteUserDto
-	{
-		[SafeText]
-		public string Id { get; set; }
-		public bool isDelete { get; set; }
-	}
+    public class DeleteUserDto
+    {
+        [SafeText]
+        public string Id { get; set; }
+        public bool isDelete { get; set; }
+    }
 }

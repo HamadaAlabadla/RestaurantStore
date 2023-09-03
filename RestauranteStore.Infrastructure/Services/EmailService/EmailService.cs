@@ -1,42 +1,42 @@
-﻿using RestauranteStore.EF.Models;
+﻿using RestaurantStore.EF.Models;
 using System.Net;
 using System.Net.Mail;
 
 namespace RestaurantStore.Infrastructure.Services.EmailService
 {
-	public class EmailService : IEmailService
-	{
-		//public async Task SendEmailAsync(string email, string subject, string htmlMessage)
-		//{
-		//    var smtpClient = new SmtpClient("smtp.gmail.com")
-		//    {
-		//        Port = 587,
-		//        Credentials = new NetworkCredential("hamadh.h9719@gmail.com" , "mosojupnghtemmqm"),
-		//        EnableSsl = true,
-		//    };
-		//    await smtpClient.SendMailAsync("hamadh.h9719@gmail.com", email, subject, htmlMessage);
+    public class EmailService : IEmailService
+    {
+        //public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        //{
+        //    var smtpClient = new SmtpClient("smtp.gmail.com")
+        //    {
+        //        Port = 587,
+        //        Credentials = new NetworkCredential("hamadh.h9719@gmail.com" , "mosojupnghtemmqm"),
+        //        EnableSsl = true,
+        //    };
+        //    await smtpClient.SendMailAsync("hamadh.h9719@gmail.com", email, subject, htmlMessage);
 
-		//}
+        //}
 
-		public async Task SendDistinctiveStyleEmail(string customerEmail, Order order)
-		{
-			try
-			{
-				// Create a new MailMessage
-				MailMessage message = new MailMessage();
-				message.From = new MailAddress("storerestaurantsha@gmail.com", "Restaurant Store");
-				message.To.Add(customerEmail);
-				message.Subject = "Receipt of an order - Restaurant Store";
-				var trs = "";
-				foreach (var item in order.OrderItems)
-				{
-					trs += $@"<tr>
+        public async Task SendDistinctiveStyleEmail(string customerEmail, Order order)
+        {
+            try
+            {
+                // Create a new MailMessage
+                MailMessage message = new MailMessage();
+                message.From = new MailAddress("storerestaurantsha@gmail.com", "Restaurant Store");
+                message.To.Add(customerEmail);
+                message.Subject = "Receipt of an order - Restaurant Store";
+                var trs = "";
+                foreach (var item in order.OrderItems)
+                {
+                    trs += $@"<tr>
                                 <td style=""border-bottom: 1px solid #ddd; padding: 10px;"">{item.Product.Name}</td>
                                 <td style=""border-bottom: 1px solid #ddd; padding: 10px;"">{item.QTY}</td>
                             </tr>";
-				}
-				// Create the HTML email body with inline CSS for styling
-				string emailBody = $@"<!DOCTYPE html>
+                }
+                // Create the HTML email body with inline CSS for styling
+                string emailBody = $@"<!DOCTYPE html>
                                         <html>
                                         <head>
                                             <meta charset=""UTF-8"">
@@ -69,25 +69,25 @@ namespace RestaurantStore.Infrastructure.Services.EmailService
                                         </html>
                                         ";
 
-				message.IsBodyHtml = true;
-				message.Body = emailBody;
+                message.IsBodyHtml = true;
+                message.Body = emailBody;
 
-				// Set up your SMTP server credentials
-				SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
-				smtpClient.UseDefaultCredentials = false;
-				smtpClient.Credentials = new NetworkCredential("storerestaurantsha@gmail.com", "qtdezpumicvqtzmg");
-				smtpClient.EnableSsl = true;
+                // Set up your SMTP server credentials
+                SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential("storerestaurantsha@gmail.com", "qtdezpumicvqtzmg");
+                smtpClient.EnableSsl = true;
 
-				// Send the email
-				await smtpClient.SendMailAsync(message);
+                // Send the email
+                await smtpClient.SendMailAsync(message);
 
-				Console.WriteLine("Distinctive style email sent successfully!");
-			}
-			catch (Exception ex)
-			{
-				// Handle any errors that may occur during the email sending process
-				Console.WriteLine("Error sending distinctive style email: " + ex.Message);
-			}
-		}
-	}
+                Console.WriteLine("Distinctive style email sent successfully!");
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors that may occur during the email sending process
+                Console.WriteLine("Error sending distinctive style email: " + ex.Message);
+            }
+        }
+    }
 }
